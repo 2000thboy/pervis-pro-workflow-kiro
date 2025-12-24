@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@0.12.1"],
+      "env": {
+        "SystemRoot": "C:\\Windows",
+        "PROGRAMFILES": "C:\\Program Files",
+        "APPDATA": "C:\\Users\\hy10\\AppData\\Roaming"
+      }
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": ["-y", "shadcn@3.6.2", "mcp"]
+    },
+    "codex-cli": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/codex-mcp-server"],
+      "env": {
+        "SystemRoot": "C:\\Windows",
+        "APPDATA": "C:\\Users\\hy10\\AppData\\Roaming"
+      }
+    },
+    "sqlite": {
+      "command": "uvx",
+      "args": ["mcp-server-sqlite", "--db-path", "./data/pervis.db"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    }
+  }
+}

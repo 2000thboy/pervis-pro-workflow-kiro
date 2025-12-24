@@ -1,0 +1,437 @@
+{
+  "summary": {
+    "test_time": "2025-12-19T13:27:43.582224",
+    "base_url": "http://localhost:8000",
+    "total_tests": 9,
+    "successful_tests": 5,
+    "failed_tests": 4,
+    "success_rate": 55.55555555555556
+  },
+  "test_results": [
+    {
+      "endpoint": "/api/health",
+      "method": "GET",
+      "url": "http://localhost:8000/api/health",
+      "status_code": 200,
+      "response_time": 2.038360595703125,
+      "success": true,
+      "timestamp": "2025-12-19T13:27:27.045883",
+      "response_data": {
+        "status": "healthy",
+        "service": "director-workbench",
+        "version": "0.2.0",
+        "config": {
+          "gemini_configured": false,
+          "asset_root": "./assets",
+          "asset_dirs_exist": true
+        }
+      }
+    },
+    {
+      "endpoint": "/",
+      "method": "GET",
+      "url": "http://localhost:8000/",
+      "status_code": 200,
+      "response_time": 2.0596044063568115,
+      "success": true,
+      "timestamp": "2025-12-19T13:27:29.105686",
+      "response_data": {
+        "message": "Pervis PRO Director Workbench API",
+        "status": "running"
+      }
+    },
+    {
+      "endpoint": "/api/script/analyze",
+      "method": "POST",
+      "url": "http://localhost:8000/api/script/analyze",
+      "status_code": 200,
+      "response_time": 2.1656713485717773,
+      "success": true,
+      "timestamp": "2025-12-19T13:27:31.271632",
+      "response_data": {
+        "status": "success",
+        "beats": [
+          {
+            "id": "beat_d9c2fe93",
+            "content": "场景1：城市街道 - 白天",
+            "emotion_tags": [
+              "平静",
+              "中性"
+            ],
+            "scene_tags": [
+              "户外",
+              "白天",
+              "城市"
+            ],
+            "action_tags": [
+              "静态"
+            ],
+            "cinematography_tags": [
+              "中景"
+            ],
+            "duration": 2.0
+          },
+          {
+            "id": "beat_b1748fa6",
+            "content": "小明匆忙地跑过繁忙的街道。",
+            "emotion_tags": [
+              "平静",
+              "中性"
+            ],
+            "scene_tags": [
+              "户外",
+              "白天",
+              "城市"
+            ],
+            "action_tags": [
+              "移动"
+            ],
+            "cinematography_tags": [
+              "中景"
+            ],
+            "duration": 4.0
+          }
+        ],
+        "characters": [
+          {
+            "id": "char_87ee754d",
+            "name": "主角",
+            "role": "Protagonist",
+            "description": "故事的主要角色"
+          }
+        ],
+        "processing_time": 0.12021994590759277,
+        "project_id": "proj_ee196288",
+        "error": null
+      }
+    },
+    {
+      "endpoint": "/api/assets/list",
+      "method": "GET",
+      "url": "http://localhost:8000/api/assets/list",
+      "status_code": 404,
+      "response_time": 2.03501033782959,
+      "success": false,
+      "timestamp": "2025-12-19T13:27:33.306919",
+      "error": "期望状态码 200, 实际 404",
+      "error_detail": {
+        "detail": "素材不存在"
+      }
+    },
+    {
+      "endpoint": "/api/search/semantic",
+      "method": "POST",
+      "url": "http://localhost:8000/api/search/semantic",
+      "status_code": 400,
+      "response_time": 2.054691791534424,
+      "success": false,
+      "timestamp": "2025-12-19T13:27:35.361877",
+      "error": "期望状态码 200, 实际 400",
+      "error_detail": {
+        "detail": "Beat不存在"
+      }
+    },
+    {
+      "endpoint": "/api/multimodal/search",
+      "method": "POST",
+      "url": "http://localhost:8000/api/multimodal/search",
+      "status_code": 200,
+      "response_time": 2.067460775375366,
+      "success": true,
+      "timestamp": "2025-12-19T13:27:37.429622",
+      "response_data": {
+        "status": "success",
+        "query": "快乐的街道场景",
+        "query_intent": {
+          "primary_intent": "semantic",
+          "visual_keywords": [],
+          "audio_keywords": [],
+          "emotion_keywords": [
+            "快乐"
+          ],
+          "scene_keywords": [],
+          "action_keywords": [],
+          "technical_keywords": []
+        },
+        "search_modes": [
+          "semantic"
+        ],
+        "weights": {
+          "semantic": 0.4,
+          "transcription": 0.3,
+          "visual": 0.3
+        },
+        "results": [],
+        "total_matches": 0,
+        "individual_results": {
+          "semantic": 0
+        }
+      }
+    },
+    {
+      "endpoint": "/api/autocut/generate",
+      "method": "POST",
+      "url": "http://localhost:8000/api/autocut/generate",
+      "status_code": 422,
+      "response_time": 2.0535035133361816,
+      "success": false,
+      "timestamp": "2025-12-19T13:27:39.483693",
+      "error": "期望状态码 200, 实际 422",
+      "error_detail": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "project_id"
+            ],
+            "msg": "Field required",
+            "input": {
+              "beats": [
+                {
+                  "id": "beat_1",
+                  "content": "小明跑过街道",
+                  "emotion_tags": [
+                    "紧张"
+                  ],
+                  "scene_tags": [
+                    "街道"
+                  ],
+                  "action_tags": [
+                    "跑步"
+                  ],
+                  "cinematography_tags": [],
+                  "duration": 3.0
+                }
+              ],
+              "available_assets": [
+                {
+                  "id": "asset_1",
+                  "filename": "test_video.mp4",
+                  "file_path": "/path/to/test_video.mp4"
+                }
+              ]
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "beat_ids"
+            ],
+            "msg": "Field required",
+            "input": {
+              "beats": [
+                {
+                  "id": "beat_1",
+                  "content": "小明跑过街道",
+                  "emotion_tags": [
+                    "紧张"
+                  ],
+                  "scene_tags": [
+                    "街道"
+                  ],
+                  "action_tags": [
+                    "跑步"
+                  ],
+                  "cinematography_tags": [],
+                  "duration": 3.0
+                }
+              ],
+              "available_assets": [
+                {
+                  "id": "asset_1",
+                  "filename": "test_video.mp4",
+                  "file_path": "/path/to/test_video.mp4"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/api/timelines/list",
+      "method": "GET",
+      "url": "http://localhost:8000/api/timelines/list",
+      "status_code": 404,
+      "response_time": 2.0455288887023926,
+      "success": false,
+      "timestamp": "2025-12-19T13:27:41.529503",
+      "error": "期望状态码 200, 实际 404",
+      "error_detail": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "endpoint": "/api/render/tasks",
+      "method": "GET",
+      "url": "http://localhost:8000/api/render/tasks",
+      "status_code": 200,
+      "response_time": 2.0521581172943115,
+      "success": true,
+      "timestamp": "2025-12-19T13:27:43.581926",
+      "response_data": {
+        "status": "success",
+        "tasks": [
+          {
+            "id": "133a44f2-5d88-4e57-83c8-588eab9f6f6b",
+            "timeline_id": "71e79367-4299-4dc7-a2da-91b20b4cfaf2",
+            "status": "completed",
+            "progress": 100.0,
+            "error_message": null,
+            "output_path": "storage\\renders\\render_20251219_130348_133a44f2.mp4",
+            "file_size": 1867764,
+            "created_at": "2025-12-19 13:03:48.156359",
+            "started_at": "2025-12-19 13:03:48.193906",
+            "completed_at": "2025-12-19 13:03:48.788603"
+          },
+          {
+            "id": "efb92cd2-ef02-4475-87b5-9ad7829f15d5",
+            "timeline_id": "bc0bef50-eab0-41ce-b30f-a4b930b09338",
+            "status": "completed",
+            "progress": 100.0,
+            "error_message": null,
+            "output_path": "storage\\renders\\render_20251219_124657_efb92cd2.mp4",
+            "file_size": 1867764,
+            "created_at": "2025-12-19 12:46:57.538359",
+            "started_at": null,
+            "completed_at": "2025-12-19 12:46:58.741685"
+          },
+          {
+            "id": "8b8cdd60-2caa-4ac1-94df-615c59e5b093",
+            "timeline_id": "3c42f774-2e53-43f6-bcab-df6cd0000e74",
+            "status": "completed",
+            "progress": 100.0,
+            "error_message": null,
+            "output_path": "storage\\renders\\render_20251219_124608_8b8cdd60.mp4",
+            "file_size": 1867764,
+            "created_at": "2025-12-19 12:46:08.303875",
+            "started_at": null,
+            "completed_at": "2025-12-19 12:46:08.982609"
+          },
+          {
+            "id": "de580572-bec3-4a2d-a9be-e7852b0be267",
+            "timeline_id": "4cd7ff5c-f68d-48a0-b391-5e8798f1e0c4",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "ffmpeg error (see stderr output for detail)",
+            "output_path": "storage\\renders\\render_20251219_124455_de580572.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:44:55.783465",
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "id": "84ad125d-4646-4604-9f1d-b8d893783e7b",
+            "timeline_id": "57e580ee-afb8-4bee-8279-fe3315e2426e",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "ffmpeg error (see stderr output for detail)",
+            "output_path": "storage\\renders\\render_20251219_124124_84ad125d.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:41:24.583234",
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "id": "7065f437-d109-41bd-925e-fccffa9dbf98",
+            "timeline_id": "19e6c984-ca3a-42df-adf1-f5a15b61f57d",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "ffmpeg error (see stderr output for detail)",
+            "output_path": "storage\\renders\\render_20251219_123935_7065f437.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:39:35.122764",
+            "started_at": "2025-12-19 12:39:35.250516",
+            "completed_at": null
+          },
+          {
+            "id": "b8c4caaa-a18a-466a-8fd6-1e947ca39edb",
+            "timeline_id": "fb92feba-8542-449c-a72f-1d2dad084a2f",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "ffmpeg error (see stderr output for detail)",
+            "output_path": "storage\\renders\\render_20251219_123836_b8c4caaa.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:38:36.781622",
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "id": "a76272b5-56d3-4073-a8ae-eed56f744daa",
+            "timeline_id": "4bc8f939-c0d0-4d8c-82ff-d530ae184035",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "ffmpeg error (see stderr output for detail)",
+            "output_path": "storage\\renders\\render_20251219_123715_a76272b5.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:37:15.506452",
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "id": "00f85f14-6f8b-45b9-801c-9c9c044aad61",
+            "timeline_id": "78be4769-a4e3-42dd-a15c-f2de8e241d31",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "ffmpeg error (see stderr output for detail)",
+            "output_path": "storage\\renders\\render_20251219_123629_00f85f14.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:36:29.010011",
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "id": "1bd2df2e-ce2d-4b7e-a258-299d1b8c23de",
+            "timeline_id": "3052f4c3-dff2-400d-ad45-a95f4afc6d92",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "ffmpeg error (see stderr output for detail)",
+            "output_path": "storage\\renders\\render_20251219_123442_1bd2df2e.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:34:42.749601",
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "id": "eb25d3d3-536c-4385-86a8-05df7f03f39f",
+            "timeline_id": "9984ed93-a978-4537-8422-7e5f08ccfa1b",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "'coroutine' object has no attribute 'id'",
+            "output_path": "storage\\renders\\render_20251219_123305_eb25d3d3.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:33:05.517572",
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "id": "8b44ba41-1e8f-4a2b-a61c-dcbf7f33a376",
+            "timeline_id": "bf6b5027-a6c6-43d7-b22e-ea72ac8132d4",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "'coroutine' object has no attribute 'id'",
+            "output_path": "storage\\renders\\render_20251219_122646_8b44ba41.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:26:46.135759",
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "id": "44254597-af2a-4f26-ab33-78ec1753c9f1",
+            "timeline_id": "84966689-de89-41ce-a148-ff378d24cbb8",
+            "status": "failed",
+            "progress": 0.0,
+            "error_message": "'coroutine' object has no attribute 'id'",
+            "output_path": "storage\\renders\\render_20251219_122057_44254597.mp4",
+            "file_size": null,
+            "created_at": "2025-12-19 12:20:57.786194",
+            "started_at": "2025-12-19 12:20:57.834084",
+            "completed_at": null
+          }
+        ]
+      }
+    }
+  ]
+}

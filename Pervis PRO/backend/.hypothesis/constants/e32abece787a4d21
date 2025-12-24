@@ -1,0 +1,4 @@
+# file: F:\100KIRO project\Pervis PRO\backend\services\ffmpeg_detector.py
+# hypothesis_version: 6.148.7
+
+['# 3. 解压到 C:\\ffmpeg', '# Arch Linux:', '# CentOS/RHEL:', '# Fedora:', '# Ubuntu/Debian:', '# 如果没有Homebrew，先安装:', '# 方法2: 使用MacPorts', '# 方法2: 使用Winget', '# 方法3: 手动安装', '-version', '.', '4.0.0', 'InstallationGuide', 'Windows', 'arch', 'brew install ffmpeg', 'centos', 'choco install ffmpeg', 'chocolatey', 'darwin', 'fedora', 'ffmpeg', 'homebrew', 'linux', 'macos', 'macports', 'manual', 'package_manager', 'scoop', 'scoop install ffmpeg', 'sudo apt update', 'ubuntu', 'unknown', 'where', 'which', 'windows', 'winget', '推荐使用Homebrew包管理器', '某些发行版可能需要启用额外的软件源', '请根据您的操作系统选择合适的安装方法', '选择适合你的Linux发行版的命令']

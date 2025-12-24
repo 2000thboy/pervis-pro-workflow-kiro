@@ -1,0 +1,116 @@
+{
+  "timestamp": "2025-12-19 09:53:05",
+  "optimizations": {
+    "api_performance_measurement": {
+      "success": true,
+      "message": "API性能测量完成，平均响应时间: 2392.17ms",
+      "details": {
+        "endpoints_tested": 4,
+        "successful": 3
+      },
+      "timestamp": "09:53:14"
+    },
+    "database_optimization": {
+      "success": true,
+      "message": "数据库配置检查完成",
+      "details": {
+        "suggestions": [
+          "建议在backend/app/config.py中添加连接池配置"
+        ]
+      },
+      "timestamp": "09:53:14"
+    },
+    "frontend_optimization": {
+      "success": true,
+      "message": "前端资源优化检查完成",
+      "details": {
+        "suggestions": [
+          "建议在vite.config.ts中添加构建优化配置",
+          "建议启用代码压缩"
+        ]
+      },
+      "timestamp": "09:53:14"
+    },
+    "system_resources_check": {
+      "success": true,
+      "message": "系统资源检查完成",
+      "details": {
+        "cpu_percent": 0.5,
+        "memory_percent": 29.7,
+        "memory_available_gb": 89.7624397277832,
+        "disk_percent": 78.7,
+        "disk_free_gb": 132.32509231567383
+      },
+      "timestamp": "09:53:15"
+    },
+    "mock_services_optimization": {
+      "success": true,
+      "message": "Mock服务配置检查完成",
+      "details": {
+        "mock_services": {
+          "backend/services/audio_transcriber.py": true,
+          "backend/services/visual_processor.py": true,
+          "backend/services/semantic_search.py": true
+        },
+        "all_mock": true
+      },
+      "timestamp": "09:53:15"
+    },
+    "performance_recommendations": {
+      "success": true,
+      "message": "生成了 13 条优化建议",
+      "details": {},
+      "timestamp": "09:53:15"
+    }
+  },
+  "performance_metrics": {
+    "api_performance": {
+      "average_response_time_ms": 2392.174164454142,
+      "endpoints": {
+        "/api/health": {
+          "response_time_ms": 2061.5434646606445,
+          "status_code": 200,
+          "success": true
+        },
+        "/api/projects": {
+          "response_time_ms": 2021.4102268218994,
+          "status_code": 404,
+          "success": false
+        },
+        "/api/batch/queue/status": {
+          "response_time_ms": 2045.3174114227295,
+          "status_code": 200,
+          "success": true
+        },
+        "/api/batch/stats": {
+          "response_time_ms": 3069.6616172790527,
+          "status_code": 200,
+          "success": true
+        }
+      },
+      "successful_endpoints": 3
+    },
+    "system_resources": {
+      "cpu_percent": 0.5,
+      "memory_percent": 29.7,
+      "memory_available_gb": 89.7624397277832,
+      "disk_percent": 78.7,
+      "disk_free_gb": 132.32509231567383
+    }
+  },
+  "recommendations": [
+    "建议在backend/app/config.py中添加连接池配置",
+    "建议在vite.config.ts中添加构建优化配置",
+    "建议启用代码压缩",
+    "所有AI服务都在Mock模式，这有助于性能但限制了功能。考虑在需要时启用真实服务。",
+    "API响应时间过长，建议启用数据库连接池",
+    "考虑添加Redis缓存以减少数据库查询",
+    "优化数据库查询，添加必要的索引",
+    "考虑使用异步处理减少阻塞操作",
+    "定期清理临时文件和日志文件",
+    "监控系统资源使用情况",
+    "考虑使用CDN加速静态资源",
+    "启用gzip压缩减少传输大小",
+    "使用HTTP/2提升网络性能"
+  ]
+}

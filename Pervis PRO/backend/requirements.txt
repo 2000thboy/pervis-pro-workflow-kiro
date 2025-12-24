@@ -1,0 +1,40 @@
+# PreVis PRO Backend Requirements
+
+# Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Database
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# AI/ML
+google-generativeai==0.3.1
+sentence-transformers==2.2.2
+chromadb==0.4.18
+
+# Video Processing
+ffmpeg-python==0.2.0
+
+# Document Export
+python-docx==1.1.0
+reportlab==4.0.7
+Pillow==10.1.0
+
+# Task Queue (for async rendering)
+celery==5.3.4
+redis==5.0.1
+
+# Utilities
+python-dotenv==1.0.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+requests==2.31.0
+httpx==0.27.2
+aiohttp==3.9.1
+
+# Testing
+pytest==8.3.4
+hypothesis==6.92.4
+psutil==6.1.0

@@ -1,0 +1,15 @@
+# PreVis PRO 增强导出和标签管理系统依赖
+
+# 文档导出
+python-docx>=0.8.11
+WeasyPrint>=60.0
+Jinja2>=3.1.2
+
+# 图片处理
+Pillow>=10.0.0
+
+# 现有依赖（确保兼容）
+fastapi>=0.104.0
+sqlalchemy>=2.0.0
+pydantic>=2.0.0
+requests>=2.31.0

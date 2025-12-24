@@ -1,0 +1,108 @@
+{
+  "test_time": "2025-12-19T14:52:58.846078",
+  "api_base_url": "http://localhost:8000",
+  "connection_tests": {
+    "health_check": {
+      "status": "success",
+      "status_code": 200,
+      "response_time": 2.06133,
+      "response_data": {
+        "status": "healthy",
+        "service": "director-workbench",
+        "version": "0.2.0",
+        "config": {
+          "gemini_configured": false,
+          "asset_root": "./assets",
+          "asset_dirs_exist": true
+        }
+      }
+    },
+    "root_path": {
+      "status": "success",
+      "status_code": 200,
+      "response_time": 2.047276
+    },
+    "api_docs": {
+      "status": "success",
+      "status_code": 200,
+      "response_time": 2.059901
+    }
+  },
+  "endpoint_tests": {
+    "script_analyze": {
+      "status": "success",
+      "status_code": 200,
+      "response_time": 2.175138,
+      "response_size": 424,
+      "has_json_response": true,
+      "response_keys": [
+        "status",
+        "beats",
+        "characters",
+        "processing_time",
+        "project_id",
+        "error"
+      ]
+    },
+    "assets_upload": {
+      "status": "skipped",
+      "reason": "文件上传端点需要实际文件，跳过测试"
+    },
+    "search_semantic": {
+      "status": "success",
+      "status_code": 200,
+      "response_time": 2.041213,
+      "response_size": 68,
+      "has_json_response": true,
+      "response_keys": [
+        "results",
+        "total_matches",
+        "search_time"
+      ]
+    },
+    "multimodal_search": {
+      "status": "success",
+      "status_code": 200,
+      "response_time": 2.046781,
+      "response_size": 447,
+      "has_json_response": true,
+      "response_keys": [
+        "status",
+        "query",
+        "query_intent",
+        "search_modes",
+        "weights",
+        "results",
+        "total_matches",
+        "individual_results"
+      ]
+    }
+  },
+  "cors_tests": {
+    "preflight_request": {
+      "status": "success",
+      "status_code": 200,
+      "cors_headers": {
+        "Access-Control-Allow-Origin": "http://localhost:3000",
+        "Access-Control-Allow-Methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Credentials": "true"
+      },
+      "allows_origin": true,
+      "allows_post": true,
+      "allows_content_type": true
+    }
+  },
+  "summary": {
+    "overall_health_score": 100.0,
+    "connection_success_rate": 100.0,
+    "endpoint_success_rate": 100.0,
+    "cors_success_rate": 100.0,
+    "total_tests": 7,
+    "successful_tests": 7,
+    "failed_tests": 0,
+    "identified_issues": [],
+    "recommendations": [],
+    "diagnosis": "API连接状态优秀，前端应该能够正常工作"
+  }
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PreVis Pro Test</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .test-box {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-box">
+        <h1>PreVis Pro 测试页面</h1>
+        <p>如果你能看到这个页面，说明基础HTML可以正常显示。</p>
+        <p>时间: <span id="time"></span></p>
+        <button onclick="testJS()">测试JavaScript</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 更新时间
+        function updateTime() {
+            document.getElementById('time').textContent = new Date().toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // 测试JavaScript
+        function testJS() {
+            document.getElementById('result').innerHTML = '<p style="color: green;">JavaScript 工作正常！</p>';
+        }
+
+        console.log('PreVis Pro 测试页面加载完成');
+    </script>
+</body>
+</html>

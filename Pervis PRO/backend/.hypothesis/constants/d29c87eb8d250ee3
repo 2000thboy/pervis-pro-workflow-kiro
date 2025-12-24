@@ -1,0 +1,4 @@
+# file: E:\Pervis PRO\Pervis PRO\backend\services\database_service.py
+# hypothesis_version: 6.148.7
+
+['ANALYSIS', 'actions', 'asset_id', 'brightness_level', 'cinematography', 'color_tone', 'confidence', 'duration', 'emotions', 'end_time', 'filename', 'full_text', 'id', 'keyframes', 'keyframes_count', 'language', 'lighting_quality', 'matching_segments', 'medium', 'neutral', 'normal', 'scenes', 'segment_id', 'segments', 'start_time', 'text', 'transcription', 'unknown', 'uploaded', 'visual_analysis', 'visual_complexity', 'visual_description', 'visual_summary']

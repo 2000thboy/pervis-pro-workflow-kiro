@@ -1,0 +1,915 @@
+{
+  "timestamp": "2025-12-19T14:04:44.151932",
+  "database_path": "./pervis_director.db",
+  "summary": {
+    "overall_status": "warning",
+    "total_issues": 5,
+    "critical_issues": 0,
+    "warnings": 5
+  },
+  "table_structure": {
+    "total_expected": 14,
+    "total_existing": 18,
+    "missing_tables": [],
+    "existing_tables": [
+      "projects",
+      "beats",
+      "assets",
+      "asset_segments",
+      "asset_vectors",
+      "feedback_logs",
+      "tag_hierarchy",
+      "asset_tags",
+      "export_history",
+      "search_test_cases",
+      "timelines",
+      "clips",
+      "render_tasks",
+      "proxy_files",
+      "analysis_logs",
+      "auto_tag_tasks",
+      "image_assets",
+      "image_vectors"
+    ],
+    "table_details": {
+      "projects": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "title",
+            "VARCHAR(255)"
+          ],
+          [
+            "logline",
+            "TEXT"
+          ],
+          [
+            "synopsis",
+            "TEXT"
+          ],
+          [
+            "script_raw",
+            "TEXT"
+          ],
+          [
+            "characters",
+            "JSON"
+          ],
+          [
+            "specs",
+            "JSON"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ],
+          [
+            "current_stage",
+            "VARCHAR(50)"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "beats": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "project_id",
+            "VARCHAR"
+          ],
+          [
+            "order_index",
+            "INTEGER"
+          ],
+          [
+            "content",
+            "TEXT"
+          ],
+          [
+            "emotion_tags",
+            "JSON"
+          ],
+          [
+            "scene_tags",
+            "JSON"
+          ],
+          [
+            "action_tags",
+            "JSON"
+          ],
+          [
+            "cinematography_tags",
+            "JSON"
+          ],
+          [
+            "duration",
+            "FLOAT"
+          ],
+          [
+            "user_notes",
+            "TEXT"
+          ],
+          [
+            "main_asset_id",
+            "VARCHAR"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "assets": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "project_id",
+            "VARCHAR"
+          ],
+          [
+            "filename",
+            "VARCHAR(255)"
+          ],
+          [
+            "mime_type",
+            "VARCHAR(100)"
+          ],
+          [
+            "source",
+            "VARCHAR(50)"
+          ],
+          [
+            "file_path",
+            "VARCHAR(500)"
+          ],
+          [
+            "proxy_path",
+            "VARCHAR(500)"
+          ],
+          [
+            "thumbnail_path",
+            "VARCHAR(500)"
+          ],
+          [
+            "processing_status",
+            "VARCHAR(50)"
+          ],
+          [
+            "processing_progress",
+            "INTEGER"
+          ],
+          [
+            "tags",
+            "JSON"
+          ],
+          [
+            "processing_metadata",
+            "JSON"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "asset_segments": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "asset_id",
+            "VARCHAR"
+          ],
+          [
+            "start_time",
+            "FLOAT"
+          ],
+          [
+            "end_time",
+            "FLOAT"
+          ],
+          [
+            "description",
+            "TEXT"
+          ],
+          [
+            "emotion_tags",
+            "JSON"
+          ],
+          [
+            "scene_tags",
+            "JSON"
+          ],
+          [
+            "action_tags",
+            "JSON"
+          ],
+          [
+            "cinematography_tags",
+            "JSON"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "asset_vectors": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "asset_id",
+            "VARCHAR"
+          ],
+          [
+            "segment_id",
+            "VARCHAR"
+          ],
+          [
+            "vector_data",
+            "TEXT"
+          ],
+          [
+            "content_type",
+            "VARCHAR(50)"
+          ],
+          [
+            "text_content",
+            "TEXT"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "tag_hierarchy": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "tag_name",
+            "VARCHAR(255)"
+          ],
+          [
+            "parent_id",
+            "VARCHAR"
+          ],
+          [
+            "level",
+            "INTEGER"
+          ],
+          [
+            "category",
+            "VARCHAR(100)"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ],
+          [
+            "updated_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "asset_tags": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "asset_id",
+            "VARCHAR"
+          ],
+          [
+            "tag_id",
+            "VARCHAR"
+          ],
+          [
+            "weight",
+            "FLOAT"
+          ],
+          [
+            "order_index",
+            "INTEGER"
+          ],
+          [
+            "source",
+            "VARCHAR(50)"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ],
+          [
+            "updated_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "export_history": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "project_id",
+            "VARCHAR"
+          ],
+          [
+            "export_type",
+            "VARCHAR(50)"
+          ],
+          [
+            "file_path",
+            "VARCHAR(500)"
+          ],
+          [
+            "file_size",
+            "INTEGER"
+          ],
+          [
+            "file_format",
+            "VARCHAR(20)"
+          ],
+          [
+            "options",
+            "JSON"
+          ],
+          [
+            "status",
+            "VARCHAR(50)"
+          ],
+          [
+            "error_message",
+            "TEXT"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ],
+          [
+            "created_by",
+            "VARCHAR(100)"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "timelines": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "project_id",
+            "VARCHAR"
+          ],
+          [
+            "name",
+            "VARCHAR(255)"
+          ],
+          [
+            "duration",
+            "FLOAT"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ],
+          [
+            "updated_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "clips": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "timeline_id",
+            "VARCHAR"
+          ],
+          [
+            "asset_id",
+            "VARCHAR"
+          ],
+          [
+            "start_time",
+            "FLOAT"
+          ],
+          [
+            "end_time",
+            "FLOAT"
+          ],
+          [
+            "trim_start",
+            "FLOAT"
+          ],
+          [
+            "trim_end",
+            "FLOAT"
+          ],
+          [
+            "volume",
+            "FLOAT"
+          ],
+          [
+            "is_muted",
+            "INTEGER"
+          ],
+          [
+            "audio_fade_in",
+            "FLOAT"
+          ],
+          [
+            "audio_fade_out",
+            "FLOAT"
+          ],
+          [
+            "transition_type",
+            "VARCHAR(50)"
+          ],
+          [
+            "transition_duration",
+            "FLOAT"
+          ],
+          [
+            "order_index",
+            "INTEGER"
+          ],
+          [
+            "clip_metadata",
+            "JSON"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ],
+          [
+            "updated_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "render_tasks": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "timeline_id",
+            "VARCHAR"
+          ],
+          [
+            "format",
+            "VARCHAR(20)"
+          ],
+          [
+            "resolution",
+            "VARCHAR(20)"
+          ],
+          [
+            "framerate",
+            "INTEGER"
+          ],
+          [
+            "quality",
+            "VARCHAR(20)"
+          ],
+          [
+            "bitrate",
+            "INTEGER"
+          ],
+          [
+            "audio_bitrate",
+            "INTEGER"
+          ],
+          [
+            "status",
+            "VARCHAR(50)"
+          ],
+          [
+            "progress",
+            "FLOAT"
+          ],
+          [
+            "error_message",
+            "TEXT"
+          ],
+          [
+            "output_path",
+            "VARCHAR(500)"
+          ],
+          [
+            "file_size",
+            "INTEGER"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ],
+          [
+            "started_at",
+            "DATETIME"
+          ],
+          [
+            "completed_at",
+            "DATETIME"
+          ],
+          [
+            "celery_task_id",
+            "VARCHAR(255)"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "analysis_logs": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR"
+          ],
+          [
+            "asset_id",
+            "VARCHAR"
+          ],
+          [
+            "analysis_type",
+            "VARCHAR(50)"
+          ],
+          [
+            "status",
+            "VARCHAR(50)"
+          ],
+          [
+            "progress",
+            "FLOAT"
+          ],
+          [
+            "steps",
+            "JSON"
+          ],
+          [
+            "current_step",
+            "VARCHAR(100)"
+          ],
+          [
+            "results",
+            "JSON"
+          ],
+          [
+            "error_message",
+            "TEXT"
+          ],
+          [
+            "duration",
+            "FLOAT"
+          ],
+          [
+            "file_size",
+            "INTEGER"
+          ],
+          [
+            "processing_speed",
+            "FLOAT"
+          ],
+          [
+            "started_at",
+            "DATETIME"
+          ],
+          [
+            "completed_at",
+            "DATETIME"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "image_assets": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR(36)"
+          ],
+          [
+            "project_id",
+            "VARCHAR(36)"
+          ],
+          [
+            "filename",
+            "VARCHAR(255)"
+          ],
+          [
+            "original_path",
+            "VARCHAR(500)"
+          ],
+          [
+            "thumbnail_path",
+            "VARCHAR(500)"
+          ],
+          [
+            "mime_type",
+            "VARCHAR(100)"
+          ],
+          [
+            "file_size",
+            "INTEGER"
+          ],
+          [
+            "width",
+            "INTEGER"
+          ],
+          [
+            "height",
+            "INTEGER"
+          ],
+          [
+            "description",
+            "TEXT"
+          ],
+          [
+            "tags",
+            "JSON"
+          ],
+          [
+            "color_palette",
+            "JSON"
+          ],
+          [
+            "processing_status",
+            "VARCHAR(50)"
+          ],
+          [
+            "processing_progress",
+            "FLOAT"
+          ],
+          [
+            "error_message",
+            "TEXT"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ],
+          [
+            "updated_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      },
+      "image_vectors": {
+        "exists": true,
+        "columns": [
+          [
+            "id",
+            "VARCHAR(36)"
+          ],
+          [
+            "image_id",
+            "VARCHAR(36)"
+          ],
+          [
+            "vector_type",
+            "VARCHAR(50)"
+          ],
+          [
+            "vector_data",
+            "TEXT"
+          ],
+          [
+            "content_text",
+            "TEXT"
+          ],
+          [
+            "model_version",
+            "VARCHAR(100)"
+          ],
+          [
+            "confidence_score",
+            "FLOAT"
+          ],
+          [
+            "vector_dimension",
+            "INTEGER"
+          ],
+          [
+            "created_at",
+            "DATETIME"
+          ]
+        ],
+        "missing_required_columns": [],
+        "missing_optional_columns": [],
+        "extra_columns": [],
+        "status": "ok"
+      }
+    },
+    "overall_status": "ok"
+  },
+  "indexes": {
+    "total_expected": 15,
+    "total_existing": 17,
+    "missing_indexes": [
+      "idx_timelines_project_id",
+      "idx_clips_timeline_id",
+      "idx_clips_order_index",
+      "idx_render_tasks_timeline_id",
+      "idx_render_tasks_status"
+    ],
+    "existing_indexes": [
+      "idx_image_assets_project_id",
+      "idx_image_assets_status",
+      "idx_image_assets_created",
+      "idx_image_vectors_image_id",
+      "idx_image_vectors_type",
+      "idx_assets_project_id",
+      "idx_assets_created_at",
+      "idx_assets_mime_type",
+      "idx_assets_processing_status",
+      "idx_asset_vectors_asset_id",
+      "idx_asset_vectors_content_type",
+      "idx_projects_created_at",
+      "idx_projects_current_stage",
+      "idx_beats_project_id",
+      "idx_beats_order_index",
+      "idx_assets_project_status",
+      "idx_beats_project_order"
+    ],
+    "extra_indexes": [
+      "idx_image_assets_status",
+      "idx_image_assets_created",
+      "idx_image_vectors_type",
+      "idx_assets_created_at",
+      "idx_assets_mime_type",
+      "idx_projects_created_at",
+      "idx_projects_current_stage"
+    ]
+  },
+  "data_integrity": {
+    "foreign_key_violations": [],
+    "null_violations": [],
+    "data_consistency_issues": [],
+    "table_counts": {
+      "projects": 0,
+      "beats": 0,
+      "assets": 6,
+      "asset_segments": 0,
+      "asset_vectors": 0,
+      "feedback_logs": 0,
+      "tag_hierarchy": 0,
+      "asset_tags": 0,
+      "export_history": 0,
+      "search_test_cases": 0,
+      "timelines": 0,
+      "clips": 0,
+      "render_tasks": 0,
+      "proxy_files": 0,
+      "analysis_logs": 9,
+      "auto_tag_tasks": 3,
+      "image_assets": 0,
+      "image_vectors": 0
+    }
+  },
+  "file_storage": {
+    "storage_directories": {
+      "assets": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      },
+      "assets/originals": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      },
+      "assets/proxies": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      },
+      "assets/thumbnails": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      },
+      "assets/audio": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      },
+      "storage": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      },
+      "storage/renders": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      },
+      "storage/temp": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      },
+      "exports": {
+        "exists": true,
+        "readable": true,
+        "writable": true,
+        "status": "ok"
+      }
+    },
+    "missing_directories": [],
+    "permission_issues": []
+  },
+  "recommendations": [
+    "运行性能优化脚本创建缺失的索引"
+  ]
+}

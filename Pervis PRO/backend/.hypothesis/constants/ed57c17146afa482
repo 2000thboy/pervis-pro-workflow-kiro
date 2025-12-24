@@ -1,0 +1,4 @@
+# file: E:\Pervis PRO\Pervis PRO\backend\app\main.py
+# hypothesis_version: 6.148.7
+
+[500, 1000, '*', '/', '/docs', '/health', '1.0.0', 'Pervis PRO Backend', 'connected', 'database', 'disconnected', 'docs', 'error', 'error_code', 'healthy', 'message', 'status', 'trace_id', 'unhealthy', 'version']

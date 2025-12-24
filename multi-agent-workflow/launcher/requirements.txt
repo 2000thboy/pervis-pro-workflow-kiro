@@ -1,0 +1,20 @@
+# CustomTkinter桌面应用
+customtkinter==5.2.2
+tkinter-tooltip==2.1.0
+
+# 系统监控
+psutil==5.9.6
+
+# HTTP客户端
+requests==2.31.0
+httpx==0.25.2
+
+# 配置管理
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# 日志
+structlog==23.2.0
+
+# 异步支持
+asyncio-mqtt==0.16.1

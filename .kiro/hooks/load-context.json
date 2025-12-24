@@ -1,0 +1,11 @@
+{
+  "name": "load-conversation-context",
+  "description": "新对话开始时提示加载之前的上下文",
+  "trigger": {
+    "type": "session-start"
+  },
+  "action": {
+    "type": "send-message",
+    "message": "检查 conversation_summary 表中最近的对话记录，使用 mcp_sqlite_read_query 查询：SELECT * FROM conversation_summary ORDER BY updated_at DESC LIMIT 3。如果有记录，简要告知用户之前的工作进度。"
+  }
+}

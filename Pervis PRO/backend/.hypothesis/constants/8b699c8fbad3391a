@@ -1,0 +1,4 @@
+# file: E:\Pervis PRO\Pervis PRO\backend\services\proxy_file_selector.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.5, 0.7, 0.85, 1024, 2160, 4320, '1080p', '4k', '720p', '8k', 'AUTO模式大文件，优先代理文件', 'AUTO模式无代理文件，选择原始文件', 'AUTO模式根据大小与性能选择代理文件', 'AUTO模式缺少大小信息，选择代理文件', 'AUTO模式选择原始文件', 'ORIGINAL模式选择原始文件', 'PROXY模式选择代理文件', 'SMART模式性能优先，选择代理文件', 'SMART模式无代理文件，选择原始文件', 'SMART模式质量不足，选择原始文件', 'asset_id', 'assets', 'auto', 'available_ram_gb', 'completed', 'editing', 'file_path', 'file_size', 'final_render', 'high', 'low', 'medium', 'minimal', 'mode', 'none', 'original', 'original_file', 'original_path', 'p', 'path', 'preview', 'proxy', 'proxy_files', 'proxy_path', 'quality', 'recommendations', 'resolution', 'smart', 'status', 'target_resolution', 'ultra', '未知模式，回退到原始文件', '没有可用的代理文件，回退到原始文件']

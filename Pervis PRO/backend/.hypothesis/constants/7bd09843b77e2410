@@ -1,0 +1,4 @@
+# file: E:\Pervis PRO\Pervis PRO\backend\services\render_state_manager.py
+# hypothesis_version: 6.148.7
+
+[0.0, 100.0, 'active_processes', 'backend', 'backend.services', 'cancelled', 'completed', 'failed', 'pending', 'processing', 'task_id is required', 'temp_files_count']

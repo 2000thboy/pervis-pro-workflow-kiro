@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-12-17 09:54:32",
+  "system_status": "enhanced_and_fixed",
+  "statistics": {
+    "total_assets": 53,
+    "completed_assets": 12,
+    "total_vectors": 50,
+    "segments": 110,
+    "completion_rate": "22.6%"
+  },
+  "vector_distribution": {
+    "description": 1,
+    "enhanced_content": 12,
+    "enhanced_filename": 12,
+    "enhanced_tags": 12,
+    "filename_description": 2,
+    "segment_description": 10,
+    "tags": 1
+  },
+  "asset_distribution": {
+    "completed": 12,
+    "error": 39,
+    "uploaded": 2
+  },
+  "system_health": {
+    "rag_pipeline": "operational",
+    "search_engine": "enhanced",
+    "vector_index": "populated",
+    "processing_pipeline": "fixed"
+  }
+}

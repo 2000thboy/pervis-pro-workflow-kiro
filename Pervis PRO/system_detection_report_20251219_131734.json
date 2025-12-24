@@ -1,0 +1,572 @@
+{
+  "summary": {
+    "start_time": "2025-12-19T13:17:32.720638",
+    "end_time": "2025-12-19T13:17:34.338446",
+    "duration_seconds": 1.617808,
+    "tests_run": 57,
+    "tests_passed": 55,
+    "tests_failed": 2,
+    "success_rate": 96.49122807017544
+  },
+  "critical_issues": [
+    "Python包检查: google-generativeai: 包未安装: google-generativeai",
+    "Python包检查: opencv-python: 包未安装: opencv-python"
+  ],
+  "warnings": [],
+  "detailed_results": [
+    {
+      "test_name": "Python版本检查",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:32.726034",
+      "details": {
+        "python_version": "3.13.8 (tags/v3.13.8:a15ae61, Oct  7 2025, 12:34:25) [MSC v.1944 64 bit (AMD64)]"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "目录存在检查: backend",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:32.727321",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\backend"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "目录存在检查: frontend",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:32.728708",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\frontend"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "目录存在检查: assets",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:32.729797",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\assets"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "目录存在检查: storage",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:32.731049",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\storage"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "Python包检查: sqlalchemy",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:32.871051",
+      "details": {
+        "package": "sqlalchemy"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "Python包检查: fastapi",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.048200",
+      "details": {
+        "package": "fastapi"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "Python包检查: uvicorn",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.072990",
+      "details": {
+        "package": "uvicorn"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "Python包检查: pydantic",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.074539",
+      "details": {
+        "package": "pydantic"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "Python包检查: google-generativeai",
+      "status": "FAIL",
+      "timestamp": "2025-12-19T13:17:33.075904",
+      "details": {
+        "error": "包未安装: google-generativeai"
+      },
+      "is_critical": true
+    },
+    {
+      "test_name": "Python包检查: numpy",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.114670",
+      "details": {
+        "package": "numpy"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "Python包检查: opencv-python",
+      "status": "FAIL",
+      "timestamp": "2025-12-19T13:17:33.116514",
+      "details": {
+        "error": "包未安装: opencv-python"
+      },
+      "is_critical": true
+    },
+    {
+      "test_name": "数据库连接测试",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.163650",
+      "details": {
+        "database_url": "sqlite:///backend/pervis_director.db"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "数据表检查: projects",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.165042",
+      "details": {
+        "table": "projects",
+        "record_count": 48
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "数据表检查: beats",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.166280",
+      "details": {
+        "table": "beats",
+        "record_count": 119
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "数据表检查: assets",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.167444",
+      "details": {
+        "table": "assets",
+        "record_count": 21
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "数据表检查: timelines",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.169029",
+      "details": {
+        "table": "timelines",
+        "record_count": 18
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "数据表检查: clips",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.170355",
+      "details": {
+        "table": "clips",
+        "record_count": 26
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "数据表检查: render_tasks",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.171623",
+      "details": {
+        "table": "render_tasks",
+        "record_count": 13
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "数据表检查: asset_segments",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.173641",
+      "details": {
+        "table": "asset_segments",
+        "record_count": 110
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "剧本分析服务初始化",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:33.933790",
+      "details": {
+        "service": "ScriptProcessor"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "剧本分析功能测试",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.195153",
+      "details": {
+        "beats_count": 5,
+        "characters_count": 1,
+        "processing_time": 0.25980591773986816,
+        "project_id": "proj_d3637fda"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "素材处理服务初始化",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.214220",
+      "details": {
+        "service": "AssetProcessor"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "素材处理依赖服务: video_processor",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.215371",
+      "details": {
+        "service": "video_processor"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "素材处理依赖服务: gemini_client",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.216644",
+      "details": {
+        "service": "gemini_client"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "素材处理依赖服务: audio_transcriber",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.217659",
+      "details": {
+        "service": "audio_transcriber"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "素材处理依赖服务: visual_processor",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.218662",
+      "details": {
+        "service": "visual_processor"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "文件类型检测: test.mp4",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.219671",
+      "details": {
+        "filename": "test.mp4",
+        "is_video": true
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "文件类型检测: test.avi",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.220707",
+      "details": {
+        "filename": "test.avi",
+        "is_video": true
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "文件类型检测: test.jpg",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.221728",
+      "details": {
+        "filename": "test.jpg",
+        "is_video": false
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "文件类型检测: test.txt",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.222938",
+      "details": {
+        "filename": "test.txt",
+        "is_video": false
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "多模态搜索引擎初始化",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.227453",
+      "details": {
+        "service": "MultimodalSearchEngine"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "查询意图解析: 蓝色夜景城市",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.228600",
+      "details": {
+        "query": "蓝色夜景城市",
+        "primary_intent": "visual",
+        "keywords_count": 3
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "查询意图解析: 快乐的对话场景",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.229663",
+      "details": {
+        "query": "快乐的对话场景",
+        "primary_intent": "audio",
+        "keywords_count": 2
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "查询意图解析: 紧张的追逐镜头",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.230645",
+      "details": {
+        "query": "紧张的追逐镜头",
+        "primary_intent": "semantic",
+        "keywords_count": 2
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "多模态搜索功能测试",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.234256",
+      "details": {
+        "results_count": 0,
+        "search_modes": [
+          "semantic"
+        ]
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "时间轴服务初始化",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.238347",
+      "details": {
+        "service": "TimelineService"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "AutoCut服务初始化",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.240046",
+      "details": {
+        "service": "AutoCutOrchestrator"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "AutoCut智能决策测试",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.250551",
+      "details": {
+        "clips_generated": 2,
+        "total_duration": 6.4,
+        "processing_time": 0.008268594741821289
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "时间轴创建测试",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.285390",
+      "details": {
+        "timeline_id": "1815c032-e113-4f04-8693-ebe5db364882",
+        "project_id": "test_project_123",
+        "name": "测试时间轴"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "时间轴查询测试",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.287337",
+      "details": {
+        "timeline_id": "1815c032-e113-4f04-8693-ebe5db364882"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "渲染服务初始化",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.295882",
+      "details": {
+        "service": "RenderService"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "FFmpeg集成检查",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.297048",
+      "details": {
+        "ffmpeg_wrapper": "<class 'services.ffmpeg_wrapper.FFmpegWrapper'>"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "渲染输出目录检查",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.298099",
+      "details": {
+        "output_dir": "storage\\renders"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "渲染前检查功能测试",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.299476",
+      "details": {
+        "can_render": false,
+        "errors": [
+          "时间轴不存在"
+        ]
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "任务状态查询测试",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.301106",
+      "details": {
+        "task_id": "nonexistent_task",
+        "result": "None (expected)"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "API模块导入: routers.assets",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.307092",
+      "details": {
+        "module": "routers.assets"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "API模块导入: routers.projects",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.311478",
+      "details": {
+        "module": "routers.projects"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "API模块导入: routers.autocut",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.314015",
+      "details": {
+        "module": "routers.autocut"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "API模块导入: routers.timeline",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.320618",
+      "details": {
+        "module": "routers.timeline"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "API模块导入: routers.render",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.324336",
+      "details": {
+        "module": "routers.render"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "API模块导入: routers.multimodal",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.330083",
+      "details": {
+        "module": "routers.multimodal"
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "存储目录检查: assets/originals",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.332474",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\assets\\originals",
+        "readable": true,
+        "writable": true
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "存储目录检查: assets/proxies",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.333477",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\assets\\proxies",
+        "readable": true,
+        "writable": true
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "存储目录检查: assets/thumbnails",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.334503",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\assets\\thumbnails",
+        "readable": true,
+        "writable": true
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "存储目录检查: storage/renders",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.335488",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\storage\\renders",
+        "readable": true,
+        "writable": true
+      },
+      "is_critical": false
+    },
+    {
+      "test_name": "存储目录检查: backend/assets",
+      "status": "PASS",
+      "timestamp": "2025-12-19T13:17:34.336509",
+      "details": {
+        "path": "F:\\100KIRO project\\Pervis PRO\\backend\\assets",
+        "readable": true,
+        "writable": true
+      },
+      "is_critical": false
+    }
+  ]
+}

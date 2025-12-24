@@ -1,0 +1,4 @@
+# file: E:\Pervis PRO\Pervis PRO\backend\app\database.py
+# hypothesis_version: 6.148.7
+
+['SELECT 1', 'check_same_thread', 'postgresql', 'sqlite']

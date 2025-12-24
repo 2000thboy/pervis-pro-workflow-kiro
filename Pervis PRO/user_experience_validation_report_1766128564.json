@@ -1,0 +1,422 @@
+{
+  "test_time": "2025-12-19T15:14:32.888012",
+  "user_scenarios": {
+    "new_user_complete_workflow": {
+      "status": "success",
+      "overall_success": true,
+      "workflow_steps": [
+        {
+          "step": "access_homepage",
+          "success": true,
+          "time": 2.0491912364959717,
+          "details": "HTTP 200"
+        },
+        {
+          "step": "check_api_health",
+          "success": true,
+          "time": 2.061932325363159,
+          "details": "API Health: 200"
+        },
+        {
+          "step": "submit_script_analysis",
+          "success": true,
+          "time": 2.433565378189087,
+          "details": "Project ID: proj_e4e46747"
+        },
+        {
+          "step": "search_assets",
+          "success": true,
+          "time": 2.0551395416259766,
+          "details": "Search results: 0"
+        },
+        {
+          "step": "check_export_options",
+          "success": true,
+          "time": 2.053300380706787,
+          "details": "Export history available"
+        }
+      ],
+      "total_time": 10.653128862380981,
+      "successful_steps": 5,
+      "total_steps": 5,
+      "user_experience_rating": "excellent"
+    },
+    "experienced_user_workflow": {
+      "status": "success",
+      "quick_operations": [
+        {
+          "operation": "quick_health_check",
+          "success": true,
+          "time": 2.051934003829956,
+          "expected_time": 1.0,
+          "performance_rating": "slow"
+        },
+        {
+          "operation": "quick_script_analysis",
+          "success": true,
+          "time": 2.1297497749328613,
+          "expected_time": 5.0,
+          "performance_rating": "excellent"
+        },
+        {
+          "operation": "quick_search",
+          "success": true,
+          "time": 2.0626893043518066,
+          "expected_time": 3.0,
+          "performance_rating": "good"
+        }
+      ],
+      "total_operations": 3,
+      "successful_operations": 3,
+      "excellent_performance_count": 1,
+      "overall_performance_rating": "good",
+      "user_satisfaction": "high"
+    },
+    "error_handling_scenarios": {
+      "status": "success",
+      "error_scenarios": [
+        {
+          "scenario": "empty_script_handling",
+          "expected_behavior": "graceful_error_handling",
+          "actual_status": 200,
+          "response_time": 2.2250914573669434,
+          "handled_gracefully": false,
+          "error_message_provided": false
+        },
+        {
+          "scenario": "nonexistent_resource_access",
+          "expected_behavior": "not_found_error",
+          "actual_status": 200,
+          "response_time": 2.0768063068389893,
+          "handled_gracefully": false,
+          "error_message_provided": true
+        },
+        {
+          "scenario": "invalid_search_parameters",
+          "expected_behavior": "validation_error",
+          "actual_status": 422,
+          "response_time": 2.044771909713745,
+          "handled_gracefully": true,
+          "error_message_provided": true
+        }
+      ],
+      "total_scenarios": 3,
+      "graceful_handling_count": 1,
+      "error_messages_provided": 2,
+      "error_handling_quality": "needs_improvement",
+      "user_friendly_errors": false
+    },
+    "long_session_stability": {
+      "status": "success",
+      "test_duration": 30,
+      "total_checks": 6,
+      "successful_checks": 6,
+      "stability_rate": 100.0,
+      "stability_metrics": [
+        {
+          "check_number": 1,
+          "elapsed_time": 4.103019952774048,
+          "check_duration": 4.103018760681152,
+          "operations": [
+            {
+              "operation": "health_check",
+              "success": true,
+              "response_time": 2.061208
+            },
+            {
+              "operation": "frontend_check",
+              "success": true,
+              "response_time": 2.041015
+            }
+          ],
+          "all_operations_successful": true
+        },
+        {
+          "check_number": 2,
+          "elapsed_time": 9.086545467376709,
+          "check_duration": 4.0862507820129395,
+          "operations": [
+            {
+              "operation": "health_check",
+              "success": true,
+              "response_time": 2.036602
+            },
+            {
+              "operation": "frontend_check",
+              "success": true,
+              "response_time": 2.048708
+            }
+          ],
+          "all_operations_successful": true
+        },
+        {
+          "check_number": 3,
+          "elapsed_time": 14.114982604980469,
+          "check_duration": 4.114225149154663,
+          "operations": [
+            {
+              "operation": "health_check",
+              "success": true,
+              "response_time": 2.054915
+            },
+            {
+              "operation": "frontend_check",
+              "success": true,
+              "response_time": 2.058438
+            }
+          ],
+          "all_operations_successful": true
+        },
+        {
+          "check_number": 4,
+          "elapsed_time": 19.095187425613403,
+          "check_duration": 4.094062089920044,
+          "operations": [
+            {
+              "operation": "health_check",
+              "success": true,
+              "response_time": 2.046109
+            },
+            {
+              "operation": "frontend_check",
+              "success": true,
+              "response_time": 2.047038
+            }
+          ],
+          "all_operations_successful": true
+        },
+        {
+          "check_number": 5,
+          "elapsed_time": 24.113041877746582,
+          "check_duration": 4.111658334732056,
+          "operations": [
+            {
+              "operation": "health_check",
+              "success": true,
+              "response_time": 2.057002
+            },
+            {
+              "operation": "frontend_check",
+              "success": true,
+              "response_time": 2.053716
+            }
+          ],
+          "all_operations_successful": true
+        },
+        {
+          "check_number": 6,
+          "elapsed_time": 29.10675072669983,
+          "check_duration": 4.105087518692017,
+          "operations": [
+            {
+              "operation": "health_check",
+              "success": true,
+              "response_time": 2.039423
+            },
+            {
+              "operation": "frontend_check",
+              "success": true,
+              "response_time": 2.064769
+            }
+          ],
+          "all_operations_successful": true
+        }
+      ],
+      "stability_rating": "excellent",
+      "suitable_for_long_sessions": true
+    }
+  },
+  "performance_benchmarks": {
+    "page_load_times": {
+      "status": "success",
+      "load_times": [
+        {
+          "page": "frontend_homepage",
+          "load_time": 2.0315794944763184,
+          "success": true,
+          "content_size": 5394,
+          "performance_rating": "good"
+        },
+        {
+          "page": "api_docs",
+          "load_time": 2.062354326248169,
+          "success": true,
+          "content_size": 953,
+          "performance_rating": "good"
+        },
+        {
+          "page": "api_test_page",
+          "load_time": 2.046212911605835,
+          "success": true,
+          "content_size": 14641,
+          "performance_rating": "good"
+        }
+      ],
+      "average_load_time": 2.046715577443441,
+      "successful_loads": 3,
+      "total_tests": 3,
+      "overall_performance": "good"
+    },
+    "api_response_times": {
+      "status": "success",
+      "response_times": [
+        {
+          "api": "health_check",
+          "response_time": 2.0466878414154053,
+          "expected_time": 1.0,
+          "success": true,
+          "meets_expectation": false,
+          "performance_rating": "slow"
+        },
+        {
+          "api": "script_analysis",
+          "response_time": 2.1124114990234375,
+          "expected_time": 5.0,
+          "success": true,
+          "meets_expectation": true,
+          "performance_rating": "excellent"
+        },
+        {
+          "api": "semantic_search",
+          "response_time": 2.0662338733673096,
+          "expected_time": 3.0,
+          "success": true,
+          "meets_expectation": true,
+          "performance_rating": "good"
+        }
+      ],
+      "successful_apis": 3,
+      "total_tests": 3,
+      "meeting_expectations": 2,
+      "expectation_rate": 66.66666666666666,
+      "overall_api_performance": "good"
+    },
+    "file_processing_speed": {
+      "status": "success",
+      "processing_results": [
+        {
+          "test_type": "small_script",
+          "script_size": "small",
+          "processing_time": 2.124403953552246,
+          "expected_time": 2.0,
+          "success": true,
+          "meets_expectation": false,
+          "script_length": 53,
+          "processing_speed": 24.948174245005497
+        },
+        {
+          "test_type": "medium_script",
+          "script_size": "medium",
+          "processing_time": 2.3066627979278564,
+          "expected_time": 5.0,
+          "success": true,
+          "meets_expectation": true,
+          "script_length": 384,
+          "processing_speed": 166.47426764976598
+        },
+        {
+          "test_type": "large_script",
+          "script_size": "large",
+          "processing_time": 2.7071897983551025,
+          "expected_time": 10.0,
+          "success": true,
+          "meets_expectation": true,
+          "script_length": 1184,
+          "processing_speed": 437.35389396022487
+        }
+      ],
+      "successful_tests": 3,
+      "total_tests": 3,
+      "meeting_expectations": 2,
+      "processing_efficiency": 66.66666666666666,
+      "overall_processing_speed": "good"
+    }
+  },
+  "compatibility_tests": {
+    "network_resilience": {
+      "status": "success",
+      "resilience_tests": [
+        {
+          "timeout_setting": 1,
+          "success": true,
+          "response_time": 1.0018935203552246,
+          "within_timeout": false,
+          "resilience_rating": "good"
+        },
+        {
+          "timeout_setting": 3,
+          "success": true,
+          "response_time": 2.048368453979492,
+          "within_timeout": true,
+          "resilience_rating": "good"
+        },
+        {
+          "timeout_setting": 5,
+          "success": true,
+          "response_time": 2.051584482192993,
+          "within_timeout": true,
+          "resilience_rating": "excellent"
+        },
+        {
+          "timeout_setting": 10,
+          "success": true,
+          "response_time": 2.05349063873291,
+          "within_timeout": true,
+          "resilience_rating": "excellent"
+        }
+      ],
+      "successful_tests": 4,
+      "total_tests": 4,
+      "network_resilience_rate": 100.0,
+      "overall_resilience": "excellent"
+    },
+    "resource_adaptation": {
+      "status": "success",
+      "load_tests": [
+        {
+          "load_level": 1,
+          "concurrent_requests": 1,
+          "success_rate": 100.0,
+          "total_time": 2.0415875911712646,
+          "average_time_per_request": 2.0415875911712646,
+          "adaptation_rating": "excellent"
+        },
+        {
+          "load_level": 2,
+          "concurrent_requests": 2,
+          "success_rate": 100.0,
+          "total_time": 4.088038682937622,
+          "average_time_per_request": 2.044019341468811,
+          "adaptation_rating": "excellent"
+        },
+        {
+          "load_level": 3,
+          "concurrent_requests": 3,
+          "success_rate": 100.0,
+          "total_time": 6.155382871627808,
+          "average_time_per_request": 2.0517942905426025,
+          "adaptation_rating": "excellent"
+        }
+      ],
+      "max_tested_load": 3,
+      "overall_adaptation": "excellent",
+      "suitable_for_production": true
+    }
+  },
+  "ui_responsiveness": {},
+  "summary": {
+    "overall_ux_score": 74.44444444444444,
+    "ux_rating": "needs_improvement",
+    "total_tests_run": 9,
+    "user_scenario_tests": 4,
+    "performance_tests": 3,
+    "compatibility_tests": 2,
+    "ready_for_users": false,
+    "recommended_actions": [
+      "系统基本可用，但需要优化性能和稳定性",
+      "改进错误处理和用户反馈机制",
+      "优化API响应时间和页面加载速度"
+    ],
+    "test_completion_time": "2025-12-19T15:16:04.185083"
+  }
+}

@@ -1,0 +1,4 @@
+# file: F:\100KIRO project\Pervis PRO\backend\services\render_preflight_checker.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.5, 100, 120, 128, 192, 256, 320, 1000, 1024, 100000, '1080p', '4k', '720p', 'FFmpeg未安装，无法进行视频渲染', 'audio_bitrate', 'available_mb', 'bitrate', 'count', 'cpu', 'error', 'ffmpeg', 'format', 'framerate', 'high', 'installed', 'low', 'machine', 'medium', 'memory', 'mov', 'mp4', 'path', 'percent_used', 'platform', 'processor', 'quality', 'render_dir_space_mb', 'resolution', 'storage', 'storage/renders', 'storage/temp', 'supported', 'system', 'temp_dir_space_mb', 'total_mb', 'ultra', 'version', '时间轴不存在', '时间轴中没有视频片段']

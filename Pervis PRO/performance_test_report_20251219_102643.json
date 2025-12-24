@@ -1,0 +1,93 @@
+{
+  "timestamp": "2025-12-19 10:24:48",
+  "test_environment": {
+    "backend_url": "http://localhost:8000",
+    "frontend_url": "http://localhost:3000",
+    "python_version": "3.13.8 (tags/v3.13.8:a15ae61, Oct  7 2025, 12:34:25) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "win32"
+  },
+  "performance_tests": {
+    "api_response_time": {
+      "success": false,
+      "metrics": {
+        "average_response_time_ms": 2381.31,
+        "p95_response_time_ms": 3077.13,
+        "min_response_time_ms": 2022.63,
+        "max_response_time_ms": 3081.95,
+        "successful_requests": 30,
+        "total_requests": 40,
+        "improvement_percentage": 0.5
+      },
+      "message": "平均响应时间: 2381.31ms (改进: 0.5%)",
+      "timestamp": "10:26:20"
+    },
+    "database_connection_pool": {
+      "success": false,
+      "metrics": {
+        "concurrent_requests": 20,
+        "successful_requests": 20,
+        "success_rate_percentage": 100.0,
+        "total_time_ms": 2064.06,
+        "avg_time_per_request_ms": 103.2
+      },
+      "message": "并发成功率: 100.0%, 平均时间: 103.20ms",
+      "timestamp": "10:26:22"
+    },
+    "cache_service": {
+      "success": false,
+      "metrics": {
+        "first_request_time_ms": 3032.7,
+        "second_request_time_ms": 3051.1,
+        "cache_speedup_percentage": -0.6,
+        "cache_effective": false
+      },
+      "message": "缓存加速: -0.6% (第一次: 3032.70ms, 第二次: 3051.10ms)",
+      "timestamp": "10:26:28"
+    },
+    "response_compression": {
+      "success": false,
+      "metrics": {
+        "uncompressed_size_bytes": 47,
+        "compressed_size_bytes": 47,
+        "compression_ratio_percentage": 0.0,
+        "is_compressed": false,
+        "content_encoding": "none"
+      },
+      "message": "压缩比: 0.0%, 编码: none",
+      "timestamp": "10:26:32"
+    },
+    "frontend_build_optimization": {
+      "success": false,
+      "metrics": {},
+      "message": "前端构建优化测试异常: [WinError 2] 系统找不到指定的文件。",
+      "timestamp": "10:26:32"
+    },
+    "database_indexes": {
+      "success": false,
+      "metrics": {},
+      "message": "数据库查询测试失败",
+      "timestamp": "10:26:43"
+    }
+  },
+  "comparison": {
+    "api_response_time": {
+      "baseline": 2392.17,
+      "current": 2381.3074588775635,
+      "improvement": 0.4540873400484329,
+      "target": 500,
+      "target_met": false
+    }
+  },
+  "summary": {
+    "total_tests": 6,
+    "passed_tests": 0,
+    "failed_tests": 6,
+    "performance_improvements": {
+      "individual_improvements": {
+        "api_response_time": 0.4540873400484329
+      },
+      "average_improvement": 0.5,
+      "total_metrics_improved": 1
+    }
+  }
+}

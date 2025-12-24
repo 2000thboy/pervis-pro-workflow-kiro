@@ -1,0 +1,154 @@
+# ==========================================
+# 敏感信息 - 绝对不要上传
+# ==========================================
+.env
+.env.*
+*.env
+**/.env
+**/secrets/
+*.key
+*.pem
+
+# API Keys (以防万一)
+**/GEMINI_API_KEY*
+**/OPENAI_API_KEY*
+
+# ==========================================
+# Python
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+venv/
+env/
+ENV/
+.venv/
+
+# ==========================================
+# Node.js
+# ==========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+*.tgz
+
+# ==========================================
+# IDE / 编辑器
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-*
+
+# ==========================================
+# 操作系统
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# 数据库
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+!**/migrations/*.sql
+
+# ==========================================
+# 日志和临时文件
+# ==========================================
+logs/
+*.log
+temp/
+tmp/
+*.tmp
+.cache/
+.parcel-cache/
+
+# ==========================================
+# 测试
+# ==========================================
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+coverage/
+.nyc_output/
+
+# ==========================================
+# 构建输出
+# ==========================================
+dist/
+build/
+.next/
+.nuxt/
+out/
+
+# ==========================================
+# 项目特定
+# ==========================================
+# Pervis PRO
+Pervis PRO/data/
+Pervis PRO/exports/
+Pervis PRO/storage/
+Pervis PRO/pool/
+Pervis PRO/temp/
+Pervis PRO/logs/
+Pervis PRO/*.db
+Pervis PRO/test_assets/
+Pervis PRO/demo_projects/
+Pervis PRO/MVP_DEMO_PACKAGE/
+
+# 大文件 (>50MB) - 使用 Git LFS 或本地保存
+Pervis PRO/backend/assets/
+Pervis PRO/backend/storage/
+Pervis PRO/backend/exports/
+Pervis PRO/backend/logs/
+Pervis PRO/backend/*.db
+Pervis PRO/backend/test_video.mp4
+*.mp4
+*.wav
+*.exe
+
+# Multi-Agent Workflow
+multi-agent-workflow/data/
+multi-agent-workflow/backend/chroma_db/
+
+# 备份文件
+backup_before_cleanup/
+
+# ==========================================
+# Kiro 特定（保留 specs 和 steering）
+# ==========================================
+# 不忽略 .kiro/specs 和 .kiro/steering
+# 忽略 hooks 中的敏感配置
+.kiro/hooks/*.secret.json

@@ -1,0 +1,4 @@
+# file: E:\Pervis PRO\Pervis PRO\backend\app\logging_config.py
+# hypothesis_version: 6.148.7
+
+[1024, 'httpx', 'logs', 'pervis_pro.log', 'sqlalchemy.engine', 'urllib3']

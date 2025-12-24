@@ -1,0 +1,86 @@
+{
+  "timestamp": "2025-12-19 09:36:41",
+  "tests": {
+    "create_test_files": {
+      "success": true,
+      "message": "创建了 3 个测试文件",
+      "details": {},
+      "timestamp": "09:36:41"
+    },
+    "frontend_components": {
+      "success": true,
+      "message": "所有前端组件文件存在 (4 个文件)",
+      "details": {},
+      "timestamp": "09:36:41"
+    },
+    "batch_upload_api": {
+      "success": true,
+      "message": "批量上传成功，获得 3 个任务ID",
+      "details": {
+        "task_ids": [
+          "task_7314ba4e",
+          "task_0433b943",
+          "task_e8cc4ec1"
+        ],
+        "total_files": 3,
+        "estimated_time": 405.0
+      },
+      "timestamp": "09:36:43"
+    },
+    "task_status_api": {
+      "success": true,
+      "message": "成功查询 3/3 个任务状态",
+      "details": {},
+      "timestamp": "09:36:49"
+    },
+    "queue_status_api": {
+      "success": true,
+      "message": "队列状态查询成功",
+      "details": {
+        "queue_size": 0,
+        "running_tasks": 0,
+        "is_running": true
+      },
+      "timestamp": "09:36:51"
+    },
+    "system_stats_api": {
+      "success": true,
+      "message": "系统统计查询成功",
+      "details": {
+        "cpu_percent": 1.1,
+        "memory_percent": 29.8,
+        "disk_usage": 78.7
+      },
+      "timestamp": "09:36:55"
+    },
+    "task_history_api": {
+      "success": true,
+      "message": "任务历史查询成功，获得 3 条记录",
+      "details": {
+        "total_count": 3,
+        "tasks_count": 3
+      },
+      "timestamp": "09:36:57"
+    },
+    "cleanup_api": {
+      "success": true,
+      "message": "清理操作成功，清理了 0 个任务",
+      "details": {
+        "cleaned_count": 0
+      },
+      "timestamp": "09:36:59"
+    },
+    "cleanup_test_files": {
+      "success": true,
+      "message": "清理了 3 个测试文件",
+      "details": {},
+      "timestamp": "09:36:59"
+    }
+  },
+  "summary": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0,
+    "errors": []
+  }
+}

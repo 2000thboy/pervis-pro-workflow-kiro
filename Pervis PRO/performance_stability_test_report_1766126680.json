@@ -1,0 +1,262 @@
+{
+  "test_start_time": "2025-12-19T14:44:26.147437",
+  "performance_tests": {
+    "large_file_processing": {
+      "status": "error",
+      "error": "AssetProcessor.__init__() missing 1 required positional argument: 'db'",
+      "traceback": "Traceback (most recent call last):\n  File \"F:\\100KIRO project\\Pervis PRO\\system_performance_stability_test.py\", line 87, in test_large_file_processing\n    processor = AssetProcessor()\nTypeError: AssetProcessor.__init__() missing 1 required positional argument: 'db'\n"
+    },
+    "complex_script_analysis": {
+      "status": "error",
+      "error": "ScriptProcessor.__init__() missing 1 required positional argument: 'db'",
+      "traceback": "Traceback (most recent call last):\n  File \"F:\\100KIRO project\\Pervis PRO\\system_performance_stability_test.py\", line 134, in test_complex_script_analysis\n    processor = ScriptProcessor()\nTypeError: ScriptProcessor.__init__() missing 1 required positional argument: 'db'\n"
+    },
+    "search_response_time": {
+      "status": "error",
+      "error": "MultimodalSearchEngine.__init__() missing 1 required positional argument: 'db'",
+      "traceback": "Traceback (most recent call last):\n  File \"F:\\100KIRO project\\Pervis PRO\\system_performance_stability_test.py\", line 265, in test_search_performance\n    search_engine = MultimodalSearchEngine()\nTypeError: MultimodalSearchEngine.__init__() missing 1 required positional argument: 'db'\n"
+    },
+    "render_task_capacity": {
+      "status": "error",
+      "error": "RenderService.__init__() missing 1 required positional argument: 'db'",
+      "traceback": "Traceback (most recent call last):\n  File \"F:\\100KIRO project\\Pervis PRO\\system_performance_stability_test.py\", line 333, in test_render_capacity\n    render_service = RenderService()\nTypeError: RenderService.__init__() missing 1 required positional argument: 'db'\n"
+    }
+  },
+  "stability_tests": {
+    "exception_handling": {
+      "status": "error",
+      "error": "ScriptProcessor.__init__() missing 1 required positional argument: 'db'",
+      "traceback": "Traceback (most recent call last):\n  File \"F:\\100KIRO project\\Pervis PRO\\system_performance_stability_test.py\", line 416, in test_exception_handling\n    processor = ScriptProcessor()\nTypeError: ScriptProcessor.__init__() missing 1 required positional argument: 'db'\n"
+    },
+    "network_recovery": {
+      "status": "success",
+      "test_count": 3,
+      "recovery_results": [
+        {
+          "scenario": "database_reconnection",
+          "recovery_time": 0.11027956008911133,
+          "recovery_successful": true,
+          "simulated": true
+        },
+        {
+          "scenario": "api_timeout_recovery",
+          "recovery_time": 0.10956454277038574,
+          "recovery_successful": true,
+          "simulated": true
+        },
+        {
+          "scenario": "service_restart_recovery",
+          "recovery_time": 0.11017990112304688,
+          "recovery_successful": true,
+          "simulated": true
+        }
+      ],
+      "average_recovery_time": 0.11000800132751465,
+      "successful_recoveries": 3
+    },
+    "resource_shortage": {
+      "status": "success",
+      "test_count": 3,
+      "resource_status": [
+        {
+          "resource_type": "memory",
+          "current_usage_percent": 34.6,
+          "available_gb": 83.52081298828125,
+          "status": "normal",
+          "degradation_needed": false
+        },
+        {
+          "resource_type": "disk",
+          "current_usage_percent": 78.7,
+          "available_gb": 132.2978973388672,
+          "status": "normal",
+          "degradation_needed": false
+        },
+        {
+          "resource_type": "cpu",
+          "current_usage_percent": 1.0,
+          "available_gb": 0,
+          "status": "normal",
+          "degradation_needed": false
+        }
+      ],
+      "overall_system_health": "healthy",
+      "resources_under_pressure": 0
+    },
+    "long_running_stability": {
+      "status": "success",
+      "test_duration": 10,
+      "check_count": 10,
+      "stability_metrics": [
+        {
+          "elapsed_time": 0.009212732315063477,
+          "memory_usage_mb": 45285.1015625,
+          "memory_delta_mb": -0.21875,
+          "cpu_percent": 0.4,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 1.0333750247955322,
+          "memory_usage_mb": 45289.5078125,
+          "memory_delta_mb": 4.1875,
+          "cpu_percent": 0.7,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 2.0478267669677734,
+          "memory_usage_mb": 45296.796875,
+          "memory_delta_mb": 11.4765625,
+          "cpu_percent": 1.3,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 3.058803081512451,
+          "memory_usage_mb": 45294.26171875,
+          "memory_delta_mb": 8.94140625,
+          "cpu_percent": 0.8,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 4.089328289031982,
+          "memory_usage_mb": 45260.19921875,
+          "memory_delta_mb": -25.12109375,
+          "cpu_percent": 0.8,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 5.1079394817352295,
+          "memory_usage_mb": 45259.87109375,
+          "memory_delta_mb": -25.44921875,
+          "cpu_percent": 0.7,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 6.126096487045288,
+          "memory_usage_mb": 45250.5703125,
+          "memory_delta_mb": -34.75,
+          "cpu_percent": 0.5,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 7.138510465621948,
+          "memory_usage_mb": 45252.5078125,
+          "memory_delta_mb": -32.8125,
+          "cpu_percent": 0.6,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 8.170727491378784,
+          "memory_usage_mb": 45137.05859375,
+          "memory_delta_mb": -148.26171875,
+          "cpu_percent": 0.7,
+          "active_threads": 1
+        },
+        {
+          "elapsed_time": 9.18951153755188,
+          "memory_usage_mb": 45136.1875,
+          "memory_delta_mb": -149.1328125,
+          "cpu_percent": 0.6,
+          "active_threads": 1
+        }
+      ],
+      "memory_leak_mb": -200.265625,
+      "memory_stable": false,
+      "average_cpu_usage": 0.71,
+      "max_threads": 1
+    }
+  },
+  "resource_usage": {
+    "system_memory": {
+      "total_gb": 127.76785659790039,
+      "available_gb": 83.73966217041016,
+      "used_percent": 34.5,
+      "free_gb": 83.73966217041016
+    },
+    "system_disk": {
+      "total_gb": 620.0136680603027,
+      "free_gb": 132.2978973388672,
+      "used_percent": 78.66209986099857
+    },
+    "system_cpu": {
+      "cpu_count": 32,
+      "cpu_percent_per_core": [
+        0.0,
+        3.1,
+        0.0,
+        0.0,
+        12.5,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.2,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "average_cpu_percent": 0.5875,
+      "load_average": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "process_info": {
+      "pid": 29028,
+      "memory_mb": 106.3203125,
+      "cpu_percent": 0.0,
+      "num_threads": 31,
+      "open_files": 1,
+      "connections": 2
+    },
+    "memory_delta_mb": -873.2421875
+  },
+  "error_recovery_tests": {},
+  "concurrent_tests": {
+    "concurrent_script_analysis": {
+      "status": "error",
+      "error": "ScriptProcessor.__init__() missing 1 required positional argument: 'db'",
+      "traceback": "Traceback (most recent call last):\n  File \"F:\\100KIRO project\\Pervis PRO\\system_performance_stability_test.py\", line 711, in test_concurrent_script_analysis\n    processor = ScriptProcessor()\nTypeError: ScriptProcessor.__init__() missing 1 required positional argument: 'db'\n"
+    },
+    "concurrent_search_requests": {
+      "status": "error",
+      "error": "MultimodalSearchEngine.__init__() missing 1 required positional argument: 'db'",
+      "traceback": "Traceback (most recent call last):\n  File \"F:\\100KIRO project\\Pervis PRO\\system_performance_stability_test.py\", line 760, in test_concurrent_search\n    search_engine = MultimodalSearchEngine()\nTypeError: MultimodalSearchEngine.__init__() missing 1 required positional argument: 'db'\n"
+    },
+    "data_consistency": {
+      "status": "error",
+      "error": "'generator' object does not support the asynchronous context manager protocol",
+      "traceback": "Traceback (most recent call last):\n  File \"F:\\100KIRO project\\Pervis PRO\\system_performance_stability_test.py\", line 817, in test_data_consistency\n    async with get_db() as db:\n               ~~~~~~^^\nTypeError: 'generator' object does not support the asynchronous context manager protocol\n"
+    }
+  },
+  "summary": {
+    "test_completion_time": "2025-12-19T14:44:40.100014",
+    "total_test_duration": 13.952577,
+    "total_tests_run": 11,
+    "successful_tests": 3,
+    "failed_tests": 8,
+    "success_rate_percent": 27.27272727272727,
+    "performance_status": "needs_improvement",
+    "stability_status": "monitoring_needed",
+    "resource_health": true
+  }
+}

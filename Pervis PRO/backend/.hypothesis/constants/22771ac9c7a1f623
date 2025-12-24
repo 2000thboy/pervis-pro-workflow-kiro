@@ -1,0 +1,4 @@
+# file: E:\Pervis PRO\Pervis PRO\backend\app\config.py
+# hypothesis_version: 6.148.7
+
+[1024, 3600, './.data/pervis_temp', '.env', 'INFO', 'dev-secret', 'ffmpeg', 'ffprobe', 'ignore']

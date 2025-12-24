@@ -1,0 +1,11 @@
+{
+  "name": "save-conversation-context",
+  "description": "对话结束时自动保存上下文到SQLite数据库",
+  "trigger": {
+    "type": "agent-complete"
+  },
+  "action": {
+    "type": "send-message",
+    "message": "请总结本次对话的关键内容，并使用 mcp_sqlite_write_query 保存到 conversation_context 表。包含：1) 完成的任务 2) 关键决策 3) 待办事项 4) 相关文件路径。使用当前时间戳作为 session_id 的一部分。"
+  }
+}

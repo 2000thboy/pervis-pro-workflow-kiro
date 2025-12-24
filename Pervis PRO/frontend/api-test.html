@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端API连接测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-loading { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 前端API连接测试</h1>
+        <p>这个页面用于测试前端是否能正常调用后端API。</p>
+        
+        <div class="test-section">
+            <h3><span id="health-status" class="status-indicator"></span>1. 健康检查</h3>
+            <button onclick="testHealth()">测试健康检查</button>
+            <div id="health-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3><span id="script-status" class="status-indicator"></span>2. 剧本分析</h3>
+            <textarea id="script-text" placeholder="输入测试剧本...">FADE IN:
+
+INT. COFFEE SHOP - DAY
+
+SARAH (20s) sits at a corner table, typing on her laptop. The morning sun streams through large windows.
+
+BARISTA (30s) approaches with a steaming cup.
+
+BARISTA
+Your usual latte.
+
+SARAH
+(looking up, smiling)
+Thanks, Mike. You're a lifesaver.
+
+Sarah takes a sip and returns to her work. Her phone BUZZES.
+
+SARAH (CONT'D)
+(reading text)
+Finally! The interview is confirmed.
+
+She closes her laptop with determination.
+
+FADE OUT.</textarea>
+            <button onclick="testScriptAnalysis()">测试剧本分析</button>
+            <div id="script-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3><span id="search-status" class="status-indicator"></span>3. 语义搜索</h3>
+            <input type="text" id="search-query" placeholder="输入搜索查询..." value="快乐的对话场景" style="width: 300px; padding: 8px; margin-right: 10px;">
+            <button onclick="testSemanticSearch()">测试语义搜索</button>
+            <div id="search-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3><span id="multimodal-status" class="status-indicator"></span>4. 多模态搜索</h3>
+            <input type="text" id="multimodal-query" placeholder="输入多模态查询..." value="蓝色夜景城市" style="width: 300px; padding: 8px; margin-right: 10px;">
+            <button onclick="testMultimodalSearch()">测试多模态搜索</button>
+            <div id="multimodal-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 测试总结</h3>
+            <div id="summary" style="padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                点击上面的测试按钮开始测试...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API配置
+        const API_BASE_URL = 'http://localhost:8000';
+        
+        // 测试结果跟踪
+        const testResults = {
+            health: null,
+            script: null,
+            search: null,
+            multimodal: null
+        };
+        
+        // 通用API请求函数
+        async function apiRequest(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers,
+                },
+                ...options,
+            };
+
+            const response = await fetch(url, defaultOptions);
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(
+                    errorData.detail || 
+                    errorData.message || 
+                    `API请求失败: ${response.status} ${response.statusText}`
+                );
+            }
+
+            return await response.json();
+        }
+        
+        // 更新状态指示器
+        function updateStatus(testName, status) {
+            const indicator = document.getElementById(`${testName}-status`);
+            indicator.className = `status-indicator status-${status}`;
+        }
+        
+        // 显示结果
+        function showResult(elementId, content, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${isSuccess ? 'success' : 'error'}`;
+            element.textContent = content;
+        }
+        
+        // 显示加载状态
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = 'result loading';
+            element.textContent = '正在测试...';
+        }
+        
+        // 更新测试总结
+        function updateSummary() {
+            const results = Object.values(testResults);
+            const completed = results.filter(r => r !== null).length;
+            const successful = results.filter(r => r === true).length;
+            const failed = results.filter(r => r === false).length;
+            
+            const summary = document.getElementById('summary');
+            summary.innerHTML = `
+                <strong>测试进度:</strong> ${completed}/4 完成<br>
+                <strong>成功:</strong> ${successful} 个测试<br>
+                <strong>失败:</strong> ${failed} 个测试<br>
+                <strong>成功率:</strong> ${completed > 0 ? (successful / completed * 100).toFixed(1) : 0}%
+            `;
+        }
+        
+        // 1. 健康检查测试
+        async function testHealth() {
+            updateStatus('health', 'loading');
+            showLoading('health-result');
+            
+            try {
+                const startTime = Date.now();
+                const result = await apiRequest('/api/health');
+                const duration = Date.now() - startTime;
+                
+                const resultText = `✅ 健康检查成功 (${duration}ms)\n\n响应数据:\n${JSON.stringify(result, null, 2)}`;
+                showResult('health-result', resultText, true);
+                updateStatus('health', 'success');
+                testResults.health = true;
+            } catch (error) {
+                const resultText = `❌ 健康检查失败\n\n错误信息:\n${error.message}`;
+                showResult('health-result', resultText, false);
+                updateStatus('health', 'error');
+                testResults.health = false;
+            }
+            
+            updateSummary();
+        }
+        
+        // 2. 剧本分析测试
+        async function testScriptAnalysis() {
+            updateStatus('script', 'loading');
+            showLoading('script-result');
+            
+            try {
+                const scriptText = document.getElementById('script-text').value;
+                const startTime = Date.now();
+                
+                const result = await apiRequest('/api/script/analyze', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        script_text: scriptText,
+                        title: 'API测试剧本',
+                        mode: 'parse'
+                    }),
+                });
+                
+                const duration = Date.now() - startTime;
+                
+                const resultText = `✅ 剧本分析成功 (${duration}ms)\n\n分析结果:\n- 状态: ${result.status}\n- Beat数量: ${result.beats?.length || 0}\n- 角色数量: ${result.characters?.length || 0}\n- 处理时间: ${result.processing_time}s\n- 项目ID: ${result.project_id}\n\n详细数据:\n${JSON.stringify(result, null, 2)}`;
+                showResult('script-result', resultText, true);
+                updateStatus('script', 'success');
+                testResults.script = true;
+            } catch (error) {
+                const resultText = `❌ 剧本分析失败\n\n错误信息:\n${error.message}`;
+                showResult('script-result', resultText, false);
+                updateStatus('script', 'error');
+                testResults.script = false;
+            }
+            
+            updateSummary();
+        }
+        
+        // 3. 语义搜索测试
+        async function testSemanticSearch() {
+            updateStatus('search', 'loading');
+            showLoading('search-result');
+            
+            try {
+                const query = document.getElementById('search-query').value;
+                const startTime = Date.now();
+                
+                const result = await apiRequest('/api/search/semantic', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        beat_id: 'test_beat',
+                        query_tags: {
+                            emotions: ['happy'],
+                            scenes: ['indoor'],
+                            actions: ['talking'],
+                            cinematography: ['medium']
+                        },
+                        limit: 5
+                    }),
+                });
+                
+                const duration = Date.now() - startTime;
+                
+                const resultText = `✅ 语义搜索成功 (${duration}ms)\n\n搜索结果:\n- 查询: ${query}\n- 结果数量: ${result.results?.length || 0}\n- 总匹配数: ${result.total_matches || 0}\n- 搜索时间: ${result.search_time}s\n\n详细数据:\n${JSON.stringify(result, null, 2)}`;
+                showResult('search-result', resultText, true);
+                updateStatus('search', 'success');
+                testResults.search = true;
+            } catch (error) {
+                const resultText = `❌ 语义搜索失败\n\n错误信息:\n${error.message}`;
+                showResult('search-result', resultText, false);
+                updateStatus('search', 'error');
+                testResults.search = false;
+            }
+            
+            updateSummary();
+        }
+        
+        // 4. 多模态搜索测试
+        async function testMultimodalSearch() {
+            updateStatus('multimodal', 'loading');
+            showLoading('multimodal-result');
+            
+            try {
+                const query = document.getElementById('multimodal-query').value;
+                const startTime = Date.now();
+                
+                const result = await apiRequest('/api/multimodal/search', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        query: query,
+                        limit: 5
+                    }),
+                });
+                
+                const duration = Date.now() - startTime;
+                
+                const resultText = `✅ 多模态搜索成功 (${duration}ms)\n\n搜索结果:\n- 查询: ${result.query}\n- 搜索模式: ${result.search_modes?.join(', ')}\n- 结果数量: ${result.results?.length || 0}\n- 总匹配数: ${result.total_matches || 0}\n\n详细数据:\n${JSON.stringify(result, null, 2)}`;
+                showResult('multimodal-result', resultText, true);
+                updateStatus('multimodal', 'success');
+                testResults.multimodal = true;
+            } catch (error) {
+                const resultText = `❌ 多模态搜索失败\n\n错误信息:\n${error.message}`;
+                showResult('multimodal-result', resultText, false);
+                updateStatus('multimodal', 'error');
+                testResults.multimodal = false;
+            }
+            
+            updateSummary();
+        }
+        
+        // 页面加载完成后自动运行健康检查
+        window.addEventListener('load', function() {
+            setTimeout(testHealth, 1000);
+        });
+    </script>
+</body>
+</html>

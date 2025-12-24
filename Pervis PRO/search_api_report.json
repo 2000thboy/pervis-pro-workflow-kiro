@@ -1,0 +1,329 @@
+{
+  "timestamp": "2025-12-19T14:38:58.431912",
+  "base_url": "http://localhost:8000",
+  "server_status": {
+    "server_running": true,
+    "response_time": 2048.5,
+    "error": null,
+    "status_code": 200
+  },
+  "endpoint_tests": {
+    "semantic_search": {
+      "endpoint": "semantic_search",
+      "url": "/api/search/semantic",
+      "method": "POST",
+      "success": true,
+      "status_code": 200,
+      "response_time": 2024.99,
+      "response_data": {
+        "results": [],
+        "total_matches": 0,
+        "search_time": 0.0010492801666259766
+      },
+      "error": null,
+      "validation_errors": []
+    },
+    "multimodal_search": {
+      "endpoint": "multimodal_search",
+      "url": "/api/multimodal/search",
+      "method": "POST",
+      "success": true,
+      "status_code": 200,
+      "response_time": 2049.22,
+      "response_data": {
+        "status": "success",
+        "query": "夜晚街道追逐场景",
+        "query_intent": {
+          "primary_intent": "semantic",
+          "visual_keywords": [],
+          "audio_keywords": [],
+          "emotion_keywords": [],
+          "scene_keywords": [],
+          "action_keywords": [
+            "追逐"
+          ],
+          "technical_keywords": []
+        },
+        "search_modes": [
+          "semantic",
+          "transcription",
+          "visual"
+        ],
+        "weights": {
+          "semantic": 0.4,
+          "transcription": 0.3,
+          "visual": 0.3
+        },
+        "results": [],
+        "total_matches": 0,
+        "individual_results": {
+          "semantic": 0,
+          "transcription": 0,
+          "visual": 0
+        }
+      },
+      "error": null,
+      "validation_errors": []
+    },
+    "beatboard_search": {
+      "endpoint": "beatboard_search",
+      "url": "/api/multimodal/search/beatboard",
+      "method": "POST",
+      "success": true,
+      "status_code": 200,
+      "response_time": 2132.66,
+      "response_data": {
+        "status": "success",
+        "query": "城市夜景咖啡厅",
+        "total_results": 3,
+        "video_results": 0,
+        "image_results": 3,
+        "results": [
+          {
+            "id": "mock_image_0",
+            "type": "image",
+            "filename": "mock_image_0.jpg",
+            "thumbnail_url": "/thumbnails/mock_image_0_thumb.jpg",
+            "original_url": "/originals/mock_image_0.jpg",
+            "similarity_score": 0.9,
+            "match_reason": "与查询'城市夜景咖啡厅'高度匹配",
+            "tags": {
+              "objects": [
+                "物体1",
+                "物体2"
+              ],
+              "scenes": [
+                "场景1"
+              ],
+              "emotions": [
+                "情绪1"
+              ]
+            },
+            "color_palette": {
+              "dominant": "#4A90E2"
+            },
+            "metadata": {
+              "width": 1920,
+              "height": 1080,
+              "file_size": null,
+              "type": "image"
+            }
+          },
+          {
+            "id": "mock_image_1",
+            "type": "image",
+            "filename": "mock_image_1.jpg",
+            "thumbnail_url": "/thumbnails/mock_image_1_thumb.jpg",
+            "original_url": "/originals/mock_image_1.jpg",
+            "similarity_score": 0.8,
+            "match_reason": "与查询'城市夜景咖啡厅'高度匹配",
+            "tags": {
+              "objects": [
+                "物体1",
+                "物体2"
+              ],
+              "scenes": [
+                "场景1"
+              ],
+              "emotions": [
+                "情绪1"
+              ]
+            },
+            "color_palette": {
+              "dominant": "#4A90E2"
+            },
+            "metadata": {
+              "width": 1920,
+              "height": 1080,
+              "file_size": null,
+              "type": "image"
+            }
+          },
+          {
+            "id": "mock_image_2",
+            "type": "image",
+            "filename": "mock_image_2.jpg",
+            "thumbnail_url": "/thumbnails/mock_image_2_thumb.jpg",
+            "original_url": "/originals/mock_image_2.jpg",
+            "similarity_score": 0.7,
+            "match_reason": "与查询'城市夜景咖啡厅'高度匹配",
+            "tags": {
+              "objects": [
+                "物体1",
+                "物体2"
+              ],
+              "scenes": [
+                "场景1"
+              ],
+              "emotions": [
+                "情绪1"
+              ]
+            },
+            "color_palette": {
+              "dominant": "#4A90E2"
+            },
+            "metadata": {
+              "width": 1920,
+              "height": 1080,
+              "file_size": null,
+              "type": "image"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "validation_errors": []
+    },
+    "visual_search": {
+      "endpoint": "visual_search",
+      "url": "/api/multimodal/search/visual",
+      "method": "POST",
+      "success": true,
+      "status_code": 200,
+      "response_time": 2060.93,
+      "response_data": {
+        "status": "success",
+        "query": "建筑 天空 现代",
+        "results": [],
+        "total_matches": 0
+      },
+      "error": null,
+      "validation_errors": []
+    },
+    "model_info": {
+      "endpoint": "model_info",
+      "url": "/api/multimodal/model/info",
+      "method": "GET",
+      "success": true,
+      "status_code": 200,
+      "response_time": 2021.79,
+      "response_data": {
+        "status": "success",
+        "multimodal_capabilities": {
+          "visual_analysis": {
+            "available": false,
+            "model_name": "ViT-B/32",
+            "device": "cpu",
+            "features": {
+              "visual_features": true,
+              "color_analysis": true,
+              "composition_analysis": true,
+              "keyframe_extraction": true,
+              "temporal_analysis": true
+            }
+          },
+          "audio_transcription": {
+            "available": false,
+            "model_size": "base",
+            "device": "cpu",
+            "supported_languages": 4,
+            "features": {
+              "word_timestamps": true,
+              "language_detection": true,
+              "confidence_scores": true,
+              "multiple_speakers": false
+            }
+          },
+          "semantic_search": {
+            "available": true,
+            "model": "sentence-transformers",
+            "features": [
+              "text_embedding",
+              "similarity_search"
+            ]
+          }
+        },
+        "supported_search_modes": [
+          "semantic",
+          "transcription",
+          "visual"
+        ],
+        "default_weights": {
+          "semantic": 0.4,
+          "transcription": 0.3,
+          "visual": 0.3
+        }
+      },
+      "error": null,
+      "validation_errors": []
+    },
+    "processing_estimate": {
+      "endpoint": "processing_estimate",
+      "url": "/api/multimodal/estimate?video_duration=30.0&enable_transcription=true&enable_visual_analysis=true&sample_interval=2.0",
+      "method": "POST",
+      "success": true,
+      "status_code": 200,
+      "response_time": 2036.12,
+      "response_data": {
+        "status": "success",
+        "video_duration": 30.0,
+        "total_estimated_time": 10.5,
+        "processing_breakdown": {
+          "video_processing": 3.0,
+          "transcription": 3.0,
+          "visual_analysis": 3.0,
+          "vectorization": 1.5
+        },
+        "configuration": {
+          "transcription_enabled": true,
+          "visual_analysis_enabled": true,
+          "sample_interval": 2.0
+        }
+      },
+      "error": null,
+      "validation_errors": []
+    }
+  },
+  "search_scenarios": {
+    "empty_query": {
+      "status_code": 200,
+      "success": true,
+      "response_data": {
+        "status": "success",
+        "query": "",
+        "query_intent": {
+          "primary_intent": "visual",
+          "visual_keywords": [],
+          "audio_keywords": [],
+          "emotion_keywords": [],
+          "scene_keywords": [],
+          "action_keywords": [],
+          "technical_keywords": []
+        },
+        "search_modes": [
+          "semantic",
+          "transcription",
+          "visual"
+        ],
+        "weights": {
+          "semantic": 0.4,
+          "transcription": 0.3,
+          "visual": 0.3
+        },
+        "results": [],
+        "total_matches": 0,
+        "individual_results": {
+          "semantic": 0,
+          "transcription": 0,
+          "visual": 0
+        }
+      }
+    },
+    "invalid_beat_id": {
+      "status_code": 200,
+      "success": true,
+      "response_data": {
+        "results": [],
+        "total_matches": 0,
+        "search_time": 0.0012352466583251953
+      }
+    },
+    "large_limit": null
+  },
+  "summary": {
+    "total_endpoints": 6,
+    "successful_endpoints": 6,
+    "failed_endpoints": 0,
+    "server_running": true
+  }
+}
