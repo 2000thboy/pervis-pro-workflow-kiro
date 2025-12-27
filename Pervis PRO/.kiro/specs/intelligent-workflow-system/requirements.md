@@ -87,35 +87,3 @@
 3. WHEN 处理步骤失败 THEN 智能工作流系统 SHALL 记录错误日志并提供重试或跳过选项
 4. WHEN 用户取消操作 THEN 智能工作流系统 SHALL 安全停止当前处理并清理临时文件
 5. WHEN 系统空闲时 THEN 智能工作流系统 SHALL 显示就绪状态和下一步操作建议
-
-## 部署（Deployment）
-
-### MCP（Model Context Protocol）
-
-#### 安装与运行方式
-
-- MCP 以开发/运维工具链形式接入项目，通过项目根目录的 `.mcp.json` 声明 MCP Server 列表与启动参数。
-- MCP Server 采用 `npx` 拉起，不需要将 MCP 依赖写入项目运行时依赖。
-
-#### 安装目录结构（规范）
-
-```
-Pervis PRO/
-├── .mcp.json
-├── backend/
-├── frontend/
-└── logs/
-    └── mcp/
-```
-
-#### 关键配置摘要
-
-- MCP 配置文件：`.mcp.json`
-- MCP Server 启动器：`npx`
-- 需要提供的密钥类环境变量（按启用的 Server 配置）：`NEON_API_KEY`、`SUPABASE_ACCESS_TOKEN`、`SUPABASE_PROJECT_REF`、`FIGMA_ACCESS_TOKEN`、`CONTEXT7_API_KEY`、`REF_API_KEY`、`API_KEY`、`EDGEONE_PAGES_API_TOKEN`、`EDGEONE_PAGES_PROJECT_NAME`、`SEMGREP_APP_TOKEN`
-
-#### 监控与告警（最小要求）
-
-- 必须监控 MCP Server 进程存活（退出即告警）
-- 必须收集标准输出/错误输出到 `logs/mcp/`
-- 必须对连续启动失败（例如 3 次/5 分钟）触发告警

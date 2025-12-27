@@ -9,18 +9,25 @@ Feature: multi-agent-workflow-core
 - 视觉元素管理
 - 设计建议生成
 - 风格参考管理
+- LLM 集成：视觉标签生成、参考资料分类（0-Fix.3）
 """
 import asyncio
 import logging
+import sys
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, TYPE_CHECKING
 from uuid import uuid4
 
 from app.agents.base_agent import BaseAgent
 from app.core.agent_types import AgentType
 from app.core.message_bus import MessageBus
+
+# 类型检查时导入，运行时延迟加载
+if TYPE_CHECKING:
+    from services.agent_llm_adapter import AgentLLMAdapter
 
 
 class DesignCategory(str, Enum):
@@ -146,6 +153,7 @@ class ArtAgent(BaseAgent):
     - 视觉元素管理
     - 设计建议生成
     - 风格参考管理
+    - LLM 集成：视觉标签生成、参考资料分类（0-Fix.3）
     """
     
     def __init__(
@@ -166,10 +174,36 @@ class ArtAgent(BaseAgent):
         self._color_palettes: Dict[str, ColorPalette] = {}
         self._style_references: Dict[str, StyleReference] = {}
         self._suggestions: Dict[str, DesignSuggestion] = {}
+        
+        # LLM 适配器（延迟加载）
+        self._llm_adapter: Optional["AgentLLMAdapter"] = None
     
     async def _on_initialize(self) -> None:
         """初始化美术Agent"""
         self._logger.info("美术Agent初始化完成")
+    
+    def _get_llm_adapter(self) -> Optional["AgentLLMAdapter"]:
+        """
+        延迟加载 LLM 适配器
+        
+        Returns:
+            AgentLLMAdapter 实例，如果加载失败返回 None
+        """
+        if self._llm_adapter is None:
+            try:
+                # 添加 Pervis PRO 后端路径
+                pervis_backend = Path(__file__).parent.parent.parent.parent.parent / "Pervis PRO" / "backend"
+                if str(pervis_backend) not in sys.path:
+                    sys.path.insert(0, str(pervis_backend))
+                
+                from services.agent_llm_adapter import get_agent_llm_adapter
+                self._llm_adapter = get_agent_llm_adapter()
+                self._logger.info("ArtAgent LLM 适配器加载成功")
+            except ImportError as e:
+                self._logger.warning(f"无法加载 LLM 适配器: {e}")
+            except Exception as e:
+                self._logger.error(f"LLM 适配器初始化失败: {e}")
+        return self._llm_adapter
     
     async def _on_start(self) -> None:
         """启动美术Agent"""
@@ -583,6 +617,233 @@ class ArtAgent(BaseAgent):
             ref for ref in self._style_references.values()
             if ref.style_type == style_type
         ]
+    
+    # ========================================================================
+    # LLM 集成方法（0-Fix.3）
+    # ========================================================================
+    
+    async def generate_visual_tags(
+        self,
+        description: str,
+        file_type: str = "image"
+    ) -> Dict[str, Any]:
+        """
+        使用 LLM 生成视觉标签
+        
+        Args:
+            description: 内容描述或文件名
+            file_type: 文件类型（image, video, document）
+        
+        Returns:
+            包含视觉标签的字典：
+            {
+                "scene_type": "室内/室外/城市/自然",
+                "time": "白天/夜晚/黄昏/黎明",
+                "shot_type": "全景/中景/特写/过肩",
+                "mood": "紧张/浪漫/悲伤/欢乐/悬疑",
+                "action": "对话/追逐/打斗/静态",
+                "characters": "单人/双人/群戏/无人",
+                "free_tags": ["自由标签1", "自由标签2"],
+                "summary": "一句话描述",
+                "source": "llm/rule"
+            }
+        """
+        adapter = self._get_llm_adapter()
+        
+        if adapter:
+            try:
+                response = await adapter.generate_visual_tags(description, file_type)
+                if response.success and response.parsed_data:
+                    result = response.parsed_data
+                    result["source"] = "llm"
+                    self._logger.info(f"LLM 生成视觉标签成功: {description[:30]}...")
+                    return result
+                else:
+                    self._logger.warning(f"LLM 生成视觉标签失败: {response.error_message}")
+            except Exception as e:
+                self._logger.error(f"LLM 调用异常: {e}")
+        
+        # 回退：基于规则生成标签
+        return self._generate_visual_tags_by_rule(description, file_type)
+    
+    def _generate_visual_tags_by_rule(
+        self,
+        description: str,
+        file_type: str
+    ) -> Dict[str, Any]:
+        """
+        基于规则生成视觉标签（回退方案）
+        
+        Args:
+            description: 内容描述
+            file_type: 文件类型
+        
+        Returns:
+            基于规则生成的标签
+        """
+        desc_lower = description.lower()
+        
+        # 场景类型检测
+        scene_type = "未知"
+        if any(kw in desc_lower for kw in ["室内", "房间", "办公室", "indoor", "room"]):
+            scene_type = "室内"
+        elif any(kw in desc_lower for kw in ["室外", "街道", "公园", "outdoor", "street"]):
+            scene_type = "室外"
+        elif any(kw in desc_lower for kw in ["城市", "都市", "city", "urban"]):
+            scene_type = "城市"
+        elif any(kw in desc_lower for kw in ["自然", "森林", "山", "nature", "forest"]):
+            scene_type = "自然"
+        
+        # 时间检测
+        time = "未知"
+        if any(kw in desc_lower for kw in ["白天", "日间", "day", "morning"]):
+            time = "白天"
+        elif any(kw in desc_lower for kw in ["夜晚", "夜间", "night", "evening"]):
+            time = "夜晚"
+        elif any(kw in desc_lower for kw in ["黄昏", "日落", "sunset", "dusk"]):
+            time = "黄昏"
+        elif any(kw in desc_lower for kw in ["黎明", "日出", "dawn", "sunrise"]):
+            time = "黎明"
+        
+        # 镜头类型检测
+        shot_type = "中景"
+        if any(kw in desc_lower for kw in ["全景", "远景", "wide", "establishing"]):
+            shot_type = "全景"
+        elif any(kw in desc_lower for kw in ["特写", "close", "closeup"]):
+            shot_type = "特写"
+        elif any(kw in desc_lower for kw in ["过肩", "over shoulder"]):
+            shot_type = "过肩"
+        
+        # 情绪检测
+        mood = "中性"
+        if any(kw in desc_lower for kw in ["紧张", "悬疑", "tense", "suspense"]):
+            mood = "紧张"
+        elif any(kw in desc_lower for kw in ["浪漫", "温馨", "romantic", "warm"]):
+            mood = "浪漫"
+        elif any(kw in desc_lower for kw in ["悲伤", "忧郁", "sad", "melancholy"]):
+            mood = "悲伤"
+        elif any(kw in desc_lower for kw in ["欢乐", "喜悦", "happy", "joyful"]):
+            mood = "欢乐"
+        
+        return {
+            "scene_type": scene_type,
+            "time": time,
+            "shot_type": shot_type,
+            "mood": mood,
+            "action": "静态",
+            "characters": "未知",
+            "free_tags": [],
+            "summary": description[:50] if len(description) > 50 else description,
+            "source": "rule"
+        }
+    
+    async def classify_reference(
+        self,
+        filename: str,
+        file_type: str = "image",
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        使用 LLM 分类参考资料
+        
+        Args:
+            filename: 文件名
+            file_type: 文件类型（image, video, document）
+            metadata: 文件元数据
+        
+        Returns:
+            分类结果：
+            {
+                "category": "character/scene/reference",
+                "confidence": 0.9,
+                "reason": "分类理由",
+                "suggested_tags": ["标签1", "标签2"],
+                "source": "llm/rule"
+            }
+        """
+        adapter = self._get_llm_adapter()
+        
+        if adapter:
+            try:
+                response = await adapter.classify_file(filename, file_type, metadata)
+                if response.success and response.parsed_data:
+                    result = response.parsed_data
+                    result["source"] = "llm"
+                    self._logger.info(f"LLM 分类成功: {filename} -> {result.get('category')}")
+                    return result
+                else:
+                    self._logger.warning(f"LLM 分类失败: {response.error_message}")
+            except Exception as e:
+                self._logger.error(f"LLM 调用异常: {e}")
+        
+        # 回退：基于规则分类
+        return self._classify_reference_by_rule(filename, file_type, metadata)
+    
+    def _classify_reference_by_rule(
+        self,
+        filename: str,
+        file_type: str,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        基于规则分类参考资料（回退方案）
+        
+        Args:
+            filename: 文件名
+            file_type: 文件类型
+            metadata: 文件元数据
+        
+        Returns:
+            基于规则的分类结果
+        """
+        filename_lower = filename.lower()
+        
+        # 角色相关关键词
+        character_keywords = [
+            "角色", "人物", "character", "char", "人设",
+            "portrait", "头像", "avatar", "actor", "演员",
+            "costume", "服装", "造型"
+        ]
+        
+        # 场景相关关键词
+        scene_keywords = [
+            "场景", "scene", "环境", "environment", "背景",
+            "background", "location", "地点", "布景", "set",
+            "landscape", "风景", "建筑", "building"
+        ]
+        
+        # 检测分类
+        category = "reference"  # 默认放入参考界面
+        confidence = 0.5
+        reason = "无法确定分类，放入参考界面等待用户手动分类"
+        suggested_tags = []
+        
+        if any(kw in filename_lower for kw in character_keywords):
+            category = "character"
+            confidence = 0.7
+            reason = "文件名包含角色相关关键词"
+            suggested_tags = ["角色参考"]
+        elif any(kw in filename_lower for kw in scene_keywords):
+            category = "scene"
+            confidence = 0.7
+            reason = "文件名包含场景相关关键词"
+            suggested_tags = ["场景参考"]
+        
+        # 如果有元数据，尝试进一步分析
+        if metadata:
+            if metadata.get("has_face", False):
+                category = "character"
+                confidence = 0.8
+                reason = "检测到人脸"
+                suggested_tags.append("人物")
+        
+        return {
+            "category": category,
+            "confidence": confidence,
+            "reason": reason,
+            "suggested_tags": suggested_tags,
+            "source": "rule"
+        }
     
     # ========================================================================
     # 消息处理器

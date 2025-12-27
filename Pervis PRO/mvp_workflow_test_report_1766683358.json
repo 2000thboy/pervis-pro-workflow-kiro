@@ -1,0 +1,451 @@
+{
+  "test_time": "2025-12-26T01:22:32.732659",
+  "project_id": "test_1766683352",
+  "phases": {
+    "load_assets": {
+      "status": "passed",
+      "total_assets": 300
+    },
+    "project_wizard": {
+      "status": "passed",
+      "steps": {
+        "parse": {
+          "scenes": 7,
+          "characters": 10
+        },
+        "logline": "炭治郎与伙伴们深入蜘蛛山，对抗强大鬼怪，最终在水之呼吸与义勇剑术的完美配合下，击败了最终敌人。",
+        "review": {
+          "status": "approved",
+          "passed_checks": [
+            "内容不为空",
+            "字数合理（47）"
+          ]
+        }
+      }
+    },
+    "beatboard": {
+      "status": "passed",
+      "scenes": [
+        {
+          "scene_id": "s01",
+          "heading": "EXT. 蜘蛛山入口 - 黄昏",
+          "candidates": [
+            {
+              "asset_id": "asset_000121",
+              "score": 4.5,
+              "tags": [
+                "森林"
+              ]
+            }
+          ],
+          "match_count": 1
+        },
+        {
+          "scene_id": "s02",
+          "heading": "INT. 蜘蛛山森林 - 夜",
+          "candidates": [
+            {
+              "asset_id": "asset_000121",
+              "score": 8.5,
+              "tags": [
+                "夜晚",
+                "森林"
+              ]
+            },
+            {
+              "asset_id": "asset_000007",
+              "score": 4.5,
+              "tags": [
+                "蜘蛛鬼",
+                "那田蜘蛛山"
+              ]
+            },
+            {
+              "asset_id": "asset_000117",
+              "score": 4.5,
+              "tags": [
+                "蜘蛛鬼",
+                "那田蜘蛛山"
+              ]
+            },
+            {
+              "asset_id": "asset_000227",
+              "score": 4.5,
+              "tags": [
+                "那田蜘蛛山",
+                "蜘蛛鬼"
+              ]
+            },
+            {
+              "asset_id": "asset_000127",
+              "score": 4,
+              "tags": [
+                "夜晚"
+              ]
+            }
+          ],
+          "match_count": 29
+        },
+        {
+          "scene_id": "s03",
+          "heading": "善逸霹雳一闪",
+          "candidates": [
+            {
+              "asset_id": "asset_000042",
+              "score": 9.0,
+              "tags": [
+                "雷之呼吸",
+                "霹雳一闪",
+                "善逸"
+              ]
+            },
+            {
+              "asset_id": "asset_000028",
+              "score": 8.5,
+              "tags": [
+                "雷之呼吸",
+                "霹雳一闪",
+                "善逸"
+              ]
+            },
+            {
+              "asset_id": "asset_000077",
+              "score": 8.5,
+              "tags": [
+                "雷之呼吸",
+                "霹雳一闪",
+                "善逸"
+              ]
+            },
+            {
+              "asset_id": "asset_000117",
+              "score": 8.5,
+              "tags": [
+                "雷之呼吸",
+                "霹雳一闪",
+                "善逸"
+              ]
+            },
+            {
+              "asset_id": "asset_000153",
+              "score": 8.5,
+              "tags": [
+                "雷之呼吸",
+                "霹雳一闪",
+                "善逸"
+              ]
+            }
+          ],
+          "match_count": 9
+        },
+        {
+          "scene_id": "s04",
+          "heading": "炭治郎水之呼吸",
+          "candidates": [
+            {
+              "asset_id": "asset_000077",
+              "score": 8.5,
+              "tags": [
+                "炭治郎",
+                "水之呼吸",
+                "睡眠战斗"
+              ]
+            },
+            {
+              "asset_id": "asset_000291",
+              "score": 8.5,
+              "tags": [
+                "炭治郎",
+                "水之呼吸",
+                "斩击"
+              ]
+            },
+            {
+              "asset_id": "asset_000018",
+              "score": 6.5,
+              "tags": [
+                "炭治郎",
+                "水之呼吸"
+              ]
+            },
+            {
+              "asset_id": "asset_000029",
+              "score": 6.5,
+              "tags": [
+                "炭治郎",
+                "水之呼吸"
+              ]
+            },
+            {
+              "asset_id": "asset_000054",
+              "score": 6.5,
+              "tags": [
+                "炭治郎",
+                "水之呼吸"
+              ]
+            }
+          ],
+          "match_count": 49
+        },
+        {
+          "scene_id": "s05",
+          "heading": "义勇斩杀蜘蛛",
+          "candidates": [
+            {
+              "asset_id": "asset_000007",
+              "score": 9.5,
+              "tags": [
+                "义勇",
+                "蜘蛛鬼",
+                "水之呼吸"
+              ]
+            },
+            {
+              "asset_id": "asset_000117",
+              "score": 6.5,
+              "tags": [
+                "蜘蛛鬼",
+                "斩击",
+                "那田蜘蛛山"
+              ]
+            },
+            {
+              "asset_id": "asset_000227",
+              "score": 6.5,
+              "tags": [
+                "水之呼吸",
+                "那田蜘蛛山",
+                "蜘蛛鬼"
+              ]
+            },
+            {
+              "asset_id": "asset_000291",
+              "score": 4,
+              "tags": [
+                "水之呼吸",
+                "斩击"
+              ]
+            },
+            {
+              "asset_id": "asset_000131",
+              "score": 2.5,
+              "tags": [
+                "水之呼吸"
+              ]
+            }
+          ],
+          "match_count": 21
+        },
+        {
+          "scene_id": "s06",
+          "heading": "弥豆子血鬼术",
+          "candidates": [
+            {
+              "asset_id": "asset_000111",
+              "score": 5,
+              "tags": [
+                "热血",
+                "弥豆子"
+              ]
+            },
+            {
+              "asset_id": "asset_000234",
+              "score": 5,
+              "tags": [
+                "热血",
+                "弥豆子"
+              ]
+            },
+            {
+              "asset_id": "asset_000114",
+              "score": 4,
+              "tags": [
+                "弥豆子"
+              ]
+            },
+            {
+              "asset_id": "asset_000047",
+              "score": 2.5,
+              "tags": [
+                "火之呼吸，血鬼术"
+              ]
+            },
+            {
+              "asset_id": "asset_000012",
+              "score": 1,
+              "tags": [
+                "热血"
+              ]
+            }
+          ],
+          "match_count": 26
+        },
+        {
+          "scene_id": "s07",
+          "heading": "最终决战",
+          "candidates": [
+            {
+              "asset_id": "asset_000012",
+              "score": 6.5,
+              "tags": [
+                "战斗",
+                "攻击"
+              ]
+            },
+            {
+              "asset_id": "asset_000014",
+              "score": 6.5,
+              "tags": [
+                "战斗",
+                "攻击"
+              ]
+            },
+            {
+              "asset_id": "asset_000043",
+              "score": 6.5,
+              "tags": [
+                "战斗",
+                "攻击"
+              ]
+            },
+            {
+              "asset_id": "asset_000044",
+              "score": 6.5,
+              "tags": [
+                "战斗",
+                "攻击"
+              ]
+            },
+            {
+              "asset_id": "asset_000050",
+              "score": 6.5,
+              "tags": [
+                "战斗",
+                "攻击"
+              ]
+            }
+          ],
+          "match_count": 35
+        }
+      ],
+      "total_matched": 170,
+      "scenes_with_match": 7
+    },
+    "preview_mode": {
+      "status": "passed",
+      "timeline": [
+        {
+          "scene_id": "s01",
+          "heading": "EXT. 蜘蛛山入口 - 黄昏",
+          "start_time": 0.0,
+          "duration": 15,
+          "end_time": 15.0,
+          "asset": {
+            "asset_id": "asset_000121",
+            "score": 4.5,
+            "tags": [
+              "森林"
+            ]
+          }
+        },
+        {
+          "scene_id": "s02",
+          "heading": "INT. 蜘蛛山森林 - 夜",
+          "start_time": 15.0,
+          "duration": 20,
+          "end_time": 35.0,
+          "asset": {
+            "asset_id": "asset_000121",
+            "score": 8.5,
+            "tags": [
+              "夜晚",
+              "森林"
+            ]
+          }
+        },
+        {
+          "scene_id": "s03",
+          "heading": "善逸霹雳一闪",
+          "start_time": 35.0,
+          "duration": 10,
+          "end_time": 45.0,
+          "asset": {
+            "asset_id": "asset_000042",
+            "score": 9.0,
+            "tags": [
+              "雷之呼吸",
+              "霹雳一闪",
+              "善逸"
+            ]
+          }
+        },
+        {
+          "scene_id": "s04",
+          "heading": "炭治郎水之呼吸",
+          "start_time": 45.0,
+          "duration": 15,
+          "end_time": 60.0,
+          "asset": {
+            "asset_id": "asset_000077",
+            "score": 8.5,
+            "tags": [
+              "炭治郎",
+              "水之呼吸",
+              "睡眠战斗"
+            ]
+          }
+        },
+        {
+          "scene_id": "s05",
+          "heading": "义勇斩杀蜘蛛",
+          "start_time": 60.0,
+          "duration": 10,
+          "end_time": 70.0,
+          "asset": {
+            "asset_id": "asset_000007",
+            "score": 9.5,
+            "tags": [
+              "义勇",
+              "蜘蛛鬼",
+              "水之呼吸"
+            ]
+          }
+        },
+        {
+          "scene_id": "s06",
+          "heading": "弥豆子血鬼术",
+          "start_time": 70.0,
+          "duration": 12,
+          "end_time": 82.0,
+          "asset": {
+            "asset_id": "asset_000111",
+            "score": 5,
+            "tags": [
+              "热血",
+              "弥豆子"
+            ]
+          }
+        },
+        {
+          "scene_id": "s07",
+          "heading": "最终决战",
+          "start_time": 82.0,
+          "duration": 20,
+          "end_time": 102.0,
+          "asset": {
+            "asset_id": "asset_000012",
+            "score": 6.5,
+            "tags": [
+              "战斗",
+              "攻击"
+            ]
+          }
+        }
+      ],
+      "total_duration": 102.0,
+      "total_clips": 7,
+      "clips_with_assets": 7
+    }
+  },
+  "success": true
+}

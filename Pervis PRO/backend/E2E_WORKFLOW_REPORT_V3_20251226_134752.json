@@ -1,0 +1,97 @@
+{
+  "project_id": "e2e-test-20251226134614",
+  "script_title": "城市边缘",
+  "total_time_seconds": 98.14854788780212,
+  "stages": [
+    {
+      "name": "1",
+      "description": "AI 剧本解析",
+      "status": "completed",
+      "duration_ms": 12.32004165649414,
+      "result_summary": "{'scenes': [{'scene_id': 'scene_71d951d9', 'scene_number': 1, 'heading': '场景：老旧街区 - 黄昏', 'location': '老旧街区', 'time_of_day': '黄昏', 'int_ext': '', 'description': '', 'action': '林晓背着相机走在空旷的街道上，镜头捕捉着斑驳的墙壁",
+      "error": null
+    },
+    {
+      "name": "2",
+      "description": "AI 角色分析",
+      "status": "completed",
+      "duration_ms": 42803.529500961304,
+      "result_summary": "{'characters_analyzed': 4}",
+      "error": null
+    },
+    {
+      "name": "3",
+      "description": "AI 场次分析",
+      "status": "completed",
+      "duration_ms": 26891.64113998413,
+      "result_summary": "{'scenes_analyzed': 5, 'total_duration_seconds': 300}",
+      "error": null
+    },
+    {
+      "name": "4",
+      "description": "导演审核",
+      "status": "completed",
+      "duration_ms": 0.6520748138427734,
+      "result_summary": "{'status': 'approved', 'passed_checks': ['内容不为空'], 'failed_checks': [], 'suggestions': [], 'reason': '审核通过', 'confidence': 0.9}",
+      "error": null
+    },
+    {
+      "name": "5",
+      "description": "市场分析",
+      "status": "completed",
+      "duration_ms": 18207.02052116394,
+      "result_summary": "{'analysis_id': 'mkt_385a5c127aa3', 'project_id': 'e2e-test-20251226134614', 'audience': {'primary_age_range': '18-35', 'gender_distribution': '均衡', 'interests': [], 'viewing_habits': [], 'platforms':",
+      "error": null
+    },
+    {
+      "name": "6",
+      "description": "版本管理",
+      "status": "completed",
+      "duration_ms": 1.706838607788086,
+      "result_summary": "{'script_version': {'version_id': 'ver_0d8528039d67', 'version_name': 'script_城市边缘_v1', 'version_number': 1, 'content_type': 'script', 'entity_id': None, 'entity_name': '城市边缘', 'content': {'scenes': [",
+      "error": null
+    },
+    {
+      "name": "7",
+      "description": "系统校验",
+      "status": "completed",
+      "duration_ms": 9733.60538482666,
+      "result_summary": "{'result': \"ValidationResult(validation_id='val_6cd2320d7c74', project_id='e2e-test-20251226134614', is_valid=False, issues=[ValidationIssue(issue_id='req_bf4bade7', severity='error', category='conten",
+      "error": null
+    },
+    {
+      "name": "8",
+      "description": "素材库搜索召回",
+      "status": "completed",
+      "duration_ms": 187.45970726013184,
+      "result_summary": "{'libraries_used': 2, 'scenes_searched': 5, 'total_matches': 15}",
+      "error": null
+    },
+    {
+      "name": "9",
+      "description": "时间轴生成",
+      "status": "completed",
+      "duration_ms": 174.99423027038574,
+      "result_summary": "{'timeline_id': 'e75f36c3-393d-406d-b29b-4f08f592511f', 'clips_created': 10, 'total_duration': 300}",
+      "error": null
+    },
+    {
+      "name": "10",
+      "description": "粗剪渲染输出",
+      "status": "completed",
+      "duration_ms": 134.60278511047363,
+      "result_summary": "{'render_task_id': 'a1a9d419-db18-48b5-86a9-988e2c2bda28', 'output_path': 'exports\\\\rough_cut_e2e-test-20251226134614.mp4', 'ffmpeg_available': False}",
+      "error": null
+    }
+  ],
+  "summary": {
+    "completed": 10,
+    "failed": 0,
+    "total": 10
+  },
+  "output": {
+    "timeline_id": "e75f36c3-393d-406d-b29b-4f08f592511f",
+    "output_path": "exports\\rough_cut_e2e-test-20251226134614.mp4"
+  },
+  "timestamp": "2025-12-26T13:47:52.956524"
+}

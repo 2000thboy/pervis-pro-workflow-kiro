@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-12-26T01:08:55.952941",
+  "asset_root": "U:\\PreVis_Assets",
+  "stats": {
+    "total_files": 200,
+    "indexed": 107,
+    "tagged": 107,
+    "embedded": 0,
+    "failed": 0,
+    "elapsed_seconds": 0.799067,
+    "rate": 133.9061680685099
+  },
+  "config": {
+    "use_llm": false,
+    "use_embedding": false,
+    "llm_model": "qwen2.5:7b",
+    "embedding_model": "nomic-embed-text"
+  }
+}

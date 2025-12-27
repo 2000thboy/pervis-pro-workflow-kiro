@@ -1,0 +1,119 @@
+{
+  "test_time": "2025-12-26T10:45:46.017531",
+  "script_info": {
+    "title": "最后的咖啡",
+    "type": "剧情短片",
+    "estimated_duration": "10分钟",
+    "characters": [
+      "李明",
+      "小雨",
+      "老张"
+    ],
+    "scenes": 6
+  },
+  "steps": [
+    {
+      "step": "剧本解析",
+      "status": "❌ 失败",
+      "timestamp": "2025-12-26T10:45:46.035891",
+      "data": {},
+      "error": "object ScriptParseResult can't be used in 'await' expression"
+    },
+    {
+      "step": "角色分析",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T10:45:46.035891",
+      "data": {
+        "character_bios": {},
+        "character_tags": {}
+      },
+      "error": null
+    },
+    {
+      "step": "场次分析",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T10:45:46.036899",
+      "data": {
+        "scenes": [],
+        "total_duration_seconds": 0,
+        "total_duration_minutes": 0.0
+      },
+      "error": null
+    },
+    {
+      "step": "导演审核",
+      "status": "❌ 失败",
+      "timestamp": "2025-12-26T10:45:46.036899",
+      "data": {},
+      "error": "DirectorAgentService.review() got an unexpected keyword argument 'content_type'"
+    },
+    {
+      "step": "市场分析",
+      "status": "❌ 失败",
+      "timestamp": "2025-12-26T10:45:46.038927",
+      "data": {},
+      "error": "MarketAgentService.analyze_market() missing 1 required positional argument: 'project_data'"
+    },
+    {
+      "step": "版本管理",
+      "status": "❌ 失败",
+      "timestamp": "2025-12-26T10:45:46.040939",
+      "data": {},
+      "error": "object ContentVersion can't be used in 'await' expression"
+    },
+    {
+      "step": "系统校验",
+      "status": "❌ 失败",
+      "timestamp": "2025-12-26T10:45:46.276054",
+      "data": {},
+      "error": "SystemAgentService.validate_before_export() missing 1 required positional argument: 'project_data'"
+    },
+    {
+      "step": "素材召回",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T10:45:46.276054",
+      "data": {
+        "recall_results": [],
+        "total_scenes_processed": 0
+      },
+      "error": null
+    },
+    {
+      "step": "导出准备",
+      "status": "❌ 失败",
+      "timestamp": "2025-12-26T10:45:46.994240",
+      "data": {},
+      "error": "DocumentExporter.__init__() missing 1 required positional argument: 'db'"
+    }
+  ],
+  "outputs": {
+    "parse": {},
+    "characters": {
+      "character_bios": {},
+      "character_tags": {}
+    },
+    "scenes": {
+      "scenes": [],
+      "total_duration_seconds": 0,
+      "total_duration_minutes": 0.0
+    },
+    "review": {},
+    "market": {},
+    "version": {},
+    "validation": {},
+    "recall": {
+      "recall_results": [],
+      "total_scenes_processed": 0
+    },
+    "export": {}
+  },
+  "errors": [
+    "剧本解析: object ScriptParseResult can't be used in 'await' expression",
+    "导演审核: DirectorAgentService.review() got an unexpected keyword argument 'content_type'",
+    "市场分析: MarketAgentService.analyze_market() missing 1 required positional argument: 'project_data'",
+    "版本管理: object ContentVersion can't be used in 'await' expression",
+    "系统校验: SystemAgentService.validate_before_export() missing 1 required positional argument: 'project_data'",
+    "导出准备: DocumentExporter.__init__() missing 1 required positional argument: 'db'"
+  ],
+  "summary": {}
+}

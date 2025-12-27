@@ -1,26 +1,42 @@
+﻿# -*- coding: utf-8 -*-
 """
 编剧Agent (ScriptAgent) - 处理剧本相关任务
 
-Feature: multi-agent-workflow-core
+Feature: multi-agent-workflow-core, pervis-project-wizard
 验证需求: Requirements 3.2 - 剧本时长评估和分析功能
+         Requirements 5.1 - Agent 协作内容生成
 
 主要功能:
 - 剧本时长评估
 - 剧本结构分析
 - 场景分解
 - 对话分析
+- [NEW] Logline 生成（LLM）
+- [NEW] Synopsis 生成（LLM）
+- [NEW] 人物小传生成（LLM）
 """
 import asyncio
+import json
+import logging
 import re
+import sys
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
 from app.agents.base_agent import BaseAgent
 from app.core.agent_types import AgentType
 from app.core.message_bus import MessageBus
+
+# 添加 Pervis PRO 路径以导入 AgentLLMAdapter
+_pervis_pro_path = Path(__file__).parent.parent.parent.parent.parent / "Pervis PRO" / "backend"
+if str(_pervis_pro_path) not in sys.path:
+    sys.path.insert(0, str(_pervis_pro_path))
+
+logger = logging.getLogger(__name__)
 
 
 class SceneType(str, Enum):
@@ -143,13 +159,46 @@ class ScriptAnalysisResult:
 
 
 # 场景标题正则表达式
+# 匹配格式: INT. LOCATION - TIME 或 EXT. LOCATION - TIME
 SCENE_HEADING_PATTERN = re.compile(
-    r'^(INT\.|EXT\.|INT/EXT\.|I/E\.)\s*(.+?)\s*[-–—]\s*(DAY|NIGHT|DAWN|DUSK|CONTINUOUS|LATER|MOMENTS LATER)?',
+    r'^(INT\.|EXT\.|INT/EXT\.|I/E\.)\s*(.+?)\s*[-–—]\s*(DAY|NIGHT|DAWN|DUSK|CONTINUOUS|LATER|MOMENTS LATER)?\s*$',
     re.IGNORECASE
 )
 
 # 角色名正则表达式 (全大写)
 CHARACTER_PATTERN = re.compile(r'^([A-Z][A-Z\s\.\-\']+)(\s*\(.*\))?$')
+
+
+# ========== LLM 生成结果数据类 ==========
+
+@dataclass
+class LoglineResult:
+    """Logline 生成结果"""
+    logline: str
+    confidence: float = 0.8
+    generated_at: datetime = field(default_factory=datetime.now)
+
+
+@dataclass
+class SynopsisResult:
+    """Synopsis 生成结果"""
+    synopsis: str
+    word_count: int = 0
+    key_plot_points: List[str] = field(default_factory=list)
+    generated_at: datetime = field(default_factory=datetime.now)
+
+
+@dataclass
+class CharacterBioResult:
+    """人物小传生成结果"""
+    name: str
+    bio: str
+    appearance: str = ""
+    personality: List[str] = field(default_factory=list)
+    motivation: str = ""
+    relationships: List[str] = field(default_factory=list)
+    tags: Dict[str, str] = field(default_factory=dict)
+    generated_at: datetime = field(default_factory=datetime.now)
 
 
 class ScriptAgent(BaseAgent):
@@ -161,6 +210,7 @@ class ScriptAgent(BaseAgent):
     - 剧本结构分析
     - 场景分解
     - 对话分析
+    - LLM 内容生成（Logline, Synopsis, 人物小传）
     """
     
     def __init__(
@@ -175,7 +225,20 @@ class ScriptAgent(BaseAgent):
         )
         self._scripts: Dict[str, Script] = {}
         self._analysis_cache: Dict[str, ScriptAnalysisResult] = {}
-        self._logger = __import__('logging').getLogger(__name__)
+        self._llm_adapter = None  # 延迟加载
+        self._logger = logging.getLogger(__name__)
+    
+    def _get_llm_adapter(self):
+        """延迟加载 LLM 适配器"""
+        if self._llm_adapter is None:
+            try:
+                from services.agent_llm_adapter import get_agent_llm_adapter
+                self._llm_adapter = get_agent_llm_adapter()
+                self._logger.info("Script_Agent: LLM 适配器加载成功")
+            except ImportError as e:
+                self._logger.warning(f"Script_Agent: LLM 适配器加载失败: {e}")
+                self._llm_adapter = None
+        return self._llm_adapter
     
     async def _on_initialize(self) -> None:
         """初始化编剧Agent"""
@@ -208,15 +271,15 @@ class ScriptAgent(BaseAgent):
             elif action == "get_scene":
                 return await self._handle_get_scene(content)
         
-        return {"error": f"未知操作"}
+        return {"error": "未知操作"}
     
     async def handle_protocol_message(self, message) -> Optional[Any]:
         """处理协议消息 - 实现抽象方法"""
-        # 从协议消息中提取数据
         if hasattr(message, 'payload') and hasattr(message.payload, 'data'):
             data = message.payload.data
             return await self.handle_message(data)
         return None
+
     
     async def _handle_parse_script(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """处理剧本解析请求"""
@@ -280,7 +343,6 @@ class ScriptAgent(BaseAgent):
             }
         }
 
-    
     async def parse_script(
         self,
         content: str,
@@ -404,6 +466,7 @@ class ScriptAgent(BaseAgent):
         self._scripts[script_id] = script
         
         return script
+
     
     def _parse_scene_type(self, prefix: str) -> SceneType:
         """解析场景类型"""
@@ -543,6 +606,7 @@ class ScriptAgent(BaseAgent):
         self._analysis_cache[script_id] = result
         
         return result
+
     
     def _calculate_pacing_score(self, script: Script) -> float:
         """计算节奏评分"""
@@ -633,3 +697,196 @@ class ScriptAgent(BaseAgent):
     def get_analysis(self, script_id: str) -> Optional[ScriptAnalysisResult]:
         """获取缓存的分析结果"""
         return self._analysis_cache.get(script_id)
+
+
+    # ========== LLM 生成方法 (0-Fix.2) ==========
+    
+    async def generate_logline(self, script_content: str) -> LoglineResult:
+        """
+        使用 LLM 生成 Logline（一句话概括）
+        
+        Args:
+            script_content: 剧本内容
+        
+        Returns:
+            LoglineResult 对象
+        
+        Requirements: 5.1 - Logline 生成
+        """
+        adapter = self._get_llm_adapter()
+        
+        if adapter is None:
+            # 回退到简单的规则生成
+            self._logger.warning("LLM 适配器不可用，使用规则生成 Logline")
+            return self._generate_logline_fallback(script_content)
+        
+        try:
+            response = await adapter.generate_logline(script_content)
+            
+            if response.success and response.parsed_data:
+                data = response.parsed_data
+                return LoglineResult(
+                    logline=data.get("logline", ""),
+                    confidence=data.get("confidence", 0.8)
+                )
+            else:
+                self._logger.warning(f"LLM 生成 Logline 失败: {response.error_message}")
+                return self._generate_logline_fallback(script_content)
+                
+        except Exception as e:
+            self._logger.error(f"generate_logline 异常: {e}")
+            return self._generate_logline_fallback(script_content)
+    
+    def _generate_logline_fallback(self, script_content: str) -> LoglineResult:
+        """Logline 回退生成（无 LLM 时使用）"""
+        # 提取第一个场景的描述作为简单 Logline
+        lines = script_content.strip().split('\n')[:20]
+        first_action = ""
+        for line in lines:
+            line = line.strip()
+            if line and not SCENE_HEADING_PATTERN.match(line) and not CHARACTER_PATTERN.match(line):
+                first_action = line[:100]
+                break
+        
+        return LoglineResult(
+            logline=first_action or "一个关于冒险与发现的故事。",
+            confidence=0.3
+        )
+    
+    async def generate_synopsis(self, script_content: str) -> SynopsisResult:
+        """
+        使用 LLM 生成 Synopsis（故事概要）
+        
+        Args:
+            script_content: 剧本内容
+        
+        Returns:
+            SynopsisResult 对象
+        
+        Requirements: 5.1 - Synopsis 生成
+        """
+        adapter = self._get_llm_adapter()
+        
+        if adapter is None:
+            self._logger.warning("LLM 适配器不可用，使用规则生成 Synopsis")
+            return self._generate_synopsis_fallback(script_content)
+        
+        try:
+            response = await adapter.generate_synopsis(script_content)
+            
+            if response.success and response.parsed_data:
+                data = response.parsed_data
+                return SynopsisResult(
+                    synopsis=data.get("synopsis", ""),
+                    word_count=data.get("word_count", 0),
+                    key_plot_points=data.get("key_plot_points", [])
+                )
+            else:
+                self._logger.warning(f"LLM 生成 Synopsis 失败: {response.error_message}")
+                return self._generate_synopsis_fallback(script_content)
+                
+        except Exception as e:
+            self._logger.error(f"generate_synopsis 异常: {e}")
+            return self._generate_synopsis_fallback(script_content)
+    
+    def _generate_synopsis_fallback(self, script_content: str) -> SynopsisResult:
+        """Synopsis 回退生成（无 LLM 时使用）"""
+        # 提取所有场景标题作为简单概要
+        lines = script_content.strip().split('\n')
+        scene_headings = []
+        for line in lines:
+            line = line.strip()
+            if SCENE_HEADING_PATTERN.match(line):
+                scene_headings.append(line)
+        
+        synopsis = "故事发生在以下场景中：\n" + "\n".join(scene_headings[:10])
+        
+        return SynopsisResult(
+            synopsis=synopsis,
+            word_count=len(synopsis),
+            key_plot_points=scene_headings[:5]
+        )
+    
+    async def generate_character_bio(
+        self,
+        character_name: str,
+        script_content: str,
+        existing_info: Optional[Dict[str, Any]] = None
+    ) -> CharacterBioResult:
+        """
+        使用 LLM 生成人物小传
+        
+        Args:
+            character_name: 角色名称
+            script_content: 剧本内容
+            existing_info: 已有的角色信息
+        
+        Returns:
+            CharacterBioResult 对象
+        
+        Requirements: 5.1 - 人物小传生成
+        """
+        adapter = self._get_llm_adapter()
+        
+        if adapter is None:
+            self._logger.warning("LLM 适配器不可用，使用规则生成人物小传")
+            return self._generate_character_bio_fallback(character_name, script_content)
+        
+        try:
+            response = await adapter.generate_character_bio(
+                character_name, 
+                script_content,
+                existing_info
+            )
+            
+            if response.success and response.parsed_data:
+                data = response.parsed_data
+                return CharacterBioResult(
+                    name=data.get("name", character_name),
+                    bio=data.get("bio", ""),
+                    appearance=data.get("appearance", ""),
+                    personality=data.get("personality", []),
+                    motivation=data.get("motivation", ""),
+                    relationships=data.get("relationships", []),
+                    tags=data.get("tags", {})
+                )
+            else:
+                self._logger.warning(f"LLM 生成人物小传失败: {response.error_message}")
+                return self._generate_character_bio_fallback(character_name, script_content)
+                
+        except Exception as e:
+            self._logger.error(f"generate_character_bio 异常: {e}")
+            return self._generate_character_bio_fallback(character_name, script_content)
+    
+    def _generate_character_bio_fallback(
+        self,
+        character_name: str,
+        script_content: str
+    ) -> CharacterBioResult:
+        """人物小传回退生成（无 LLM 时使用）"""
+        # 统计角色出现次数和对话
+        lines = script_content.strip().split('\n')
+        dialogue_count = 0
+        sample_dialogues = []
+        
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if CHARACTER_PATTERN.match(line) and character_name.upper() in line.upper():
+                dialogue_count += 1
+                # 获取下一行作为对话样本
+                if i + 1 < len(lines) and len(sample_dialogues) < 3:
+                    next_line = lines[i + 1].strip()
+                    if next_line and not SCENE_HEADING_PATTERN.match(next_line):
+                        sample_dialogues.append(next_line[:50])
+        
+        role_type = "主角" if dialogue_count > 10 else ("配角" if dialogue_count > 3 else "龙套")
+        
+        return CharacterBioResult(
+            name=character_name,
+            bio=f"{character_name} 是故事中的{role_type}，共有 {dialogue_count} 段对话。",
+            appearance="待补充",
+            personality=["待分析"],
+            motivation="待分析",
+            relationships=[],
+            tags={"role_type": role_type, "dialogue_count": str(dialogue_count)}
+        )

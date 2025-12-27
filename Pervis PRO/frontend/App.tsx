@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ScriptIngestion } from './ScriptIngestion';
+import { ProjectWizard } from './components/ProjectWizard';
 import { Project, Beat, WorkflowStage, SceneGroup, ProjectSpecs, Character } from './types';
 import { useLanguage } from './components/LanguageContext';
 import { api } from './services/api';
@@ -38,6 +39,9 @@ import { StepTimeline } from './components/StepTimeline';
 import { StepLibrary } from './components/StepLibrary';
 import { SettingsModal } from './components/SettingsModal';
 import { AdminConsole } from './components/AdminConsole';
+
+// System Agent
+import { SystemAgentProvider, SystemAgentUI, NotificationToast } from './components/SystemAgent';
 
 // --- Landing Page Components ---
 
@@ -230,6 +234,7 @@ function App() {
 
     // UI Modal States
     const [showIngestion, setShowIngestion] = useState(false);
+    const [showWizard, setShowWizard] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [showAdmin, setShowAdmin] = useState(false);
     const [projectListOpen, setProjectListOpen] = useState(false);
@@ -389,7 +394,7 @@ function App() {
         if (!project) {
             return (
                 <LandingPage
-                    onStart={() => setShowIngestion(true)}
+                    onStart={() => setShowWizard(true)}
                     recentProjects={recentProjects}
                     onOpenProject={handleOpenProject}
                     onDeleteProject={handleDeleteProject}
@@ -413,6 +418,7 @@ function App() {
                     <StepBeatBoard
                         scenes={getScenes()}
                         beats={project.beats}
+                        projectId={project.id}
                         onUpdateBeat={(updatedBeat) => {
                             const newBeats = project.beats.map(b => b.id === updatedBeat.id ? updatedBeat : b);
                             updateBeats(newBeats);
@@ -457,7 +463,7 @@ function App() {
         return (
             <div className="flex h-screen w-full bg-zinc-950 font-sans">
                 <LandingPage
-                    onStart={() => setShowIngestion(true)}
+                    onStart={() => setShowWizard(true)}
                     recentProjects={recentProjects}
                     onOpenProject={handleOpenProject}
                     onDeleteProject={handleDeleteProject}
@@ -469,6 +475,29 @@ function App() {
                         onClose={() => setShowIngestion(false)}
                     />
                 )}
+                {showWizard && (
+                    <ProjectWizard
+                        onClose={() => setShowWizard(false)}
+                        onComplete={async (projectId) => {
+                            setShowWizard(false);
+                            // 刷新项目列表并自动打开新创建的项目
+                            await refreshProjects();
+                            // 获取新创建的项目并打开
+                            try {
+                                const newProject = await api.getProject(projectId);
+                                if (newProject) {
+                                    setProject(newProject);
+                                    setCurrentStage(newProject.currentStage || WorkflowStage.ANALYSIS);
+                                }
+                            } catch (e) {
+                                console.error('加载新项目失败:', e);
+                            }
+                        }}
+                    />
+                )}
+                {/* System Agent UI */}
+                <SystemAgentUI />
+                <NotificationToast />
             </div>
         );
     }
@@ -646,10 +675,43 @@ function App() {
                     onClose={() => setShowIngestion(false)}
                 />
             )}
+            {showWizard && (
+                <ProjectWizard
+                    onClose={() => setShowWizard(false)}
+                    onComplete={async (projectId) => {
+                        setShowWizard(false);
+                        // 刷新项目列表并自动打开新创建的项目
+                        await refreshProjects();
+                        // 获取新创建的项目并打开
+                        try {
+                            const newProject = await api.getProject(projectId);
+                            if (newProject) {
+                                setProject(newProject);
+                                setCurrentStage(newProject.currentStage || WorkflowStage.ANALYSIS);
+                            }
+                        } catch (e) {
+                            console.error('加载新项目失败:', e);
+                        }
+                    }}
+                />
+            )}
             {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
             {showAdmin && <AdminConsole onClose={() => setShowAdmin(false)} />}
+            
+            {/* System Agent UI */}
+            <SystemAgentUI />
+            <NotificationToast />
         </div>
     );
 }
 
-export default App;
+// 包装 App 组件以提供 SystemAgentProvider
+function AppWithProviders() {
+    return (
+        <SystemAgentProvider>
+            <App />
+        </SystemAgentProvider>
+    );
+}
+
+export default AppWithProviders;

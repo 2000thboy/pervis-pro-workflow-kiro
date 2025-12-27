@@ -1,0 +1,1402 @@
+{
+  "test_time": "2025-12-26T12:21:18.833780",
+  "script_info": {
+    "title": "最后的咖啡",
+    "type": "剧情短片",
+    "estimated_duration": "10分钟",
+    "characters": [
+      "李明",
+      "小雨",
+      "老张"
+    ],
+    "scenes": 6
+  },
+  "steps": [
+    {
+      "step": "剧本解析",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:21:23.085452",
+      "data": {
+        "parse_result": {
+          "scenes": [
+            {
+              "scene_id": "scene_3487afab",
+              "scene_number": 1,
+              "heading": "场景：咖啡馆内 - 日",
+              "location": "咖啡馆内",
+              "time_of_day": "日",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：上午10点 咖啡馆内，阳光透过落地窗洒进来。小雨正在吧台后面擦拭咖啡杯。门铃响起，老张推门而入。 小雨开始制作咖啡。门铃再次响起，李明走进来，脸色有些苍白。 李明走到老张对面坐下，两人开始闲聊。",
+              "dialogue": [
+                {
+                  "character": "老张",
+                  "text": "小雨啊，今天李明怎么没来？"
+                },
+                {
+                  "character": "小雨",
+                  "text": "张叔，他最近工作忙，可能晚点来。您还是老样子？"
+                },
+                {
+                  "character": "老张",
+                  "text": "对，一杯美式，少糖。（坐到靠窗的老位置）"
+                },
+                {
+                  "character": "李明",
+                  "text": "老婆，张叔。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "你脸色不太好，昨晚又加班了？"
+                },
+                {
+                  "character": "李明",
+                  "text": "没事，就是有点累。给我来杯拿铁。"
+                }
+              ],
+              "characters": [
+                "老张",
+                "小雨",
+                "李明"
+              ],
+              "estimated_duration": 25.0
+            },
+            {
+              "scene_id": "scene_77a51369",
+              "scene_number": 2,
+              "heading": "场景：医院走廊 - 日",
+              "location": "医院走廊",
+              "time_of_day": "日",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：下午2点 医院走廊，李明独自坐在长椅上，手里攥着一份检查报告。他的眼眶微红。 一位护士经过，李明连忙收起报告，假装看手机。 护士离开后，李明深吸一口气，站起来走向电梯。",
+              "dialogue": [
+                {
+                  "character": "李明",
+                  "text": "三个月...只有三个月..."
+                },
+                {
+                  "character": "护士",
+                  "text": "先生，您还好吗？"
+                },
+                {
+                  "character": "李明",
+                  "text": "没事，谢谢。"
+                }
+              ],
+              "characters": [
+                "李明",
+                "护士"
+              ],
+              "estimated_duration": 16.2
+            },
+            {
+              "scene_id": "scene_66de49bd",
+              "scene_number": 3,
+              "heading": "场景：咖啡馆内 - 夜",
+              "location": "咖啡馆内",
+              "time_of_day": "夜",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：晚上8点 咖啡馆已经打烊，只剩下小雨在收拾。李明推门进来。 小雨看着李明的眼睛，似乎察觉到什么，但没有追问。",
+              "dialogue": [
+                {
+                  "character": "小雨",
+                  "text": "你怎么这么晚？我给你留了晚饭。"
+                },
+                {
+                  "character": "李明",
+                  "text": "老婆，我想跟你说件事。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "怎么了？"
+                },
+                {
+                  "character": "李明",
+                  "text": "我...我想辞职，陪你一起经营咖啡馆。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "真的？你不是一直说工作很重要吗？"
+                },
+                {
+                  "character": "李明",
+                  "text": "我想通了，有些事情比工作更重要。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "好，我等你很久了。"
+                }
+              ],
+              "characters": [
+                "小雨",
+                "李明"
+              ],
+              "estimated_duration": 23.2
+            },
+            {
+              "scene_id": "scene_9846595f",
+              "scene_number": 4,
+              "heading": "场景：咖啡馆内 - 日",
+              "location": "咖啡馆内",
+              "time_of_day": "日",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：一个月后，上午 咖啡馆内，李明穿着围裙在学习拉花。老张在一旁喝咖啡看着。 李明若有所思地点点头。小雨从后厨端出一盘点心。",
+              "dialogue": [
+                {
+                  "character": "老张",
+                  "text": "小李啊，你这拉花进步很快嘛。"
+                },
+                {
+                  "character": "李明",
+                  "text": "张叔过奖了，还差得远呢。"
+                },
+                {
+                  "character": "老张",
+                  "text": "我看你最近气色好多了，辞职是对的。"
+                },
+                {
+                  "character": "李明",
+                  "text": "张叔，您说人这一辈子，什么最重要？"
+                },
+                {
+                  "character": "老张",
+                  "text": "年轻时我会说事业，现在嘛...（看向窗外）能和爱的人在一起，做喜欢的事，就够了。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "尝尝我新研发的提拉米苏。"
+                },
+                {
+                  "character": "李明",
+                  "text": "好吃！老婆你太厉害了。"
+                }
+              ],
+              "characters": [
+                "老张",
+                "李明",
+                "小雨"
+              ],
+              "estimated_duration": 23.8
+            },
+            {
+              "scene_id": "scene_e069201b",
+              "scene_number": 5,
+              "heading": "场景：医院病房 - 日",
+              "location": "医院病房",
+              "time_of_day": "日",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：两个月后 病房内，李明躺在床上，小雨坐在床边握着他的手。老张站在窗边。",
+              "dialogue": [
+                {
+                  "character": "小雨",
+                  "text": "你为什么不早点告诉我？"
+                },
+                {
+                  "character": "李明",
+                  "text": "我不想让你担心。这两个月，是我人生中最幸福的时光。"
+                },
+                {
+                  "character": "老张",
+                  "text": "小李，你小子..."
+                },
+                {
+                  "character": "李明",
+                  "text": "张叔，谢谢您一直陪着我们。（对小雨）老婆，咖啡馆就交给你了。记得，美式少糖是张叔的最爱。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "你别说了..."
+                },
+                {
+                  "character": "李明",
+                  "text": "答应我，要好好的。"
+                }
+              ],
+              "characters": [
+                "小雨",
+                "李明",
+                "老张"
+              ],
+              "estimated_duration": 18.8
+            },
+            {
+              "scene_id": "scene_760faf5e",
+              "scene_number": 6,
+              "heading": "场景：咖啡馆内 - 日",
+              "location": "咖啡馆内",
+              "time_of_day": "日",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：三个月后 咖啡馆内，阳光依旧。小雨在吧台后面，墙上多了一张李明的照片。门铃响起，老张走进来。 小雨开始制作咖啡，动作熟练而温柔。 小雨端着咖啡走向老张，咖啡上是一个完美的爱心拉花。 镜头缓缓拉远，阳光洒满整个咖啡馆。 【完】",
+              "dialogue": [
+                {
+                  "character": "老张",
+                  "text": "小雨，还是老样子。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "好的，张叔。美式，少糖。"
+                },
+                {
+                  "character": "老张",
+                  "text": "小李那小子，拉花学得挺快的。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "是啊，他说要给每个客人都拉一个爱心。"
+                },
+                {
+                  "character": "小雨",
+                  "text": "张叔，这杯是李明教我的。"
+                },
+                {
+                  "character": "老张",
+                  "text": "好喝，真好喝。"
+                }
+              ],
+              "characters": [
+                "老张",
+                "小雨"
+              ],
+              "estimated_duration": 26.5
+            }
+          ],
+          "characters": [
+            {
+              "character_id": "char_6de31c13",
+              "name": "老张",
+              "dialogue_count": 9,
+              "first_appearance": 1,
+              "scenes": [
+                1,
+                4,
+                5,
+                6
+              ],
+              "bio": "",
+              "tags": {}
+            },
+            {
+              "character_id": "char_e98d65f2",
+              "name": "小雨",
+              "dialogue_count": 12,
+              "first_appearance": 1,
+              "scenes": [
+                1,
+                3,
+                4,
+                5,
+                6
+              ],
+              "bio": "",
+              "tags": {}
+            },
+            {
+              "character_id": "char_4dffb23d",
+              "name": "李明",
+              "dialogue_count": 13,
+              "first_appearance": 1,
+              "scenes": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "bio": "",
+              "tags": {}
+            },
+            {
+              "character_id": "char_d683793a",
+              "name": "护士",
+              "dialogue_count": 1,
+              "first_appearance": 2,
+              "scenes": [
+                2
+              ],
+              "bio": "",
+              "tags": {}
+            }
+          ],
+          "total_scenes": 6,
+          "total_characters": 4,
+          "estimated_duration": 133.5,
+          "logline": "",
+          "synopsis": ""
+        },
+        "logline": "一个程序员在得知自己身患绝症后，选择辞职陪伴妻子经营咖啡馆，在生命最后的时光里找到了真正的幸福。",
+        "synopsis": {
+          "synopsis": "李明是一个35岁的程序员，在得知自己只有三个月生命后，决定辞职陪伴妻子小雨经营咖啡馆..."
+        }
+      },
+      "error": null
+    },
+    {
+      "step": "角色分析",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:21:35.343108",
+      "data": {
+        "character_bios": {
+          "老张": {
+            "bio": "老张是剧中重要角色"
+          },
+          "小雨": {
+            "bio": "小雨是剧中重要角色"
+          },
+          "李明": {
+            "bio": "李明是剧中重要角色"
+          }
+        },
+        "character_tags": {
+          "老张": {
+            "gender": "未知",
+            "age_range": "成年",
+            "role_type": "主角"
+          },
+          "小雨": {
+            "gender": "未知",
+            "age_range": "成年",
+            "role_type": "主角"
+          },
+          "李明": {
+            "gender": "未知",
+            "age_range": "成年",
+            "role_type": "主角"
+          }
+        }
+      },
+      "error": null
+    },
+    {
+      "step": "场次分析",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:21:47.597689",
+      "data": {
+        "scenes": [
+          {
+            "scene_number": 1,
+            "location": "咖啡馆内",
+            "time": "日",
+            "estimated_duration": 25.0,
+            "characters": [
+              "老张",
+              "小雨",
+              "李明"
+            ],
+            "dialogue_count": 6
+          },
+          {
+            "scene_number": 2,
+            "location": "医院走廊",
+            "time": "日",
+            "estimated_duration": 16.2,
+            "characters": [
+              "李明",
+              "护士"
+            ],
+            "dialogue_count": 3
+          },
+          {
+            "scene_number": 3,
+            "location": "咖啡馆内",
+            "time": "夜",
+            "estimated_duration": 23.2,
+            "characters": [
+              "小雨",
+              "李明"
+            ],
+            "dialogue_count": 7
+          },
+          {
+            "scene_number": 4,
+            "location": "咖啡馆内",
+            "time": "日",
+            "estimated_duration": 23.8,
+            "characters": [
+              "老张",
+              "李明",
+              "小雨"
+            ],
+            "dialogue_count": 7
+          },
+          {
+            "scene_number": 5,
+            "location": "医院病房",
+            "time": "日",
+            "estimated_duration": 18.8,
+            "characters": [
+              "小雨",
+              "李明",
+              "老张"
+            ],
+            "dialogue_count": 6
+          },
+          {
+            "scene_number": 6,
+            "location": "咖啡馆内",
+            "time": "日",
+            "estimated_duration": 26.5,
+            "characters": [
+              "老张",
+              "小雨"
+            ],
+            "dialogue_count": 6
+          }
+        ],
+        "total_duration_seconds": 133.5,
+        "total_duration_minutes": 2.2
+      },
+      "error": null
+    },
+    {
+      "step": "导演审核",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:21:47.598463",
+      "data": {
+        "logline_review": {
+          "status": "approved",
+          "passed_checks": [
+            "内容不为空",
+            "字数合理（48）"
+          ],
+          "failed_checks": [],
+          "suggestions": [],
+          "reason": "审核通过",
+          "confidence": 0.9
+        },
+        "synopsis_review": {
+          "status": "rejected",
+          "passed_checks": [
+            "内容不为空"
+          ],
+          "failed_checks": [
+            "内容过短（45 < 100）"
+          ],
+          "suggestions": [],
+          "reason": "规则校验未通过",
+          "confidence": 0.9
+        }
+      },
+      "error": null
+    },
+    {
+      "step": "市场分析",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:21:49.637496",
+      "data": {
+        "analysis_id": "mkt_f80e1a3037fd",
+        "project_id": "test_project",
+        "audience": {
+          "primary_age_range": "18-35",
+          "gender_distribution": "均衡",
+          "interests": [
+            "独立电影",
+            "艺术片",
+            "电影节"
+          ],
+          "viewing_habits": [
+            "流媒体",
+            "电影节",
+            "短视频平台"
+          ],
+          "platforms": [
+            "YouTube",
+            "Vimeo",
+            "B站",
+            "电影节"
+          ]
+        },
+        "market_position": "独立短片市场，面向电影爱好者和专业观众",
+        "competitors": [],
+        "distribution_channels": [
+          "电影节投递",
+          "流媒体平台",
+          "社交媒体推广"
+        ],
+        "marketing_suggestions": [
+          "参加国内外短片电影节",
+          "在 B站/YouTube 发布预告片",
+          "建立社交媒体账号进行宣传"
+        ],
+        "risk_factors": [
+          "市场竞争激烈",
+          "观众注意力分散",
+          "宣发预算有限"
+        ],
+        "opportunities": [
+          "新媒体平台降低发行门槛",
+          "垂直领域受众精准",
+          "口碑传播效应"
+        ],
+        "estimated_budget_range": "",
+        "confidence": 0.5,
+        "is_dynamic": false,
+        "created_at": "2025-12-26T12:21:49.637496"
+      },
+      "error": null
+    },
+    {
+      "step": "版本管理",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:21:49.640149",
+      "data": {
+        "version_info": {
+          "version_id": "ver_8e8a6b244f72",
+          "version_name": "Logline_v1",
+          "version_number": 1,
+          "content_type": "logline",
+          "entity_id": null,
+          "entity_name": null,
+          "content": "一个程序员在得知自己身患绝症后，选择辞职陪伴妻子经营咖啡馆，在生命最后的时光里找到了真正的幸福。",
+          "source": "script_agent",
+          "status": "draft",
+          "created_at": "2025-12-26T12:21:49.639133",
+          "created_by": "system"
+        },
+        "decision": {
+          "decision_id": "dec_bd82b0435ca5",
+          "project_id": "test_project",
+          "decision_type": "approve",
+          "target_type": "version",
+          "target_id": "ver_8e8a6b244f72",
+          "previous_value": null,
+          "new_value": null,
+          "reason": "",
+          "created_at": "2025-12-26T12:21:49.640149"
+        },
+        "display_info": {
+          "current_version": "Logline_v1",
+          "version_count": 1,
+          "last_modified": "2025-12-26T12:21:49.639133"
+        }
+      },
+      "error": null
+    },
+    {
+      "step": "系统校验",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:22:08.692795",
+      "data": {
+        "validation": {
+          "validation_id": "val_8904079c1900",
+          "project_id": "test_project",
+          "is_valid": false,
+          "issues": [
+            {
+              "issue_id": "api_bf5bb7f9",
+              "severity": "error",
+              "category": "api",
+              "message": "API 不可用: /api/health",
+              "field": null,
+              "suggestion": "请检查后端服务是否正常运行"
+            },
+            {
+              "issue_id": "api_5950e2e2",
+              "severity": "error",
+              "category": "api",
+              "message": "API 不可用: /api/wizard/health",
+              "field": null,
+              "suggestion": "请检查后端服务是否正常运行"
+            },
+            {
+              "issue_id": "api_3c194fc6",
+              "severity": "error",
+              "category": "api",
+              "message": "API 不可用: /api/projects",
+              "field": null,
+              "suggestion": "请检查后端服务是否正常运行"
+            }
+          ],
+          "tag_consistency": {
+            "is_consistent": true,
+            "conflicts": [],
+            "suggestions": []
+          },
+          "api_health": [
+            {
+              "endpoint": "/api/health",
+              "status": "unhealthy",
+              "response_time_ms": 2345.7690000000002,
+              "error": null
+            },
+            {
+              "endpoint": "/api/wizard/health",
+              "status": "unhealthy",
+              "response_time_ms": 3667.3619999999996,
+              "error": null
+            },
+            {
+              "endpoint": "/api/projects",
+              "status": "unhealthy",
+              "response_time_ms": 3362.384,
+              "error": null
+            }
+          ],
+          "error_count": 3,
+          "warning_count": 0,
+          "created_at": "2025-12-26T12:21:49.796115"
+        },
+        "tag_consistency": {
+          "is_consistent": true,
+          "conflicts": [],
+          "suggestions": []
+        },
+        "api_health": [
+          {
+            "endpoint": "/api/health",
+            "status": "unhealthy",
+            "response_time_ms": 2352.782,
+            "error": null
+          },
+          {
+            "endpoint": "/api/wizard/health",
+            "status": "unhealthy",
+            "response_time_ms": 2403.72,
+            "error": null
+          },
+          {
+            "endpoint": "/api/projects",
+            "status": "unhealthy",
+            "response_time_ms": 3542.931,
+            "error": null
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "step": "素材召回",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:22:10.153215",
+      "data": {
+        "recall_results": [
+          {
+            "scene_id": "scene_1",
+            "candidates": [],
+            "total_searched": 0,
+            "has_match": false,
+            "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+          },
+          {
+            "scene_id": "scene_2",
+            "candidates": [],
+            "total_searched": 0,
+            "has_match": false,
+            "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+          },
+          {
+            "scene_id": "scene_3",
+            "candidates": [],
+            "total_searched": 0,
+            "has_match": false,
+            "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+          }
+        ],
+        "total_scenes_processed": 3
+      },
+      "error": null
+    },
+    {
+      "step": "导出准备",
+      "status": "✅ 通过",
+      "timestamp": "2025-12-26T12:22:10.568254",
+      "data": {
+        "document_export": {
+          "available": true,
+          "formats": [
+            "DOCX",
+            "PDF",
+            "Markdown"
+          ]
+        },
+        "nle_export": {
+          "available": true,
+          "formats": [
+            "FCPXML",
+            "EDL"
+          ]
+        },
+        "image_export": {
+          "available": true,
+          "formats": [
+            "PNG",
+            "JPG"
+          ]
+        }
+      },
+      "error": null
+    }
+  ],
+  "outputs": {
+    "parse": {
+      "parse_result": {
+        "scenes": [
+          {
+            "scene_id": "scene_3487afab",
+            "scene_number": 1,
+            "heading": "场景：咖啡馆内 - 日",
+            "location": "咖啡馆内",
+            "time_of_day": "日",
+            "int_ext": "",
+            "description": "",
+            "action": "时间：上午10点 咖啡馆内，阳光透过落地窗洒进来。小雨正在吧台后面擦拭咖啡杯。门铃响起，老张推门而入。 小雨开始制作咖啡。门铃再次响起，李明走进来，脸色有些苍白。 李明走到老张对面坐下，两人开始闲聊。",
+            "dialogue": [
+              {
+                "character": "老张",
+                "text": "小雨啊，今天李明怎么没来？"
+              },
+              {
+                "character": "小雨",
+                "text": "张叔，他最近工作忙，可能晚点来。您还是老样子？"
+              },
+              {
+                "character": "老张",
+                "text": "对，一杯美式，少糖。（坐到靠窗的老位置）"
+              },
+              {
+                "character": "李明",
+                "text": "老婆，张叔。"
+              },
+              {
+                "character": "小雨",
+                "text": "你脸色不太好，昨晚又加班了？"
+              },
+              {
+                "character": "李明",
+                "text": "没事，就是有点累。给我来杯拿铁。"
+              }
+            ],
+            "characters": [
+              "老张",
+              "小雨",
+              "李明"
+            ],
+            "estimated_duration": 25.0
+          },
+          {
+            "scene_id": "scene_77a51369",
+            "scene_number": 2,
+            "heading": "场景：医院走廊 - 日",
+            "location": "医院走廊",
+            "time_of_day": "日",
+            "int_ext": "",
+            "description": "",
+            "action": "时间：下午2点 医院走廊，李明独自坐在长椅上，手里攥着一份检查报告。他的眼眶微红。 一位护士经过，李明连忙收起报告，假装看手机。 护士离开后，李明深吸一口气，站起来走向电梯。",
+            "dialogue": [
+              {
+                "character": "李明",
+                "text": "三个月...只有三个月..."
+              },
+              {
+                "character": "护士",
+                "text": "先生，您还好吗？"
+              },
+              {
+                "character": "李明",
+                "text": "没事，谢谢。"
+              }
+            ],
+            "characters": [
+              "李明",
+              "护士"
+            ],
+            "estimated_duration": 16.2
+          },
+          {
+            "scene_id": "scene_66de49bd",
+            "scene_number": 3,
+            "heading": "场景：咖啡馆内 - 夜",
+            "location": "咖啡馆内",
+            "time_of_day": "夜",
+            "int_ext": "",
+            "description": "",
+            "action": "时间：晚上8点 咖啡馆已经打烊，只剩下小雨在收拾。李明推门进来。 小雨看着李明的眼睛，似乎察觉到什么，但没有追问。",
+            "dialogue": [
+              {
+                "character": "小雨",
+                "text": "你怎么这么晚？我给你留了晚饭。"
+              },
+              {
+                "character": "李明",
+                "text": "老婆，我想跟你说件事。"
+              },
+              {
+                "character": "小雨",
+                "text": "怎么了？"
+              },
+              {
+                "character": "李明",
+                "text": "我...我想辞职，陪你一起经营咖啡馆。"
+              },
+              {
+                "character": "小雨",
+                "text": "真的？你不是一直说工作很重要吗？"
+              },
+              {
+                "character": "李明",
+                "text": "我想通了，有些事情比工作更重要。"
+              },
+              {
+                "character": "小雨",
+                "text": "好，我等你很久了。"
+              }
+            ],
+            "characters": [
+              "小雨",
+              "李明"
+            ],
+            "estimated_duration": 23.2
+          },
+          {
+            "scene_id": "scene_9846595f",
+            "scene_number": 4,
+            "heading": "场景：咖啡馆内 - 日",
+            "location": "咖啡馆内",
+            "time_of_day": "日",
+            "int_ext": "",
+            "description": "",
+            "action": "时间：一个月后，上午 咖啡馆内，李明穿着围裙在学习拉花。老张在一旁喝咖啡看着。 李明若有所思地点点头。小雨从后厨端出一盘点心。",
+            "dialogue": [
+              {
+                "character": "老张",
+                "text": "小李啊，你这拉花进步很快嘛。"
+              },
+              {
+                "character": "李明",
+                "text": "张叔过奖了，还差得远呢。"
+              },
+              {
+                "character": "老张",
+                "text": "我看你最近气色好多了，辞职是对的。"
+              },
+              {
+                "character": "李明",
+                "text": "张叔，您说人这一辈子，什么最重要？"
+              },
+              {
+                "character": "老张",
+                "text": "年轻时我会说事业，现在嘛...（看向窗外）能和爱的人在一起，做喜欢的事，就够了。"
+              },
+              {
+                "character": "小雨",
+                "text": "尝尝我新研发的提拉米苏。"
+              },
+              {
+                "character": "李明",
+                "text": "好吃！老婆你太厉害了。"
+              }
+            ],
+            "characters": [
+              "老张",
+              "李明",
+              "小雨"
+            ],
+            "estimated_duration": 23.8
+          },
+          {
+            "scene_id": "scene_e069201b",
+            "scene_number": 5,
+            "heading": "场景：医院病房 - 日",
+            "location": "医院病房",
+            "time_of_day": "日",
+            "int_ext": "",
+            "description": "",
+            "action": "时间：两个月后 病房内，李明躺在床上，小雨坐在床边握着他的手。老张站在窗边。",
+            "dialogue": [
+              {
+                "character": "小雨",
+                "text": "你为什么不早点告诉我？"
+              },
+              {
+                "character": "李明",
+                "text": "我不想让你担心。这两个月，是我人生中最幸福的时光。"
+              },
+              {
+                "character": "老张",
+                "text": "小李，你小子..."
+              },
+              {
+                "character": "李明",
+                "text": "张叔，谢谢您一直陪着我们。（对小雨）老婆，咖啡馆就交给你了。记得，美式少糖是张叔的最爱。"
+              },
+              {
+                "character": "小雨",
+                "text": "你别说了..."
+              },
+              {
+                "character": "李明",
+                "text": "答应我，要好好的。"
+              }
+            ],
+            "characters": [
+              "小雨",
+              "李明",
+              "老张"
+            ],
+            "estimated_duration": 18.8
+          },
+          {
+            "scene_id": "scene_760faf5e",
+            "scene_number": 6,
+            "heading": "场景：咖啡馆内 - 日",
+            "location": "咖啡馆内",
+            "time_of_day": "日",
+            "int_ext": "",
+            "description": "",
+            "action": "时间：三个月后 咖啡馆内，阳光依旧。小雨在吧台后面，墙上多了一张李明的照片。门铃响起，老张走进来。 小雨开始制作咖啡，动作熟练而温柔。 小雨端着咖啡走向老张，咖啡上是一个完美的爱心拉花。 镜头缓缓拉远，阳光洒满整个咖啡馆。 【完】",
+            "dialogue": [
+              {
+                "character": "老张",
+                "text": "小雨，还是老样子。"
+              },
+              {
+                "character": "小雨",
+                "text": "好的，张叔。美式，少糖。"
+              },
+              {
+                "character": "老张",
+                "text": "小李那小子，拉花学得挺快的。"
+              },
+              {
+                "character": "小雨",
+                "text": "是啊，他说要给每个客人都拉一个爱心。"
+              },
+              {
+                "character": "小雨",
+                "text": "张叔，这杯是李明教我的。"
+              },
+              {
+                "character": "老张",
+                "text": "好喝，真好喝。"
+              }
+            ],
+            "characters": [
+              "老张",
+              "小雨"
+            ],
+            "estimated_duration": 26.5
+          }
+        ],
+        "characters": [
+          {
+            "character_id": "char_6de31c13",
+            "name": "老张",
+            "dialogue_count": 9,
+            "first_appearance": 1,
+            "scenes": [
+              1,
+              4,
+              5,
+              6
+            ],
+            "bio": "",
+            "tags": {}
+          },
+          {
+            "character_id": "char_e98d65f2",
+            "name": "小雨",
+            "dialogue_count": 12,
+            "first_appearance": 1,
+            "scenes": [
+              1,
+              3,
+              4,
+              5,
+              6
+            ],
+            "bio": "",
+            "tags": {}
+          },
+          {
+            "character_id": "char_4dffb23d",
+            "name": "李明",
+            "dialogue_count": 13,
+            "first_appearance": 1,
+            "scenes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "bio": "",
+            "tags": {}
+          },
+          {
+            "character_id": "char_d683793a",
+            "name": "护士",
+            "dialogue_count": 1,
+            "first_appearance": 2,
+            "scenes": [
+              2
+            ],
+            "bio": "",
+            "tags": {}
+          }
+        ],
+        "total_scenes": 6,
+        "total_characters": 4,
+        "estimated_duration": 133.5,
+        "logline": "",
+        "synopsis": ""
+      },
+      "logline": "一个程序员在得知自己身患绝症后，选择辞职陪伴妻子经营咖啡馆，在生命最后的时光里找到了真正的幸福。",
+      "synopsis": {
+        "synopsis": "李明是一个35岁的程序员，在得知自己只有三个月生命后，决定辞职陪伴妻子小雨经营咖啡馆..."
+      }
+    },
+    "characters": {
+      "character_bios": {
+        "老张": {
+          "bio": "老张是剧中重要角色"
+        },
+        "小雨": {
+          "bio": "小雨是剧中重要角色"
+        },
+        "李明": {
+          "bio": "李明是剧中重要角色"
+        }
+      },
+      "character_tags": {
+        "老张": {
+          "gender": "未知",
+          "age_range": "成年",
+          "role_type": "主角"
+        },
+        "小雨": {
+          "gender": "未知",
+          "age_range": "成年",
+          "role_type": "主角"
+        },
+        "李明": {
+          "gender": "未知",
+          "age_range": "成年",
+          "role_type": "主角"
+        }
+      }
+    },
+    "scenes": {
+      "scenes": [
+        {
+          "scene_number": 1,
+          "location": "咖啡馆内",
+          "time": "日",
+          "estimated_duration": 25.0,
+          "characters": [
+            "老张",
+            "小雨",
+            "李明"
+          ],
+          "dialogue_count": 6
+        },
+        {
+          "scene_number": 2,
+          "location": "医院走廊",
+          "time": "日",
+          "estimated_duration": 16.2,
+          "characters": [
+            "李明",
+            "护士"
+          ],
+          "dialogue_count": 3
+        },
+        {
+          "scene_number": 3,
+          "location": "咖啡馆内",
+          "time": "夜",
+          "estimated_duration": 23.2,
+          "characters": [
+            "小雨",
+            "李明"
+          ],
+          "dialogue_count": 7
+        },
+        {
+          "scene_number": 4,
+          "location": "咖啡馆内",
+          "time": "日",
+          "estimated_duration": 23.8,
+          "characters": [
+            "老张",
+            "李明",
+            "小雨"
+          ],
+          "dialogue_count": 7
+        },
+        {
+          "scene_number": 5,
+          "location": "医院病房",
+          "time": "日",
+          "estimated_duration": 18.8,
+          "characters": [
+            "小雨",
+            "李明",
+            "老张"
+          ],
+          "dialogue_count": 6
+        },
+        {
+          "scene_number": 6,
+          "location": "咖啡馆内",
+          "time": "日",
+          "estimated_duration": 26.5,
+          "characters": [
+            "老张",
+            "小雨"
+          ],
+          "dialogue_count": 6
+        }
+      ],
+      "total_duration_seconds": 133.5,
+      "total_duration_minutes": 2.2
+    },
+    "review": {
+      "logline_review": {
+        "status": "approved",
+        "passed_checks": [
+          "内容不为空",
+          "字数合理（48）"
+        ],
+        "failed_checks": [],
+        "suggestions": [],
+        "reason": "审核通过",
+        "confidence": 0.9
+      },
+      "synopsis_review": {
+        "status": "rejected",
+        "passed_checks": [
+          "内容不为空"
+        ],
+        "failed_checks": [
+          "内容过短（45 < 100）"
+        ],
+        "suggestions": [],
+        "reason": "规则校验未通过",
+        "confidence": 0.9
+      }
+    },
+    "market": {
+      "analysis_id": "mkt_f80e1a3037fd",
+      "project_id": "test_project",
+      "audience": {
+        "primary_age_range": "18-35",
+        "gender_distribution": "均衡",
+        "interests": [
+          "独立电影",
+          "艺术片",
+          "电影节"
+        ],
+        "viewing_habits": [
+          "流媒体",
+          "电影节",
+          "短视频平台"
+        ],
+        "platforms": [
+          "YouTube",
+          "Vimeo",
+          "B站",
+          "电影节"
+        ]
+      },
+      "market_position": "独立短片市场，面向电影爱好者和专业观众",
+      "competitors": [],
+      "distribution_channels": [
+        "电影节投递",
+        "流媒体平台",
+        "社交媒体推广"
+      ],
+      "marketing_suggestions": [
+        "参加国内外短片电影节",
+        "在 B站/YouTube 发布预告片",
+        "建立社交媒体账号进行宣传"
+      ],
+      "risk_factors": [
+        "市场竞争激烈",
+        "观众注意力分散",
+        "宣发预算有限"
+      ],
+      "opportunities": [
+        "新媒体平台降低发行门槛",
+        "垂直领域受众精准",
+        "口碑传播效应"
+      ],
+      "estimated_budget_range": "",
+      "confidence": 0.5,
+      "is_dynamic": false,
+      "created_at": "2025-12-26T12:21:49.637496"
+    },
+    "version": {
+      "version_info": {
+        "version_id": "ver_8e8a6b244f72",
+        "version_name": "Logline_v1",
+        "version_number": 1,
+        "content_type": "logline",
+        "entity_id": null,
+        "entity_name": null,
+        "content": "一个程序员在得知自己身患绝症后，选择辞职陪伴妻子经营咖啡馆，在生命最后的时光里找到了真正的幸福。",
+        "source": "script_agent",
+        "status": "draft",
+        "created_at": "2025-12-26T12:21:49.639133",
+        "created_by": "system"
+      },
+      "decision": {
+        "decision_id": "dec_bd82b0435ca5",
+        "project_id": "test_project",
+        "decision_type": "approve",
+        "target_type": "version",
+        "target_id": "ver_8e8a6b244f72",
+        "previous_value": null,
+        "new_value": null,
+        "reason": "",
+        "created_at": "2025-12-26T12:21:49.640149"
+      },
+      "display_info": {
+        "current_version": "Logline_v1",
+        "version_count": 1,
+        "last_modified": "2025-12-26T12:21:49.639133"
+      }
+    },
+    "validation": {
+      "validation": {
+        "validation_id": "val_8904079c1900",
+        "project_id": "test_project",
+        "is_valid": false,
+        "issues": [
+          {
+            "issue_id": "api_bf5bb7f9",
+            "severity": "error",
+            "category": "api",
+            "message": "API 不可用: /api/health",
+            "field": null,
+            "suggestion": "请检查后端服务是否正常运行"
+          },
+          {
+            "issue_id": "api_5950e2e2",
+            "severity": "error",
+            "category": "api",
+            "message": "API 不可用: /api/wizard/health",
+            "field": null,
+            "suggestion": "请检查后端服务是否正常运行"
+          },
+          {
+            "issue_id": "api_3c194fc6",
+            "severity": "error",
+            "category": "api",
+            "message": "API 不可用: /api/projects",
+            "field": null,
+            "suggestion": "请检查后端服务是否正常运行"
+          }
+        ],
+        "tag_consistency": {
+          "is_consistent": true,
+          "conflicts": [],
+          "suggestions": []
+        },
+        "api_health": [
+          {
+            "endpoint": "/api/health",
+            "status": "unhealthy",
+            "response_time_ms": 2345.7690000000002,
+            "error": null
+          },
+          {
+            "endpoint": "/api/wizard/health",
+            "status": "unhealthy",
+            "response_time_ms": 3667.3619999999996,
+            "error": null
+          },
+          {
+            "endpoint": "/api/projects",
+            "status": "unhealthy",
+            "response_time_ms": 3362.384,
+            "error": null
+          }
+        ],
+        "error_count": 3,
+        "warning_count": 0,
+        "created_at": "2025-12-26T12:21:49.796115"
+      },
+      "tag_consistency": {
+        "is_consistent": true,
+        "conflicts": [],
+        "suggestions": []
+      },
+      "api_health": [
+        {
+          "endpoint": "/api/health",
+          "status": "unhealthy",
+          "response_time_ms": 2352.782,
+          "error": null
+        },
+        {
+          "endpoint": "/api/wizard/health",
+          "status": "unhealthy",
+          "response_time_ms": 2403.72,
+          "error": null
+        },
+        {
+          "endpoint": "/api/projects",
+          "status": "unhealthy",
+          "response_time_ms": 3542.931,
+          "error": null
+        }
+      ]
+    },
+    "recall": {
+      "recall_results": [
+        {
+          "scene_id": "scene_1",
+          "candidates": [],
+          "total_searched": 0,
+          "has_match": false,
+          "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+        },
+        {
+          "scene_id": "scene_2",
+          "candidates": [],
+          "total_searched": 0,
+          "has_match": false,
+          "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+        },
+        {
+          "scene_id": "scene_3",
+          "candidates": [],
+          "total_searched": 0,
+          "has_match": false,
+          "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+        }
+      ],
+      "total_scenes_processed": 3
+    },
+    "export": {
+      "document_export": {
+        "available": true,
+        "formats": [
+          "DOCX",
+          "PDF",
+          "Markdown"
+        ]
+      },
+      "nle_export": {
+        "available": true,
+        "formats": [
+          "FCPXML",
+          "EDL"
+        ]
+      },
+      "image_export": {
+        "available": true,
+        "formats": [
+          "PNG",
+          "JPG"
+        ]
+      }
+    }
+  },
+  "errors": [],
+  "summary": {}
+}

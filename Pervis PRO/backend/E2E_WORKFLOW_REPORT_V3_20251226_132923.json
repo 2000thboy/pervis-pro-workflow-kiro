@@ -1,0 +1,97 @@
+{
+  "project_id": "e2e-test-20251226132922",
+  "script_title": "城市边缘",
+  "total_time_seconds": 0.48654651641845703,
+  "stages": [
+    {
+      "name": "1",
+      "description": "AI 剧本解析",
+      "status": "failed",
+      "duration_ms": 8.116960525512695,
+      "result_summary": null,
+      "error": "cannot import name 'ScriptAgent' from 'services.agents.script_agent' (E:\\Pervis PRO\\Pervis PRO\\backend\\services\\agents\\script_agent.py)"
+    },
+    {
+      "name": "2",
+      "description": "AI 角色分析",
+      "status": "failed",
+      "duration_ms": 0.0,
+      "result_summary": null,
+      "error": "cannot import name 'ArtAgent' from 'services.agents.art_agent' (E:\\Pervis PRO\\Pervis PRO\\backend\\services\\agents\\art_agent.py)"
+    },
+    {
+      "name": "3",
+      "description": "AI 场次分析",
+      "status": "failed",
+      "duration_ms": 0.0,
+      "result_summary": null,
+      "error": "cannot import name 'StoryboardAgent' from 'services.agents.storyboard_agent' (E:\\Pervis PRO\\Pervis PRO\\backend\\services\\agents\\storyboard_agent.py)"
+    },
+    {
+      "name": "4",
+      "description": "导演审核",
+      "status": "failed",
+      "duration_ms": 0.0,
+      "result_summary": null,
+      "error": "cannot import name 'DirectorAgent' from 'services.agents.director_agent' (E:\\Pervis PRO\\Pervis PRO\\backend\\services\\agents\\director_agent.py)"
+    },
+    {
+      "name": "5",
+      "description": "市场分析",
+      "status": "failed",
+      "duration_ms": 2.030611038208008,
+      "result_summary": null,
+      "error": "cannot import name 'MarketAgent' from 'services.agents.market_agent' (E:\\Pervis PRO\\Pervis PRO\\backend\\services\\agents\\market_agent.py)"
+    },
+    {
+      "name": "6",
+      "description": "版本管理",
+      "status": "failed",
+      "duration_ms": 1.0678768157958984,
+      "result_summary": null,
+      "error": "cannot import name 'PMAgent' from 'services.agents.pm_agent' (E:\\Pervis PRO\\Pervis PRO\\backend\\services\\agents\\pm_agent.py)"
+    },
+    {
+      "name": "7",
+      "description": "系统校验",
+      "status": "failed",
+      "duration_ms": 141.27087593078613,
+      "result_summary": null,
+      "error": "cannot import name 'SystemAgent' from 'services.agents.system_agent' (E:\\Pervis PRO\\Pervis PRO\\backend\\services\\agents\\system_agent.py)"
+    },
+    {
+      "name": "8",
+      "description": "素材库搜索召回",
+      "status": "failed",
+      "duration_ms": 53.81584167480469,
+      "result_summary": null,
+      "error": "cannot import name 'SearchService' from 'services.search_service' (E:\\Pervis PRO\\Pervis PRO\\backend\\services\\search_service.py)"
+    },
+    {
+      "name": "9",
+      "description": "时间轴生成",
+      "status": "completed",
+      "duration_ms": 149.89852905273438,
+      "result_summary": "{'timeline_id': 'f35d5b2c-c42e-44cd-99ef-9647daa1996d', 'clips_created': 5, 'total_duration': 600}",
+      "error": null
+    },
+    {
+      "name": "10",
+      "description": "粗剪渲染输出",
+      "status": "completed",
+      "duration_ms": 130.34582138061523,
+      "result_summary": "{'render_task_id': 'cac4814b-1da8-42cf-af7a-9ca6e16f8fcc', 'output_path': 'exports\\\\rough_cut_e2e-test-20251226132922.mp4', 'ffmpeg_available': False}",
+      "error": null
+    }
+  ],
+  "summary": {
+    "completed": 2,
+    "failed": 8,
+    "total": 10
+  },
+  "output": {
+    "timeline_id": "f35d5b2c-c42e-44cd-99ef-9647daa1996d",
+    "output_path": "exports\\rough_cut_e2e-test-20251226132922.mp4"
+  },
+  "timestamp": "2025-12-26T13:29:23.585703"
+}

@@ -4,12 +4,140 @@
 
 本设计文档描述 Pervis PRO 项目立项向导系统的架构设计。系统采用 MVP 简化方案，将 Agent 功能直接集成到 Pervis PRO 后端，保留 Agent 概念和状态显示。
 
+> **📊 完整流程图示**：详见 [agent-workflow-diagram.md](./agent-workflow-diagram.md)，包含 Mermaid 可视化图表。
+
 **核心目标**：
-1. 引导用户完成项目建档
-2. 自动解析剧本并提取项目信息
-3. 使用 Agent 生成缺失内容（Script_Agent、Art_Agent）
-4. Director_Agent 审核所有 Agent 输出
-5. 处理素材并生成标签，为 Beatboard 阶段准备数据
+1. 引导用户完成项目建档，支持多文件批量导入和智能分类
+2. 自动解析剧本并提取项目信息，无需重复上传
+3. 使用 Agent 生成缺失内容（Script_Agent、Art_Agent、Market_Agent）
+4. Director_Agent 全程只输出审核建议，需用户确认
+5. PM_Agent 用户可见，管理版本历史和文件命名
+6. System_Agent 导出前校验，确保数据完整性
+7. 处理素材并生成标签，为 Beatboard 阶段准备数据
+
+---
+
+## ⚠️ 现有框架问题分析（2025-12-25 评估）
+
+### 问题总览
+
+| 问题类型 | 严重程度 | 状态 |
+|----------|----------|------|
+| 两套代码库不统一 | 🔴 高 | 待修复 |
+| Agent 无 LLM 调用 | 🔴 高 | 待修复 |
+| Director_Agent 缺少项目记忆 | 🔴 高 | 待修复 |
+| PM_Agent 功能不匹配 | 🟡 中 | 待修复 |
+| Storyboard_Agent 不存在 | 🔴 高 | 待新建 |
+| 无 REST API 暴露 | 🔴 高 | 待修复 |
+| 素材预处理管道不存在 | 🔴 高 | 待新建 |
+
+### 问题详情
+
+#### P0-1: 两套代码库不统一
+
+```
+当前状态:
+├── multi-agent-workflow/backend/app/agents/  ← Agent 架构（BaseAgent、MessageBus）
+└── Pervis PRO/backend/services/              ← 业务服务（LLMProvider、AssetProcessor）
+
+问题: 两套代码没有集成，Agent 无法调用 Pervis PRO 的服务
+```
+
+**修复方案**：创建统一的服务适配层，让 Agent 可以调用 Pervis PRO 的 LLMProvider
+
+#### P0-2: Agent 无 LLM 调用
+
+现有 Agent 实现只有数据结构管理，没有真正的 AI 能力：
+
+```python
+# script_agent.py - 只是正则解析，没有 LLM
+async def parse_script(self, content: str):
+    scene_match = SCENE_HEADING_PATTERN.match(line)  # 纯正则
+
+# art_agent.py - 只是数据管理，没有 AI 标签生成
+async def create_character(self, name: str):
+    # 只创建数据结构
+
+# market_agent.py - LLM 调用是 Mock 的
+response_text = f"分析结果: {query}"  # 模拟响应
+```
+
+**修复方案**：集成 `Pervis PRO/backend/services/llm_provider.py`
+
+#### P0-3: Director_Agent 缺少项目记忆
+
+spec 要求：
+> Director_Agent 具有项目记忆，包括项目规格、艺术风格、历史版本
+
+当前实现只有冲突解决，没有：
+- ❌ 项目上下文（ProjectContext）
+- ❌ 历史版本对比
+- ❌ 艺术风格一致性检查
+
+#### P0-4: PM_Agent 功能不匹配
+
+spec 要求：版本管理、版本命名（角色_张三_v1.json）
+
+当前实现：只有项目文件夹管理和归档，没有版本功能
+
+#### P0-5: Storyboard_Agent 不存在
+
+spec 要求的核心功能完全没有实现：
+- ❌ 素材召回
+- ❌ Top 5 候选缓存
+- ❌ 丝滑切换
+
+#### P0-6: 无 REST API 暴露
+
+```
+spec 要求:
+POST /api/wizard/parse-script
+POST /api/wizard/generate-content
+POST /api/wizard/recall-assets
+
+当前状态: 只有 Agent 内部通信，没有 FastAPI 路由
+```
+
+#### P0-7: 素材预处理管道不存在
+
+spec 要求：`素材上传 → PySceneDetect → Gemini → Milvus`
+
+当前状态：完全没有实现
+
+---
+
+## 修复计划
+
+### Phase 0-Fix: 框架修复（优先于原 Phase 0）
+
+| 任务 | 工时 | 优先级 |
+|------|------|--------|
+| 创建 LLM 服务适配层 | 1天 | P0 |
+| Script_Agent 集成 LLM | 1天 | P0 |
+| Art_Agent 集成 LLM | 1天 | P0 |
+| Director_Agent 添加项目记忆 | 1天 | P0 |
+| PM_Agent 重构为版本管理 | 1天 | P1 |
+| 创建 Storyboard_Agent | 2天 | P0 |
+| 创建 REST API 路由层 | 2天 | P0 |
+
+### 简化架构方案（MVP 推荐）
+
+考虑到时间成本，MVP 阶段建议**简化架构**：
+
+```
+原方案（复杂）:
+前端 → REST API → AgentService → Agent (MessageBus) → LLM
+
+简化方案（推荐）:
+前端 → REST API → AgentService → LLMProvider（直接调用）
+                              ↓
+                         数据库存储
+```
+
+**简化理由**：
+1. MessageBus 在单机部署时增加复杂度，收益有限
+2. Agent 间协作可以用简单的函数调用替代
+3. 先跑通核心流程，后续再升级为完整 Agent 架构
 
 ## Architecture
 
@@ -20,14 +148,15 @@
 │  ProjectWizard.tsx                                                   │
 │  ├── WizardStep1_BasicInfo.tsx    (基本信息)                        │
 │  ├── WizardStep2_Script.tsx       (剧本导入)                        │
-│  ├── WizardStep3_Characters.tsx   (角色设定)                        │
-│  ├── WizardStep4_Scenes.tsx       (场次规划)                        │
+│  ├── WizardStep3_Characters.tsx   (角色设定 + 视觉标签确认)         │
+│  ├── WizardStep4_Scenes.tsx       (场次规划 + 场景标签确认)         │
 │  ├── WizardStep5_References.tsx   (参考资料)                        │
 │  └── WizardStep6_Confirm.tsx      (确认提交)                        │
 │                                                                      │
 │  Components:                                                         │
 │  ├── MissingContentDialog.tsx     (缺失内容处理对话框)              │
 │  ├── AgentStatusPanel.tsx         (Agent 状态面板)                  │
+│  ├── VisualTagConfirmPanel.tsx    (视觉标签确认面板) [新增]         │
 │  └── ProjectPreview.tsx           (项目预览)                        │
 └─────────────────────────────────────────────────────────────────────┘
                               │ REST API
@@ -39,6 +168,9 @@
 │  ├── POST /parse-script         - Script_Agent 解析剧本             │
 │  ├── POST /generate-content     - Agent 生成内容                    │
 │  ├── POST /process-assets       - Art_Agent 处理素材                │
+│  ├── POST /analyze-images       - Script_Agent 视觉分析 [新增]      │
+│  ├── GET  /draft/{id}/suggested-tags - 获取 AI 生成的标签 [新增]    │
+│  ├── POST /draft/{id}/confirm-tags   - 用户确认标签 [新增]          │
 │  ├── POST /create-project       - 创建项目                          │
 │  ├── GET  /templates            - 获取模板列表                      │
 │  └── GET  /task-status/{id}     - 获取 Agent 任务状态               │
@@ -49,12 +181,15 @@
 │                      AgentService Layer                              │
 ├─────────────────────────────────────────────────────────────────────┤
 │  AgentService                                                        │
-│  ├── Script_Agent (编剧)                                            │
+│  ├── Script_Agent (编剧) - 新增视觉分析能力                         │
 │  │   ├── parse_script()         - 剧本解析                          │
 │  │   ├── generate_logline()     - Logline 生成                      │
 │  │   ├── generate_synopsis()    - Synopsis 生成                     │
 │  │   ├── generate_bio()         - 人物小传生成                      │
-│  │   └── estimate_duration()    - 时长估算                          │
+│  │   ├── estimate_duration()    - 时长估算                          │
+│  │   ├── analyze_reference_images() - 视觉分析 [新增]               │
+│  │   ├── generate_character_visual_tags() - 角色视觉标签 [新增]     │
+│  │   └── generate_scene_visual_tags() - 场景视觉标签 [新增]         │
 │  │                                                                   │
 │  ├── Art_Agent (美术)                                               │
 │  │   ├── classify_file()        - 文件分类                          │
@@ -67,10 +202,32 @@
 │  │   ├── check_consistency()    - 检查与项目规格一致性              │
 │  │   └── compare_versions()     - 对比历史版本                      │
 │  │                                                                   │
-│  └── PM_Agent (项目管理) - 隐藏，后台运行                           │
+│  └── PM_Agent (项目助理) - 用户可见，显示版本信息                   │
 │      ├── get_project_context()  - 获取项目上下文                    │
 │      ├── record_version()       - 记录版本                          │
-│      └── record_decision()      - 记录用户决策                      │
+│      ├── record_decision()      - 记录用户决策                      │
+│      └── generate_version_name()- 生成版本命名                      │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Vision Model Service (视觉模型服务)             │
+├─────────────────────────────────────────────────────────────────────┤
+│  ollama_vision.py                                                    │
+│  ├── OllamaVisionProvider       - Ollama 视觉模型适配器             │
+│  │   ├── analyze_image()        - 分析单张图像                      │
+│  │   ├── batch_analyze()        - 批量分析图像                      │
+│  │   └── check_availability()   - 检查模型可用性                    │
+│  │                                                                   │
+│  支持的模型:                                                         │
+│  ├── llava-llama3              - 推荐，效果好                       │
+│  ├── llava                     - 备选                               │
+│  └── moondream                 - 轻量级备选                         │
+│                                                                   │
+│  ⚠️ 视觉模型是必选依赖，因为:                                       │
+│  ├── 导入内容是多模态的（文本+图像）                                │
+│  ├── 需要根据人设参考生成对应标签                                   │
+│  └── 标签用于后续的素材召回和匹配                                   │
 └─────────────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -83,6 +240,180 @@
 │  ├── 版本历史 (每次 Agent 生成的内容版本)                           │
 │  └── 用户决策 (接受/拒绝/修改的历史)                                │
 └─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Script_Agent 视觉分析能力（新增 2025-12-27）
+
+### 视觉分析流程
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                   Script_Agent 视觉分析流程                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  用户上传人设图/参考图                                              │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 1: 图像预处理                                          │   │
+│  │  ├── 验证图像格式（JPG/PNG/PSD）                             │   │
+│  │  ├── 生成缩略图                                              │   │
+│  │  └── 关联到角色/场景                                         │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 2: 调用视觉模型 (ollama_vision.py)                     │   │
+│  │  ├── 使用 llava-llama3 模型                                  │   │
+│  │  ├── 发送图像 + 提示词                                       │   │
+│  │  └── 获取结构化标签                                          │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 3: 标签生成                                            │   │
+│  │  角色标签:                                                    │   │
+│  │  ├── 外观描述（发型、肤色、体型）                            │   │
+│  │  ├── 服装风格（现代/古装/制服）                              │   │
+│  │  ├── 配色（主色调、辅色调）                                  │   │
+│  │  └── 特征道具（武器、配饰）                                  │   │
+│  │                                                               │   │
+│  │  场景标签:                                                    │   │
+│  │  ├── 场景类型（室内/室外）                                   │   │
+│  │  ├── 时间（日/夜/黄昏/黎明）                                 │   │
+│  │  ├── 光线（自然光/人工光/混合）                              │   │
+│  │  ├── 氛围（温馨/紧张/神秘）                                  │   │
+│  │  └── 环境元素（建筑/自然/道具）                              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 4: 用户确认                                            │   │
+│  │  ├── 展示原图与识别标签的对应关系                            │   │
+│  │  ├── 提供标签编辑界面                                        │   │
+│  │  └── 允许用户修改或补充标签                                  │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 5: 标签流转到资产管理                                  │   │
+│  │  ├── 写入 asset_tags 表                                      │   │
+│  │  ├── 更新向量索引                                            │   │
+│  │  └── 用于后续素材召回                                        │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 视觉标签数据结构
+
+```python
+@dataclass
+class CharacterVisualTags:
+    """角色视觉标签"""
+    character_id: str           # 关联的角色 ID
+    image_path: str             # 原图路径
+    
+    # 外观特征
+    appearance: Dict[str, str]  # 发型、肤色、体型等
+    clothing_style: str         # 服装风格
+    color_palette: List[str]    # 配色（RGB 或颜色名）
+    accessories: List[str]      # 配饰/道具
+    
+    # 元数据
+    confidence: float           # 识别置信度
+    source: str                 # 来源（vision_model）
+    confirmed: bool             # 是否已确认
+    confirmed_at: datetime      # 确认时间
+
+
+@dataclass
+class SceneVisualTags:
+    """场景视觉标签"""
+    scene_id: str               # 关联的场景 ID
+    image_path: str             # 原图路径
+    
+    # 场景特征
+    scene_type: str             # 室内/室外
+    time_of_day: str            # 日/夜/黄昏/黎明
+    lighting: str               # 光线类型
+    mood: str                   # 氛围
+    environment: List[str]      # 环境元素
+    
+    # 元数据
+    confidence: float           # 识别置信度
+    source: str                 # 来源（vision_model）
+    confirmed: bool             # 是否已确认
+    confirmed_at: datetime      # 确认时间
+```
+
+### 视觉分析 API
+
+```python
+# 分析参考图像
+POST /api/wizard/analyze-images
+{
+    "draft_id": "xxx",
+    "images": [
+        {
+            "image_id": "img_001",
+            "image_path": "/uploads/character_ref_001.jpg",
+            "type": "character",  # character | scene
+            "related_id": "char_001"  # 关联的角色/场景 ID
+        }
+    ]
+}
+
+# 响应
+{
+    "task_id": "task_xxx",
+    "status": "processing",
+    "agent": "script_agent"
+}
+
+# 获取生成的标签
+GET /api/wizard/draft/{draft_id}/suggested-tags
+
+# 响应
+{
+    "character_tags": [
+        {
+            "character_id": "char_001",
+            "image_path": "/uploads/character_ref_001.jpg",
+            "tags": {
+                "appearance": {"hair": "黑色长发", "skin": "白皙", "build": "纤细"},
+                "clothing_style": "现代休闲",
+                "color_palette": ["#2C3E50", "#E74C3C", "#ECF0F1"],
+                "accessories": ["眼镜", "手表"]
+            },
+            "confidence": 0.85,
+            "confirmed": false
+        }
+    ],
+    "scene_tags": [...]
+}
+
+# 确认标签
+POST /api/wizard/draft/{draft_id}/confirm-tags
+{
+    "character_tags": [
+        {
+            "character_id": "char_001",
+            "tags": {...},  # 可能被用户修改过
+            "confirmed": true
+        }
+    ],
+    "scene_tags": [...]
+}
+
+# 响应
+{
+    "success": true,
+    "message": "标签已确认并写入资产管理",
+    "asset_ids": ["asset_001", "asset_002"]
+}
 ```
 
 ## Director_Agent 审核机制
@@ -226,11 +557,11 @@ class DirectorAgent:
         pass
 ```
 
-### PM_Agent 实现（隐藏）
+### PM_Agent 实现（用户可见）
 
 ```python
 class PMAgent:
-    """项目管理 Agent - 隐藏，后台运行"""
+    """项目助理 - 用户可见，显示版本信息"""
     
     def __init__(self, db: Database):
         self.db = db
@@ -250,15 +581,36 @@ class PMAgent:
         content_type: str, 
         content: Any,
         agent: str
-    ):
-        """记录版本"""
+    ) -> str:
+        """记录版本并返回版本号"""
+        # 获取当前版本号
+        current_version = await self._get_latest_version(project_id, content_type)
+        new_version = current_version + 1
+        
+        # 生成版本命名
+        version_name = self.generate_version_name(content_type, new_version)
+        
         await self.db.insert("content_versions", {
             "project_id": project_id,
             "content_type": content_type,
             "content": content,
             "agent": agent,
+            "version": new_version,
+            "version_name": version_name,
             "created_at": datetime.now()
         })
+        
+        return version_name
+    
+    def generate_version_name(self, content_type: str, version: int, name: str = None) -> str:
+        """生成版本命名
+        
+        格式: {内容类型}_{名称}_v{版本号}.{扩展名}
+        示例: 角色_张三_v1.json, 场次大纲_v2.json, Logline_v3.txt
+        """
+        if name:
+            return f"{content_type}_{name}_v{version}"
+        return f"{content_type}_v{version}"
     
     async def record_decision(
         self, 
@@ -275,6 +627,27 @@ class PMAgent:
             "feedback": user_feedback,
             "created_at": datetime.now()
         })
+    
+    async def get_version_display_info(self, project_id: str) -> VersionDisplayInfo:
+        """获取版本显示信息（用于前端展示）"""
+        versions = await self._get_version_history(project_id)
+        decisions = await self._get_user_decisions(project_id)
+        
+        return VersionDisplayInfo(
+            current_version=versions[-1].version if versions else 0,
+            last_modified=versions[-1].created_at if versions else None,
+            history=[
+                {
+                    "version": v.version,
+                    "version_name": v.version_name,
+                    "content_type": v.content_type,
+                    "agent": v.agent,
+                    "decision": self._get_decision_for_version(v.id, decisions),
+                    "created_at": v.created_at
+                }
+                for v in versions
+            ]
+        )
 
 
 @dataclass
@@ -768,13 +1141,194 @@ ERROR_CODES = {
 }
 ```
 
+## 素材预处理管道
+
+### 预处理架构
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     素材预处理管道 (上传时自动执行)                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  素材上传 → PySceneDetect → Gemini 标签 → Milvus 存储               │
+│     │         (镜头分割)    (视频理解)    (向量索引)                  │
+│     │            │             │             │                       │
+│     │      ≤10秒片段      JSON标签      768维向量                    │
+│     │            │             │             │                       │
+│     └────────────┴─────────────┴─────────────┘                       │
+│                         ↓                                            │
+│                   预处理完成，标签已存储                              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### VideoPreprocessor 实现
+
+```python
+class VideoPreprocessor:
+    """视频预处理器 - 素材上传时自动执行完整处理流程"""
+    
+    def __init__(self, gemini_api_key: str, milvus_host: str = "localhost"):
+        # 镜头分割
+        self.scene_detector = ContentDetector(threshold=27.0)
+        self.max_scene_duration = 10.0  # ≤10秒
+        
+        # Gemini 标签
+        genai.configure(api_key=gemini_api_key)
+        self.gemini = genai.GenerativeModel('gemini-2.5-flash')
+        
+        # 向量生成 (使用 sentence-transformers，免费本地运行)
+        self.embedder = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        
+        # Milvus 存储
+        self.milvus = MilvusVideoStore(host=milvus_host)
+    
+    async def preprocess(self, video_path: str, asset_id: str) -> Dict:
+        """完整预处理流程"""
+        # Step 1: PySceneDetect 镜头分割
+        # Step 2: 确保 ≤10秒 并切割
+        # Step 3: Gemini 标签生成
+        # Step 4: 存储到 Milvus
+        pass
+```
+
+### MilvusVideoStore 实现
+
+```python
+class MilvusVideoStore:
+    """Milvus 视频向量存储"""
+    
+    def __init__(self, host: str = "localhost", port: int = 19530):
+        connections.connect(alias="default", host=host, port=port)
+        self.collection_name = "video_assets"
+        self._ensure_collection()
+    
+    def _ensure_collection(self):
+        """创建集合和索引"""
+        fields = [
+            FieldSchema(name="id", dtype=DataType.INT64, is_primary=True, auto_id=True),
+            FieldSchema(name="video_path", dtype=DataType.VARCHAR, max_length=500),
+            FieldSchema(name="segment_index", dtype=DataType.INT64),
+            FieldSchema(name="start_time", dtype=DataType.FLOAT),
+            FieldSchema(name="end_time", dtype=DataType.FLOAT),
+            FieldSchema(name="tags_json", dtype=DataType.VARCHAR, max_length=2000),
+            FieldSchema(name="embedding", dtype=DataType.FLOAT_VECTOR, dim=768),
+        ]
+        # 创建 IVF_FLAT 索引，使用 COSINE 相似度
+    
+    def insert(self, video_path, segment_index, start_time, end_time, tags, embedding):
+        """插入视频片段"""
+        pass
+    
+    def search(self, query_embedding: list, top_k: int = 5) -> list:
+        """向量搜索"""
+        pass
+    
+    def search_by_tags(self, tags: list, top_k: int = 10) -> list:
+        """标签搜索"""
+        pass
+```
+
+## Storyboard_Agent 设计
+
+### 素材召回流程
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                   Storyboard_Agent 素材召回流程                      │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  场次描述 + 标签                                                     │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 1: 标签匹配（快速）                                    │   │
+│  │  └── Milvus.search_by_tags() → Top 20 候选                   │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 2: 向量搜索（语义）                                    │   │
+│  │  └── Milvus.search() → Top 20 候选                           │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 3: 合并排序                                            │   │
+│  │  └── 交替合并，去重 → Top 5 候选                             │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 4: 缓存候选                                            │   │
+│  │  └── _candidate_cache[scene_id] = [5 candidates]             │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  返回 Top 5 候选，用户可丝滑切换                                    │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Storyboard_Agent 实现
+
+```python
+class StoryboardAgent(BaseAgent):
+    """故事板 Agent - 素材召回与候选缓存"""
+    
+    def __init__(self, agent_id: str, message_bus, milvus_store, config=None):
+        super().__init__(
+            agent_id=agent_id,
+            agent_type=AgentType.STORYBOARD,
+            message_bus=message_bus,
+            capabilities=["asset_recall", "candidate_cache", "rough_cut"],
+            config=config
+        )
+        self.milvus = milvus_store
+        self._candidate_cache = {}  # scene_id -> [5 candidates]
+    
+    async def recall_assets(self, scene_id: str, scene_tags: list, 
+                           scene_description: str) -> list:
+        """素材召回 - 返回 Top 5 候选"""
+        # 1. 标签匹配（快速）
+        tag_results = self.milvus.search_by_tags(scene_tags, top_k=20)
+        
+        # 2. 向量搜索（语义）
+        query_embedding = await self._generate_embedding(scene_description)
+        vector_results = self.milvus.search(query_embedding, top_k=20)
+        
+        # 3. 合并排序
+        candidates = self._merge_and_rank(tag_results, vector_results)[:5]
+        
+        # 4. 缓存 5 个候选
+        self._candidate_cache[scene_id] = candidates
+        
+        return candidates
+    
+    def get_cached_candidates(self, scene_id: str) -> list:
+        """获取缓存的候选（用户丝滑切换）"""
+        return self._candidate_cache.get(scene_id, [])
+    
+    def switch_candidate(self, scene_id: str, index: int) -> dict:
+        """切换候选"""
+        candidates = self._candidate_cache.get(scene_id, [])
+        if 0 <= index < len(candidates):
+            return candidates[index]
+        return None
+    
+    async def rough_cut(self, video_path: str, start: float, end: float, 
+                       output_path: str) -> str:
+        """粗剪 - 使用 FFmpeg 切割"""
+        pass
+```
+
 ## MVP 与后续迁移
 
 ### MVP 阶段（当前）
 
 - AIService 直接集成到 Pervis PRO 后端
 - 使用 REST API + 轮询获取任务状态
-- 简化的素材处理流程
+- 素材预处理管道（PySceneDetect + Gemini + Milvus）
+- Storyboard_Agent 素材召回与候选缓存
 
 ### 后续迁移路径
 
@@ -787,3 +1341,1183 @@ ERROR_CODES = {
    - 复用现有的 Agent 架构
    - 添加 REST API 网关
    - 实现 Agent 间协作流程
+
+
+---
+
+## Correctness Properties
+
+本节定义系统的正确性属性，用于验证实现是否符合需求规格。每个属性使用 Hypothesis 库进行属性测试。
+
+### 测试策略
+
+- **测试框架**: Hypothesis（Python 属性测试库）
+- **配置**: `@settings(max_examples=100, deadline=None)`
+- **测试文件命名**: `test_<模块名>_properties.py`
+- **执行目录**: `multi-agent-workflow/backend`
+
+### Property 1: 字段状态和完成度计算
+
+**Title**: 字段状态正确性与完成度计算一致性
+
+**Body**:
+```
+For all project_data: ProjectData,
+  For all field_status: Dict[str, FieldStatus],
+    completion_percentage = calculate_completion(project_data, field_status)
+    IMPLIES:
+      - 0 <= completion_percentage <= 100
+      - completion_percentage == (filled_fields / total_fields) * 100
+      - field_status[field] in ['empty', 'user_input', 'script_agent', 'art_agent', 'placeholder', 'processing']
+      - IF all required_fields are filled THEN completion_percentage >= minimum_required_percentage
+```
+
+**Requirements Reference**: 1.3, 1.4, 1.5
+
+---
+
+### Property 2: 文件格式验证
+
+**Title**: 文件格式识别与处理正确性
+
+**Body**:
+```
+For all file: UploadedFile,
+  For all format: str in ['txt', 'pdf', 'docx', 'fdx', 'jpg', 'png', 'psd', 'mp4', 'mov', 'avi'],
+    result = validate_and_process_file(file, format)
+    IMPLIES:
+      - IF file.extension in SUPPORTED_SCRIPT_FORMATS THEN result.type == 'script'
+      - IF file.extension in SUPPORTED_IMAGE_FORMATS THEN result.type == 'image'
+      - IF file.extension in SUPPORTED_VIDEO_FORMATS THEN result.type == 'video'
+      - IF file.extension not in ALL_SUPPORTED_FORMATS THEN result.error == 'UNSUPPORTED_FORMAT'
+      - result.metadata is not None OR result.error is not None
+```
+
+**Requirements Reference**: 2.1, 3.1
+
+---
+
+### Property 3: Art_Agent 文件分类正确性
+
+**Title**: Art_Agent 文件智能分类一致性
+
+**Body**:
+```
+For all files: List[UploadedFile],
+  For all classification_result: ClassificationResult,
+    classification_result = art_agent.classify_files(files)
+    IMPLIES:
+      - For all file in files:
+          file is in classification_result.characters OR
+          file is in classification_result.scenes OR
+          file is in classification_result.references
+      - len(classification_result.characters) + len(classification_result.scenes) + len(classification_result.references) == len(files)
+      - IF file cannot be classified THEN file is in classification_result.references
+      - classification_result.requires_user_confirmation == True for unclassified files
+```
+
+**Requirements Reference**: 3.2, 3.3, 5.3, 5.4
+
+---
+
+### Property 4: 缺失内容处理选项完整性
+
+**Title**: 缺失内容处理选项正确性
+
+**Body**:
+```
+For all missing_fields: List[MissingField],
+  For all action: ContentAction in ['placeholder', 'agent_generate', 'manual_input'],
+    result = handle_missing_content(missing_fields, action)
+    IMPLIES:
+      - IF action == 'placeholder' THEN result.field_status == 'placeholder' AND result.content == PLACEHOLDER_TEXT
+      - IF action == 'agent_generate' THEN result.task_id is not None AND result.agent in ['script_agent', 'art_agent']
+      - IF action == 'manual_input' THEN result.requires_user_input == True
+      - For all field in missing_fields: field has exactly 3 available actions
+```
+
+**Requirements Reference**: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6
+
+---
+
+### Property 5: Director_Agent 审核机制正确性
+
+**Title**: Director_Agent 审核流程与项目记忆一致性
+
+**Body**:
+```
+For all agent_output: AgentOutput,
+  For all project_context: ProjectContext,
+    review_result = director_agent.review(agent_output, project_context)
+    IMPLIES:
+      - review_result.status in ['approved', 'suggestions', 'rejected']
+      - IF review_result.status == 'rejected' THEN review_result.reason is not None
+      - IF review_result.status == 'suggestions' THEN len(review_result.suggestions) > 0
+      - review_result.checks_performed includes ['rule_check', 'spec_check', 'style_check', 'history_check']
+      - IF agent_output contradicts project_context.user_decisions THEN review_result.status != 'approved'
+      - IF agent_output similar_to project_context.rejected_versions THEN review_result.status == 'suggestions'
+```
+
+**Requirements Reference**: 5.1.1, 5.1.2, 5.1.3, 5.1.4, 5.1.5, 5.1.6, 5.1.7
+
+---
+
+### Property 6: PM_Agent 版本管理正确性
+
+**Title**: PM_Agent 版本记录与命名一致性
+
+**Body**:
+```
+For all project_id: str,
+  For all content_type: str,
+  For all content: Any,
+    version_result = pm_agent.record_version(project_id, content_type, content)
+    IMPLIES:
+      - version_result.version == previous_version + 1
+      - version_result.version_name matches pattern '{content_type}_{name}_v{version}.{ext}'
+      - version_result.created_at is not None
+      - pm_agent.get_version_history(project_id) includes version_result
+      - IF user confirms content THEN pm_agent.record_decision(version_id, 'accepted') succeeds
+      - pm_agent.get_version_display_info(project_id).current_version == version_result.version
+```
+
+**Requirements Reference**: 5.2.1, 5.2.2, 5.2.3, 5.2.4, 5.2.5, 5.2.6, 5.2.7
+
+---
+
+### Property 7: 项目信息验证正确性
+
+**Title**: 项目信息必填字段与格式验证
+
+**Body**:
+```
+For all project_data: ProjectData,
+    validation_result = validate_project(project_data)
+    IMPLIES:
+      - IF project_data.title is empty THEN validation_result.errors includes 'title_required'
+      - IF project_data.type is empty THEN validation_result.errors includes 'type_required'
+      - IF project_data.script is empty AND project_data.synopsis is empty THEN validation_result.errors includes 'script_or_synopsis_required'
+      - IF project_data.duration is not None THEN project_data.duration > 0
+      - IF project_data.aspect_ratio is not None THEN project_data.aspect_ratio matches pattern '\d+:\d+'
+      - IF project_data.frame_rate is not None THEN project_data.frame_rate in [24, 25, 30, 60]
+      - validation_result.is_valid == (len(validation_result.errors) == 0)
+```
+
+**Requirements Reference**: 6.1, 6.2, 6.3, 6.4
+
+---
+
+### Property 8: Agent 状态显示正确性
+
+**Title**: Agent 工作状态与流程显示一致性
+
+**Body**:
+```
+For all task: AgentTask,
+    status_display = get_agent_status_display(task)
+    IMPLIES:
+      - IF task.status == 'working' AND task.agent_type == 'script_agent' THEN status_display.message == '编剧 Agent 正在工作...'
+      - IF task.status == 'working' AND task.agent_type == 'art_agent' THEN status_display.message == '美术 Agent 正在工作...'
+      - IF task.status == 'reviewing' THEN status_display.message == '导演 Agent 审核中...'
+      - IF task.status == 'completed' THEN status_display.result_summary is not None
+      - IF task.status == 'failed' THEN status_display.error_message is not None AND status_display.retry_available == True
+      - status_display.workflow_diagram shows correct flow: Agent工作 → Director审核 → 用户确认
+```
+
+**Requirements Reference**: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 9.8, 9.9
+
+---
+
+### Property 9: Storyboard_Agent 素材召回正确性
+
+**Title**: 素材召回与候选缓存一致性
+
+**Body**:
+```
+For all scene_id: str,
+  For all scene_tags: List[str],
+  For all scene_description: str,
+    recall_result = storyboard_agent.recall_assets(scene_id, scene_tags, scene_description)
+    IMPLIES:
+      - len(recall_result) <= 5
+      - storyboard_agent.get_cached_candidates(scene_id) == recall_result
+      - For all index in range(len(recall_result)):
+          storyboard_agent.switch_candidate(scene_id, index) == recall_result[index]
+      - IF no matching assets THEN recall_result == [] AND display shows placeholder
+      - recall_result is sorted by relevance_score descending
+      - For all candidate in recall_result:
+          candidate.video_path exists AND candidate.start_time < candidate.end_time
+```
+
+**Requirements Reference**: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7
+
+---
+
+### Property 10: 素材预处理管道正确性
+
+**Title**: 视频预处理流程与存储一致性
+
+**Body**:
+```
+For all video_path: str,
+  For all asset_id: str,
+    preprocess_result = video_preprocessor.preprocess(video_path, asset_id)
+    IMPLIES:
+      - For all segment in preprocess_result.segments:
+          segment.duration <= 10.0  # ≤10秒
+          segment.start_time < segment.end_time
+          segment.tags is not None
+          segment.embedding is not None AND len(segment.embedding) == 768
+      - preprocess_result.segments are stored in Milvus
+      - preprocess_result.tags includes ['scene_type', 'time', 'shot_type', 'mood', 'action', 'characters', 'free_tags', 'summary']
+      - IF preprocess fails THEN preprocess_result.error is not None AND retry is available
+      - milvus.search(segment.embedding) returns segment in top results
+```
+
+**Requirements Reference**: 16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 17.1, 17.2, 17.3, 17.4, 17.5
+
+---
+
+### 属性测试示例代码
+
+```python
+# test_wizard_properties.py
+from hypothesis import given, settings, strategies as st
+from hypothesis.strategies import composite
+
+@composite
+def project_data_strategy(draw):
+    """生成 ProjectData 测试数据"""
+    return ProjectData(
+        title=draw(st.text(min_size=0, max_size=100)),
+        type=draw(st.sampled_from(['short_film', 'ad', 'mv', 'feature', ''])),
+        duration=draw(st.integers(min_value=0, max_value=7200)),
+        aspect_ratio=draw(st.sampled_from(['16:9', '4:3', '21:9', '1:1', ''])),
+        frame_rate=draw(st.sampled_from([24, 25, 30, 60, 0])),
+        script=draw(st.text(min_size=0, max_size=10000)),
+        synopsis=draw(st.text(min_size=0, max_size=1000)),
+    )
+
+@settings(max_examples=100, deadline=None)
+@given(project_data=project_data_strategy())
+def test_completion_percentage_bounds(project_data):
+    """Property 1: 完成度百分比在有效范围内"""
+    field_status = calculate_field_status(project_data)
+    completion = calculate_completion(project_data, field_status)
+    
+    assert 0 <= completion <= 100
+    assert isinstance(completion, (int, float))
+
+@settings(max_examples=100, deadline=None)
+@given(
+    content_type=st.sampled_from(['角色', '场次大纲', 'Logline', 'Synopsis']),
+    name=st.text(alphabet='abcdefghijklmnopqrstuvwxyz0123456789_-', min_size=1, max_size=20),
+    version=st.integers(min_value=1, max_value=100)
+)
+def test_version_name_format(content_type, name, version):
+    """Property 6: 版本命名格式正确"""
+    version_name = pm_agent.generate_version_name(content_type, version, name)
+    
+    assert f"_v{version}" in version_name
+    assert content_type in version_name
+    assert name in version_name
+
+@settings(max_examples=100, deadline=None)
+@given(
+    scene_tags=st.lists(st.text(alphabet='abcdefghijklmnopqrstuvwxyz0123456789_-', min_size=1, max_size=20), min_size=0, max_size=10),
+    scene_description=st.text(min_size=0, max_size=500)
+)
+def test_recall_assets_returns_at_most_5(scene_tags, scene_description):
+    """Property 9: 素材召回最多返回 5 个候选"""
+    scene_id = "test_scene_001"
+    result = storyboard_agent.recall_assets(scene_id, scene_tags, scene_description)
+    
+    assert len(result) <= 5
+    assert storyboard_agent.get_cached_candidates(scene_id) == result
+```
+
+---
+
+## 设计文档审核清单
+
+- [x] 问题分析完成（P0-1 到 P0-7）
+- [x] 架构设计完成（简化 MVP 方案）
+- [x] 组件接口定义完成
+- [x] 数据模型定义完成
+- [x] 错误处理策略定义完成
+- [x] 素材预处理管道设计完成
+- [x] Storyboard_Agent 设计完成
+- [x] Correctness Properties 定义完成（10 个核心属性）
+- [x] 测试策略定义完成（Hypothesis 属性测试）
+
+
+
+---
+
+## 补充设计：ProjectValidator 组件（Req 6）
+
+### 验证规则定义
+
+```python
+class ProjectValidator:
+    """项目信息验证器 - 验证必填字段和格式"""
+    
+    # 必填字段定义
+    REQUIRED_FIELDS = {
+        'title': '项目标题',
+        'type': '项目类型',
+    }
+    
+    # 至少一项必填
+    REQUIRED_ONE_OF = {
+        'script_or_synopsis': ['script', 'synopsis']
+    }
+    
+    # 格式验证规则
+    FORMAT_RULES = {
+        'duration': {
+            'type': 'positive_integer',
+            'error': '时长必须为正整数（秒）'
+        },
+        'aspect_ratio': {
+            'pattern': r'^\d+:\d+$',
+            'error': '画幅比例格式无效（如 16:9、4:3）'
+        },
+        'frame_rate': {
+            'allowed_values': [24, 25, 30, 60],
+            'error': '帧率必须为 24、25、30 或 60'
+        }
+    }
+
+    
+    def validate(self, project_data: ProjectData) -> ValidationResult:
+        """验证项目数据"""
+        errors = []
+        
+        # 1. 必填字段验证
+        for field, name in self.REQUIRED_FIELDS.items():
+            if not getattr(project_data, field, None):
+                errors.append(ValidationError(
+                    field=field,
+                    code=f'{field}_required',
+                    message=f'{name}为必填项'
+                ))
+        
+        # 2. 至少一项必填验证
+        for rule_name, fields in self.REQUIRED_ONE_OF.items():
+            if not any(getattr(project_data, f, None) for f in fields):
+                errors.append(ValidationError(
+                    field=rule_name,
+                    code=f'{rule_name}_required',
+                    message='剧本或故事概要至少填写一项'
+                ))
+        
+        # 3. 格式验证
+        errors.extend(self._validate_formats(project_data))
+        
+        return ValidationResult(
+            is_valid=len(errors) == 0,
+            errors=errors
+        )
+
+    
+    def _validate_formats(self, project_data: ProjectData) -> List[ValidationError]:
+        """格式验证"""
+        errors = []
+        
+        # 时长验证
+        if project_data.duration is not None:
+            if not isinstance(project_data.duration, int) or project_data.duration <= 0:
+                errors.append(ValidationError(
+                    field='duration',
+                    code='invalid_duration',
+                    message=self.FORMAT_RULES['duration']['error']
+                ))
+        
+        # 画幅比例验证
+        if project_data.aspect_ratio:
+            import re
+            if not re.match(self.FORMAT_RULES['aspect_ratio']['pattern'], project_data.aspect_ratio):
+                errors.append(ValidationError(
+                    field='aspect_ratio',
+                    code='invalid_aspect_ratio',
+                    message=self.FORMAT_RULES['aspect_ratio']['error']
+                ))
+        
+        # 帧率验证
+        if project_data.frame_rate is not None:
+            if project_data.frame_rate not in self.FORMAT_RULES['frame_rate']['allowed_values']:
+                errors.append(ValidationError(
+                    field='frame_rate',
+                    code='invalid_frame_rate',
+                    message=self.FORMAT_RULES['frame_rate']['error']
+                ))
+        
+        return errors
+
+
+@dataclass
+class ValidationError:
+    field: str
+    code: str
+    message: str
+
+
+@dataclass
+class ValidationResult:
+    is_valid: bool
+    errors: List[ValidationError]
+```
+
+
+---
+
+## 补充设计：模板管理 API（Req 8）
+
+### 模板 CRUD API 设计
+
+```python
+# POST /api/wizard/templates - 创建模板
+class CreateTemplateRequest(BaseModel):
+    name: str
+    type: str  # short_film, ad, mv, feature, custom
+    description: str
+    template_data: Dict[str, Any]
+
+class CreateTemplateResponse(BaseModel):
+    id: str
+    name: str
+    created_at: datetime
+
+# GET /api/wizard/templates - 获取模板列表
+class TemplateListResponse(BaseModel):
+    templates: List[TemplateInfo]
+    total: int
+
+class TemplateInfo(BaseModel):
+    id: str
+    name: str
+    type: str
+    description: str
+    is_system: bool
+    created_at: datetime
+
+
+# GET /api/wizard/templates/{id} - 获取模板详情
+class TemplateDetailResponse(BaseModel):
+    id: str
+    name: str
+    type: str
+    description: str
+    template_data: Dict[str, Any]
+    is_system: bool
+    created_at: datetime
+
+# PUT /api/wizard/templates/{id} - 更新模板
+class UpdateTemplateRequest(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    template_data: Optional[Dict[str, Any]]
+
+# DELETE /api/wizard/templates/{id} - 删除模板
+# 返回 204 No Content，系统模板不可删除
+```
+
+### 模板服务实现
+
+```python
+class TemplateService:
+    """模板管理服务"""
+    
+    def __init__(self, db: Database):
+        self.db = db
+    
+    async def create_template(self, user_id: str, request: CreateTemplateRequest) -> str:
+        """创建用户自定义模板"""
+        template_id = str(uuid.uuid4())
+        await self.db.insert("project_templates", {
+            "id": template_id,
+            "name": request.name,
+            "type": request.type,
+            "description": request.description,
+            "template_data": request.template_data,
+            "is_system": False,
+            "user_id": user_id,
+            "created_at": datetime.now()
+        })
+        return template_id
+
+    
+    async def list_templates(self, user_id: str) -> List[TemplateInfo]:
+        """获取模板列表（系统模板 + 用户模板）"""
+        templates = await self.db.query(
+            "SELECT * FROM project_templates WHERE is_system = 1 OR user_id = ?",
+            [user_id]
+        )
+        return [TemplateInfo(**t) for t in templates]
+    
+    async def get_template(self, template_id: str) -> Optional[TemplateDetailResponse]:
+        """获取模板详情"""
+        template = await self.db.query_one(
+            "SELECT * FROM project_templates WHERE id = ?",
+            [template_id]
+        )
+        return TemplateDetailResponse(**template) if template else None
+    
+    async def update_template(self, template_id: str, user_id: str, 
+                             request: UpdateTemplateRequest) -> bool:
+        """更新模板（仅限用户自定义模板）"""
+        template = await self.get_template(template_id)
+        if not template or template.is_system or template.user_id != user_id:
+            return False
+        
+        update_data = {k: v for k, v in request.dict().items() if v is not None}
+        await self.db.update("project_templates", template_id, update_data)
+        return True
+    
+    async def delete_template(self, template_id: str, user_id: str) -> bool:
+        """删除模板（仅限用户自定义模板）"""
+        template = await self.get_template(template_id)
+        if not template or template.is_system or template.user_id != user_id:
+            return False
+        
+        await self.db.delete("project_templates", template_id)
+        return True
+```
+
+
+---
+
+## 补充设计：Market_Agent 市场分析（Req 11）
+
+### Market_Agent 架构
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                   Market_Agent 市场分析流程                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  项目基本信息（类型、时长、风格）                                   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 1: 目标受众分析                                        │   │
+│  │  └── 基于项目类型和风格，分析目标观众群体                    │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 2: 市场定位建议                                        │   │
+│  │  └── 分析项目在市场中的定位和差异化优势                      │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 3: 竞品分析                                            │   │
+│  │  └── 识别同类型项目，分析优劣势                              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 4: 发行渠道建议                                        │   │
+│  │  └── 推荐适合的发行平台和渠道                                │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+
+### Market_Agent 实现
+
+```python
+class MarketAgent(BaseAgent):
+    """市场分析 Agent - 提供专业的市场分析和建议"""
+    
+    def __init__(self, agent_id: str, message_bus, llm_provider: LLMProvider, config=None):
+        super().__init__(
+            agent_id=agent_id,
+            agent_type=AgentType.MARKET,
+            message_bus=message_bus,
+            capabilities=["audience_analysis", "market_positioning", 
+                         "competitor_analysis", "distribution_recommendation"],
+            config=config
+        )
+        self.llm = llm_provider
+    
+    async def analyze(self, project_data: ProjectData) -> MarketAnalysisResult:
+        """执行完整市场分析（动态数据，非静态案例）"""
+        
+        # 1. 目标受众分析
+        audience = await self._analyze_audience(project_data)
+        
+        # 2. 市场定位建议
+        positioning = await self._analyze_positioning(project_data)
+        
+        # 3. 竞品分析
+        competitors = await self._analyze_competitors(project_data)
+        
+        # 4. 发行渠道建议
+        distribution = await self._recommend_distribution(project_data)
+        
+        return MarketAnalysisResult(
+            audience=audience,
+            positioning=positioning,
+            competitors=competitors,
+            distribution=distribution,
+            generated_at=datetime.now(),
+            is_dynamic=True  # 标记为动态数据
+        )
+
+    
+    async def _analyze_audience(self, project_data: ProjectData) -> AudienceAnalysis:
+        """目标受众分析（使用 LLM 动态生成）"""
+        prompt = f"""
+        请分析以下项目的目标受众：
+        
+        项目类型：{project_data.type}
+        时长：{project_data.duration}秒
+        风格：{project_data.style_description or '未指定'}
+        故事概要：{project_data.synopsis or '未提供'}
+        
+        请提供：
+        1. 主要目标受众群体（年龄、性别、兴趣）
+        2. 次要目标受众群体
+        3. 受众观看习惯分析
+        4. 受众痛点和需求
+        
+        以 JSON 格式返回。
+        """
+        response = await self.llm.generate(prompt)
+        return AudienceAnalysis.parse(response)
+    
+    async def _analyze_positioning(self, project_data: ProjectData) -> PositioningAnalysis:
+        """市场定位分析"""
+        # 使用 LLM 分析市场定位
+        pass
+    
+    async def _analyze_competitors(self, project_data: ProjectData) -> CompetitorAnalysis:
+        """竞品分析"""
+        # 使用 LLM 分析同类型项目
+        pass
+    
+    async def _recommend_distribution(self, project_data: ProjectData) -> DistributionRecommendation:
+        """发行渠道建议"""
+        # 使用 LLM 推荐发行渠道
+        pass
+
+
+@dataclass
+class MarketAnalysisResult:
+    """市场分析结果"""
+    audience: AudienceAnalysis
+    positioning: PositioningAnalysis
+    competitors: CompetitorAnalysis
+    distribution: DistributionRecommendation
+    generated_at: datetime
+    is_dynamic: bool = True  # 标记为动态数据，非静态案例
+
+
+@dataclass
+class AudienceAnalysis:
+    """目标受众分析"""
+    primary_audience: Dict[str, Any]  # 主要受众
+    secondary_audience: Dict[str, Any]  # 次要受众
+    viewing_habits: List[str]  # 观看习惯
+    pain_points: List[str]  # 痛点和需求
+
+
+@dataclass
+class PositioningAnalysis:
+    """市场定位分析"""
+    market_position: str  # 市场定位描述
+    differentiation: List[str]  # 差异化优势
+    value_proposition: str  # 价值主张
+
+
+@dataclass
+class CompetitorAnalysis:
+    """竞品分析"""
+    competitors: List[Dict[str, Any]]  # 竞品列表
+    strengths: List[str]  # 本项目优势
+    weaknesses: List[str]  # 本项目劣势
+    opportunities: List[str]  # 市场机会
+
+
+@dataclass
+class DistributionRecommendation:
+    """发行渠道建议"""
+    primary_channels: List[str]  # 主要渠道
+    secondary_channels: List[str]  # 次要渠道
+    timing_suggestion: str  # 发行时机建议
+    pricing_strategy: str  # 定价策略建议
+```
+
+
+### Market_Agent API 设计
+
+```python
+# POST /api/wizard/market-analysis - 执行市场分析
+class MarketAnalysisRequest(BaseModel):
+    project_id: str
+
+class MarketAnalysisResponse(BaseModel):
+    task_id: str
+    status: str
+    agent: str = "market_agent"
+
+# GET /api/wizard/market-analysis/{project_id} - 获取市场分析结果
+class MarketAnalysisDetailResponse(BaseModel):
+    project_id: str
+    analysis: MarketAnalysisResult
+    generated_at: datetime
+    is_dynamic: bool = True
+```
+
+### MarketAnalysisPanel 前端组件
+
+```typescript
+interface MarketAnalysisPanelProps {
+  projectId: string;
+  analysis: MarketAnalysisResult | null;
+  isLoading: boolean;
+  onRefresh: () => void;
+}
+
+// 显示示例：
+// ┌─────────────────────────────────────────────────────────────┐
+// │  📊 市场分析报告                              [刷新]        │
+// ├─────────────────────────────────────────────────────────────┤
+// │  🎯 目标受众                                                │
+// │  ├── 主要受众：18-35岁，男性为主，科幻爱好者               │
+// │  └── 次要受众：35-50岁，家庭观众                           │
+// │                                                             │
+// │  📍 市场定位                                                │
+// │  └── 中等预算科幻短片，主打视觉效果和情感共鸣              │
+// │                                                             │
+// │  🏆 竞品分析                                                │
+// │  └── 同类型作品：《XXX》《YYY》，本项目优势：...           │
+// │                                                             │
+// │  📺 发行建议                                                │
+// │  └── 推荐渠道：B站、YouTube、电影节                        │
+// │                                                             │
+// │  ⚡ 动态数据 | 生成时间：2025-12-25 10:30                  │
+// └─────────────────────────────────────────────────────────────┘
+```
+
+
+---
+
+## 补充设计：System_Agent 导出前校验（Req 12）
+
+### System_Agent 架构
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                   System_Agent 导出前校验流程                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  用户点击"导出"                                                     │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 1: 标签一致性检查                                      │   │
+│  │  ├── 检查角色标签是否矛盾（如：又男又女）                    │   │
+│  │  ├── 检查场景标签是否矛盾（如：又室内又室外）                │   │
+│  │  └── 检查剧本与美术标签是否冲突                              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 2: 素材匹配度检查                                      │   │
+│  │  └── 预搜索当前标签与视频素材 TAG 的匹配百分比               │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 3: API 健康检查                                        │   │
+│  │  └── 检查前后端接口是否正常                                  │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 4: 页面渲染检查                                        │   │
+│  │  └── 检查展示页面是否有 bug 或报错                           │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  校验通过 → 允许导出 | 校验失败 → 显示问题列表和修复建议           │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+
+### System_Agent 实现
+
+```python
+class SystemAgent(BaseAgent):
+    """系统校验 Agent - 导出前全面校验"""
+    
+    def __init__(self, agent_id: str, message_bus, milvus_store, config=None):
+        super().__init__(
+            agent_id=agent_id,
+            agent_type=AgentType.SYSTEM,
+            message_bus=message_bus,
+            capabilities=["tag_consistency", "asset_matching", 
+                         "api_health", "render_check"],
+            config=config
+        )
+        self.milvus = milvus_store
+    
+    # 矛盾标签规则定义
+    CONFLICTING_TAGS = {
+        'gender': [['男', '女'], ['male', 'female']],
+        'location': [['室内', '室外'], ['indoor', 'outdoor']],
+        'time': [['白天', '夜晚'], ['day', 'night']],
+        'height': [['高', '矮'], ['tall', 'short']],
+        'build': [['胖', '瘦'], ['fat', 'thin']],
+    }
+    
+    async def validate_for_export(self, project_id: str) -> ValidationReport:
+        """导出前全面校验"""
+        issues = []
+        
+        # 1. 标签一致性检查
+        tag_issues = await self._check_tag_consistency(project_id)
+        issues.extend(tag_issues)
+        
+        # 2. 素材匹配度检查
+        match_result = await self._check_asset_matching(project_id)
+        if match_result.match_percentage < 50:
+            issues.append(ValidationIssue(
+                type='warning',
+                category='asset_matching',
+                message=f'素材匹配度较低：{match_result.match_percentage}%',
+                suggestion='建议上传更多相关素材或调整标签'
+            ))
+        
+        # 3. API 健康检查
+        api_issues = await self._check_api_health()
+        issues.extend(api_issues)
+        
+        # 4. 页面渲染检查
+        render_issues = await self._check_render_status(project_id)
+        issues.extend(render_issues)
+        
+        return ValidationReport(
+            project_id=project_id,
+            is_valid=not any(i.type == 'error' for i in issues),
+            issues=issues,
+            can_export=not any(i.type == 'error' for i in issues),
+            checked_at=datetime.now()
+        )
+
+    
+    async def _check_tag_consistency(self, project_id: str) -> List[ValidationIssue]:
+        """检查标签一致性"""
+        issues = []
+        project = await self._get_project(project_id)
+        
+        # 检查角色标签
+        for character in project.characters:
+            for category, conflict_groups in self.CONFLICTING_TAGS.items():
+                for conflict_group in conflict_groups:
+                    found_tags = [t for t in character.tags if t in conflict_group]
+                    if len(found_tags) > 1:
+                        issues.append(ValidationIssue(
+                            type='error',
+                            category='tag_conflict',
+                            message=f'角色 "{character.name}" 存在矛盾标签：{found_tags}',
+                            suggestion=f'请检查并修正角色的{category}属性',
+                            related_entity=character.name
+                        ))
+        
+        # 检查场景标签
+        for scene in project.scenes:
+            for category, conflict_groups in self.CONFLICTING_TAGS.items():
+                for conflict_group in conflict_groups:
+                    found_tags = [t for t in scene.tags if t in conflict_group]
+                    if len(found_tags) > 1:
+                        issues.append(ValidationIssue(
+                            type='error',
+                            category='tag_conflict',
+                            message=f'场景 "{scene.name}" 存在矛盾标签：{found_tags}',
+                            suggestion=f'请检查并修正场景的{category}属性',
+                            related_entity=scene.name
+                        ))
+        
+        # 检查剧本与美术标签冲突
+        script_art_conflicts = await self._check_script_art_conflicts(project)
+        issues.extend(script_art_conflicts)
+        
+        return issues
+
+    
+    async def _check_asset_matching(self, project_id: str) -> AssetMatchResult:
+        """检查素材匹配度"""
+        project = await self._get_project(project_id)
+        all_tags = self._collect_all_tags(project)
+        
+        # 在 Milvus 中搜索匹配的素材
+        matched_count = 0
+        total_scenes = len(project.scenes)
+        
+        for scene in project.scenes:
+            results = self.milvus.search_by_tags(scene.tags, top_k=1)
+            if results:
+                matched_count += 1
+        
+        match_percentage = (matched_count / total_scenes * 100) if total_scenes > 0 else 0
+        
+        return AssetMatchResult(
+            total_scenes=total_scenes,
+            matched_scenes=matched_count,
+            match_percentage=round(match_percentage, 1)
+        )
+    
+    async def _check_api_health(self) -> List[ValidationIssue]:
+        """检查 API 健康状态"""
+        issues = []
+        endpoints = [
+            '/api/wizard/parse-script',
+            '/api/wizard/generate-content',
+            '/api/wizard/process-assets',
+            '/api/wizard/market-analysis',
+        ]
+        
+        for endpoint in endpoints:
+            try:
+                # 健康检查请求
+                response = await self._health_check(endpoint)
+                if not response.ok:
+                    issues.append(ValidationIssue(
+                        type='error',
+                        category='api_health',
+                        message=f'API 端点不可用：{endpoint}',
+                        suggestion='请检查后端服务是否正常运行'
+                    ))
+            except Exception as e:
+                issues.append(ValidationIssue(
+                    type='error',
+                    category='api_health',
+                    message=f'API 连接失败：{endpoint}',
+                    suggestion=str(e)
+                ))
+        
+        return issues
+    
+    async def _check_render_status(self, project_id: str) -> List[ValidationIssue]:
+        """检查页面渲染状态"""
+        # 检查前端页面是否有渲染错误
+        issues = []
+        # 实现页面渲染检查逻辑
+        return issues
+
+
+@dataclass
+class ValidationIssue:
+    """校验问题"""
+    type: str  # 'error' | 'warning' | 'info'
+    category: str  # 'tag_conflict' | 'asset_matching' | 'api_health' | 'render'
+    message: str
+    suggestion: str
+    related_entity: Optional[str] = None
+
+
+@dataclass
+class ValidationReport:
+    """校验报告"""
+    project_id: str
+    is_valid: bool
+    issues: List[ValidationIssue]
+    can_export: bool
+    checked_at: datetime
+
+
+@dataclass
+class AssetMatchResult:
+    """素材匹配结果"""
+    total_scenes: int
+    matched_scenes: int
+    match_percentage: float
+```
+
+### System_Agent API 设计
+
+```python
+# POST /api/wizard/validate-export - 导出前校验
+class ValidateExportRequest(BaseModel):
+    project_id: str
+
+class ValidateExportResponse(BaseModel):
+    is_valid: bool
+    can_export: bool
+    issues: List[ValidationIssue]
+    asset_match_percentage: float
+    checked_at: datetime
+```
+
+
+---
+
+## 补充设计：数据标注规范（Req 14）
+
+### 数据类型定义
+
+```python
+class DataType(Enum):
+    """数据类型枚举"""
+    STATIC = "static"    # 静态数据案例（模板、示例）
+    DYNAMIC = "dynamic"  # 动态数据（实时生成、分析结果）
+
+
+@dataclass
+class DataAnnotation:
+    """数据标注"""
+    data_type: DataType
+    source: str  # 数据来源
+    generated_at: Optional[datetime]  # 生成时间（动态数据）
+    is_editable: bool  # 是否可编辑
+```
+
+### 数据标注规则
+
+| 环节 | 数据类型 | 说明 |
+|------|----------|------|
+| 项目模板 | 静态 | 预设模板，可作为参考 |
+| 示例项目 | 静态 | 演示用例，标记为"示例" |
+| Script_Agent 解析 | 动态 | 基于用户剧本实时解析 |
+| Art_Agent 分类 | 动态 | 基于用户素材实时分类 |
+| Market_Agent 分析 | 动态 | 基于项目数据实时分析 |
+| System_Agent 校验 | 动态 | 基于项目数据实时校验 |
+| Director_Agent 审核 | 动态 | 基于上下文实时审核 |
+
+
+### DataTypeIndicator 前端组件
+
+```typescript
+interface DataTypeIndicatorProps {
+  dataType: 'static' | 'dynamic';
+  source?: string;
+  generatedAt?: Date;
+}
+
+// 静态数据显示示例：
+// ┌─────────────────────────────────────┐
+// │  📋 短片模板                        │
+// │  ├── 时长：5-30分钟                 │
+// │  ├── 画幅：16:9                     │
+// │  └── 帧率：24fps                    │
+// │                                      │
+// │  📌 静态案例 | 仅供参考              │
+// └─────────────────────────────────────┘
+
+// 动态数据显示示例：
+// ┌─────────────────────────────────────┐
+// │  📊 市场分析报告                    │
+// │  ├── 目标受众：18-35岁              │
+// │  ├── 市场定位：中等预算科幻短片     │
+// │  └── 推荐渠道：B站、YouTube         │
+// │                                      │
+// │  ⚡ 动态数据 | 2025-12-25 10:30     │
+// └─────────────────────────────────────┘
+
+const DataTypeIndicator: React.FC<DataTypeIndicatorProps> = ({
+  dataType,
+  source,
+  generatedAt
+}) => {
+  if (dataType === 'static') {
+    return (
+      <div className="data-indicator static">
+        <span className="icon">📌</span>
+        <span className="label">静态案例</span>
+        <span className="hint">仅供参考</span>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="data-indicator dynamic">
+      <span className="icon">⚡</span>
+      <span className="label">动态数据</span>
+      {generatedAt && (
+        <span className="time">{formatDateTime(generatedAt)}</span>
+      )}
+    </div>
+  );
+};
+```
+
+
+### 数据标注服务
+
+```python
+class DataAnnotationService:
+    """数据标注服务 - 管理数据类型标注"""
+    
+    @staticmethod
+    def annotate_static(data: Any, source: str = "template") -> AnnotatedData:
+        """标注为静态数据"""
+        return AnnotatedData(
+            data=data,
+            annotation=DataAnnotation(
+                data_type=DataType.STATIC,
+                source=source,
+                generated_at=None,
+                is_editable=False
+            )
+        )
+    
+    @staticmethod
+    def annotate_dynamic(data: Any, source: str, generated_at: datetime = None) -> AnnotatedData:
+        """标注为动态数据"""
+        return AnnotatedData(
+            data=data,
+            annotation=DataAnnotation(
+                data_type=DataType.DYNAMIC,
+                source=source,
+                generated_at=generated_at or datetime.now(),
+                is_editable=True
+            )
+        )
+    
+    @staticmethod
+    def validate_dynamic_requirement(data: AnnotatedData, context: str) -> bool:
+        """验证动态数据要求（后期分析环节必须使用动态数据）"""
+        DYNAMIC_REQUIRED_CONTEXTS = [
+            'market_analysis',
+            'system_validation',
+            'director_review',
+            'export_check'
+        ]
+        
+        if context in DYNAMIC_REQUIRED_CONTEXTS:
+            return data.annotation.data_type == DataType.DYNAMIC
+        return True
+
+
+@dataclass
+class AnnotatedData:
+    """带标注的数据"""
+    data: Any
+    annotation: DataAnnotation
+```
+
+---
+
+## 设计文档审核清单（更新）
+
+- [x] 问题分析完成（P0-1 到 P0-7）
+- [x] 架构设计完成（简化 MVP 方案）
+- [x] 组件接口定义完成
+- [x] 数据模型定义完成
+- [x] 错误处理策略定义完成
+- [x] 素材预处理管道设计完成
+- [x] Storyboard_Agent 设计完成
+- [x] Correctness Properties 定义完成（10 个核心属性）
+- [x] 测试策略定义完成（Hypothesis 属性测试）
+- [x] **ProjectValidator 组件设计完成（Req 6）**
+- [x] **模板管理 API 设计完成（Req 8）**
+- [x] **Market_Agent 设计完成（Req 11）**
+- [x] **System_Agent 设计完成（Req 12）**
+- [x] **数据标注规范设计完成（Req 14）**

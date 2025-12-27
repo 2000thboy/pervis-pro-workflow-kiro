@@ -1,0 +1,104 @@
+{
+  "project_id": "test_project_20251227_010624",
+  "start_time": "2025-12-27T01:06:24.698192",
+  "end_time": "2025-12-27T01:06:34.622856",
+  "total_duration_ms": 9924,
+  "steps": [
+    {
+      "name": "健康检查",
+      "agent": "System",
+      "status": "completed",
+      "duration_ms": 2041,
+      "input_summary": "无",
+      "output_summary": "包含字段: api_status, wizard_health",
+      "review_result": null,
+      "error": null
+    },
+    {
+      "name": "剧本解析",
+      "agent": "Script_Agent",
+      "status": "completed",
+      "duration_ms": 8,
+      "input_summary": "包含字段: script_length",
+      "output_summary": "包含字段: scenes_count, characters_count, estimated_duration, status",
+      "review_result": null,
+      "error": null
+    },
+    {
+      "name": "生成 Logline",
+      "agent": "Script_Agent",
+      "status": "completed",
+      "duration_ms": 3,
+      "input_summary": "包含字段: content_type",
+      "output_summary": "包含字段: logline, review_status",
+      "review_result": {
+        "status": null,
+        "suggestions": []
+      },
+      "error": null
+    },
+    {
+      "name": "生成 Synopsis",
+      "agent": "Script_Agent",
+      "status": "completed",
+      "duration_ms": 1,
+      "input_summary": "包含字段: content_type",
+      "output_summary": "包含字段: synopsis, review_status",
+      "review_result": {
+        "status": null
+      },
+      "error": null
+    },
+    {
+      "name": "生成人物小传",
+      "agent": "Script_Agent",
+      "status": "completed",
+      "duration_ms": 5,
+      "input_summary": "包含字段: characters_count",
+      "output_summary": "包含字段: bios_count",
+      "review_result": null,
+      "error": null
+    },
+    {
+      "name": "内容审核",
+      "agent": "Director_Agent",
+      "status": "completed",
+      "duration_ms": 2,
+      "input_summary": "包含字段: content_types",
+      "output_summary": "包含字段: status, passed_checks, failed_checks",
+      "review_result": null,
+      "error": null
+    },
+    {
+      "name": "素材召回",
+      "agent": "Storyboard_Agent",
+      "status": "completed",
+      "duration_ms": 7860,
+      "input_summary": "包含字段: scenes_count",
+      "output_summary": "包含字段: recall_results",
+      "review_result": null,
+      "error": null
+    },
+    {
+      "name": "粗剪视频",
+      "agent": "Storyboard_Agent",
+      "status": "completed",
+      "duration_ms": 0,
+      "input_summary": "包含字段: scenes_with_assets",
+      "output_summary": "包含字段: skipped, reason",
+      "review_result": null,
+      "error": null
+    }
+  ],
+  "final_output": {
+    "scenes_count": 10,
+    "characters_count": 6,
+    "estimated_duration": 213.5,
+    "logline": null,
+    "synopsis_length": 0,
+    "character_bios_count": 3,
+    "recall_results_count": 5,
+    "rough_cut_path": null
+  },
+  "success": true
+}

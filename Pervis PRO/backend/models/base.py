@@ -3,7 +3,7 @@
 Phase 2: 完整的 Pydantic 模型，对应数据库结构
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from enum import Enum
 from datetime import datetime
@@ -30,14 +30,11 @@ class Character(BaseModel):
     description: str
 
 class ScriptAnalysisRequest(BaseModel):
-    content: str = Field(..., alias="script_text")
+    content: str
     mode: str = "parse"  # parse, smart_build, ai_build
     project_id: Optional[str] = None
     title: Optional[str] = "Untitled"
     logline: Optional[str] = None
-
-    class Config:
-        allow_population_by_field_name = True
 
 class ScriptAnalysisResponse(BaseModel):
     status: str
@@ -45,7 +42,6 @@ class ScriptAnalysisResponse(BaseModel):
     characters: List[Character]
     processing_time: float
     project_id: Optional[str] = None
-    meta: Optional[Dict[str, Any]] = None
     error: Optional[Dict[str, Any]] = None
 
 class AssetUploadResponse(BaseModel):
@@ -68,8 +64,7 @@ class AssetStatusResponse(BaseModel):
 
 class SearchQuery(BaseModel):
     beat_id: Optional[str] = None
-    query_text: Optional[str] = None
-    query_tags: Dict[str, List[str]] = {}
+    query_tags: Dict[str, List[str]]
     fuzziness: float = 0.7
     limit: int = 5
 
@@ -78,15 +73,13 @@ class SearchResult(BaseModel):
     segment_id: str
     match_score: float
     match_reason: str
-    preview_url: Optional[str] = None
-    thumbnail_url: Optional[str] = None
-    tags_matched: List[str] = []
+    preview_url: str
+    tags_matched: List[str]
 
 class SearchResponse(BaseModel):
     results: List[SearchResult]
     total_matches: int
     search_time: float
-    query_info: Optional[Dict[str, Any]] = None
 
 class FeedbackRequest(BaseModel):
     beat_id: str

@@ -2,36 +2,87 @@
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@0.12.1"],
+      "args": ["-y", "chrome-devtools-mcp@latest"],
       "env": {
-        "SystemRoot": "C:\\Windows",
-        "PROGRAMFILES": "C:\\Program Files",
-        "APPDATA": "C:\\Users\\hy10\\AppData\\Roaming"
+        "SystemRoot": "C:\\\\Windows",
+        "PROGRAMFILES": "C:\\\\Program Files",
+        "APPDATA": "C:\\\\Users\\\\hy10\\\\AppData\\\\Roaming"
       }
+    },
+    "neon": {
+      "command": "npx",
+      "args": ["-y", "@neondatabase/mcp-server-neon", "start", ""],
+      "env": {
+        "NEON_API_KEY": ""
+      }
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "",
+        "--project-ref",
+        ""
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "",
+        "SUPABASE_PROJECT_REF": ""
+      }
+    },
+    "figma": {
+      "command": "npx",
+      "args": ["-y", "@hapins/figma-mcp"],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": ""
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "--api-key", ""],
+      "env": {
+        "CONTEXT7_API_KEY": "",
+        "SystemRoot": "C:\\\\Windows",
+        "APPDATA": "C:\\\\Users\\\\hy10\\\\AppData\\\\Roaming"
+      }
+    },
+    "ref": {
+      "command": "npx",
+      "args": ["-y", "ref-tools-mcp@latest"],
+      "env": {
+        "REF_API_KEY": ""
+      }
+    },
+    "vercel": {
+      "command": "npx",
+      "args": ["-y", "@open-mcp/vercel"],
+      "env": {
+        "API_KEY": ""
+      }
+    },
+    "edgeone-pages": {
+      "command": "npx",
+      "args": ["-y", "edgeone-pages-mcp-fullstack@latest", "--region", "china"],
+      "env": {
+        "EDGEONE_PAGES_API_TOKEN": "",
+        "EDGEONE_PAGES_PROJECT_NAME": ""
+      }
+    },
+    "stripe": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.stripe.com"]
     },
     "shadcn": {
       "command": "npx",
-      "args": ["-y", "shadcn@3.6.2", "mcp"]
+      "args": ["-y", "shadcn@latest", "mcp"]
     },
-    "codex-cli": {
+    "semgrep": {
       "command": "npx",
-      "args": ["-y", "@anthropic/codex-mcp-server"],
+      "args": ["-y", "mcp-server-semgrep"],
       "env": {
-        "SystemRoot": "C:\\Windows",
-        "APPDATA": "C:\\Users\\hy10\\AppData\\Roaming"
+        "SEMGREP_APP_TOKEN": ""
       }
-    },
-    "sqlite": {
-      "command": "uvx",
-      "args": ["mcp-server-sqlite", "--db-path", "./data/pervis.db"]
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
-    },
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
     }
   }
 }

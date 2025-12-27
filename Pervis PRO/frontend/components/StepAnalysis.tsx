@@ -21,8 +21,10 @@ import {
   X,
   PanelLeftClose,
   PanelLeftOpen,
-  Plus
+  Plus,
+  Download
 } from 'lucide-react';
+import { ExportDialog } from './Export';
 
 interface Props {
   project: Project;
@@ -259,6 +261,7 @@ export const StepAnalysis: React.FC<Props> = ({ project, onUpdateBeats, onUpdate
   const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const scriptContainerRef = useRef<HTMLDivElement>(null);
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   // Edit Duration States
   const [isEditingDuration, setIsEditingDuration] = useState(false);
@@ -403,6 +406,12 @@ export const StepAnalysis: React.FC<Props> = ({ project, onUpdateBeats, onUpdate
                 
                 {isSidebarOpen && (
                     <div className="p-4 border-t border-zinc-800">
+                        <button 
+                            onClick={() => setShowExportDialog(true)}
+                            className="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-black text-xs font-bold rounded border border-yellow-500 transition-colors flex items-center justify-center gap-2 mb-2"
+                        >
+                            <Download size={12} /> 导出项目文档
+                        </button>
                         <button className="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white text-xs font-bold rounded border border-zinc-700 transition-colors flex items-center justify-center gap-2">
                             <Sparkles size={12} /> 生成人物关系图
                         </button>
@@ -577,6 +586,15 @@ export const StepAnalysis: React.FC<Props> = ({ project, onUpdateBeats, onUpdate
                 </div>
             </div>
         )}
+
+        {/* Export Dialog */}
+        <ExportDialog
+            isOpen={showExportDialog}
+            onClose={() => setShowExportDialog(false)}
+            mode="analysis"
+            projectId={project.id}
+            beats={project.beats.map(b => ({ id: b.id, title: b.content.substring(0, 30) }))}
+        />
 
     </div>
   );

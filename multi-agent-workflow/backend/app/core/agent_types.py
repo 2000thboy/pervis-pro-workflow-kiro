@@ -25,3 +25,4 @@ class AgentType(Enum):
     ART = "art"
     MARKET = "market"
     BACKEND = "backend"
+    STORYBOARD = "storyboard"  # 0-Fix.6: 故事板Agent

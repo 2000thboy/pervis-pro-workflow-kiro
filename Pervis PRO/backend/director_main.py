@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from database import init_database
-from routers import analysis, autocut, batch, config, export, feedback, multimodal, projects, render, script, timeline, transcription
+from routers import analysis, autocut, batch, config, export, feedback, multimodal, projects, render, script, timeline, transcription, websocket, system
 from routers.dam_proxy import create_dam_proxy_router
 
 logging.basicConfig(level=logging.INFO)
@@ -65,6 +65,8 @@ app.include_router(render.router, tags=["视频渲染"])
 app.include_router(analysis.router, tags=["分析日志"])
 app.include_router(autocut.router, tags=["自动剪辑"])
 app.include_router(config.router, prefix="/api/config", tags=["模型配置"])
+app.include_router(system.router, tags=["系统管理"])
+app.include_router(websocket.router, tags=["WebSocket"])
 
 
 @app.get("/")

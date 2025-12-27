@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-12-27T08:50:57.998419",
+  "asset_root": "U:\\PreVis_Assets",
+  "stats": {
+    "total_files": 300,
+    "indexed": 284,
+    "embedded": 284,
+    "failed": 0,
+    "keyframes_extracted": 0,
+    "visual_embedded": 0,
+    "elapsed_seconds": 8.521075,
+    "rate": 33.32912807362921,
+    "embedding_rate": 100.0,
+    "keyframe_rate": 0.0,
+    "visual_embedding_rate": 0.0,
+    "tag_coverage_pct": {
+      "scene_type": 5.28169014084507,
+      "time_of_day": 4.225352112676056,
+      "shot_size": 10.211267605633804,
+      "camera_move": 0.0,
+      "action_type": 23.239436619718308,
+      "mood": 6.690140845070422,
+      "characters": 6.338028169014084,
+      "vfx": 15.140845070422534,
+      "environment": 0.0,
+      "source_work": 13.380281690140844,
+      "free_tags": 84.50704225352112
+    }
+  },
+  "config": {
+    "use_llm": false,
+    "use_embedding": true,
+    "llm_model": "qwen2.5:7b",
+    "embedding_model": "nomic-embed-text"
+  }
+}

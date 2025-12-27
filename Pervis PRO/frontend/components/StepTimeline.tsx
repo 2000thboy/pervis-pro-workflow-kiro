@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import { Project, SceneGroup, Beat } from '../types';
 import { Timeline } from './Timeline';
-import { MonitorPlay, Settings, Download } from 'lucide-react';
+import { MonitorPlay, Settings, Download, Layers } from 'lucide-react';
 import { Preview } from './Preview';
 import { useLanguage } from './LanguageContext';
+import { ExportDialog } from './Export';
 
 interface Props {
   project: Project;
@@ -18,6 +19,7 @@ export const StepTimeline: React.FC<Props> = ({ project, scenes, onUpdateBeats }
   const [isPlaying, setIsPlaying] = useState(false);
   const [zoom, setZoom] = useState(40); // Initial zoom: 40px per second
   const [currentBeatId, setCurrentBeatId] = useState<string | null>(null);
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   const totalDuration = project.beats.reduce((acc, b) => acc + b.duration, 0);
 
@@ -113,7 +115,10 @@ export const StepTimeline: React.FC<Props> = ({ project, scenes, onUpdateBeats }
                      <button className="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 rounded transition-colors flex items-center justify-center gap-2 mb-2">
                          <Settings size={14} /> {t('timeline.seq_settings')}
                      </button>
-                     <button className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white rounded transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/20">
+                     <button 
+                         onClick={() => setShowExportDialog(true)}
+                         className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white rounded transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/20"
+                     >
                          <Download size={14} /> {t('timeline.export')}
                      </button>
                  </div>
@@ -146,6 +151,17 @@ export const StepTimeline: React.FC<Props> = ({ project, scenes, onUpdateBeats }
                 onZoomChange={setZoom}
             />
         </div>
+
+        {/* Export Dialog */}
+        <ExportDialog
+            isOpen={showExportDialog}
+            onClose={() => setShowExportDialog(false)}
+            mode="timeline"
+            projectId={project.id}
+            timelineId={project.id}
+            beats={project.beats.map(b => ({ id: b.id, title: b.content.substring(0, 30) }))}
+            scenes={scenes.map(s => ({ id: s.id, title: s.title }))}
+        />
     </div>
   );
 };

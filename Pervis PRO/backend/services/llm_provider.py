@@ -11,7 +11,7 @@ from enum import Enum
 class LLMConfig:
     PROVIDER = os.getenv("LLM_PROVIDER", "auto")  # auto, gemini, ollama, local
     OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-    LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "qwen2.5:14b")
+    LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "qwen2.5:7b")  # 默认使用 7b 模型
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     # 自动回退: 当主服务不可用时尝试备用服务

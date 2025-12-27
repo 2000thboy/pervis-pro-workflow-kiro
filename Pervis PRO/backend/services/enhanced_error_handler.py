@@ -421,27 +421,3 @@ class EnhancedErrorHandler:
 
 # 全局实例
 enhanced_error_handler = EnhancedErrorHandler()
-
-
-def _ensure_backend_alias() -> None:
-    import sys
-    import types
-
-    module = sys.modules[__name__]
-
-    backend = sys.modules.get("backend")
-    if backend is None:
-        backend = types.ModuleType("backend")
-        backend.__path__ = []
-        sys.modules["backend"] = backend
-
-    backend_services = sys.modules.get("backend.services")
-    if backend_services is None:
-        backend_services = types.ModuleType("backend.services")
-        backend_services.__path__ = []
-        sys.modules["backend.services"] = backend_services
-
-    sys.modules.setdefault("backend.services.enhanced_error_handler", module)
-
-
-_ensure_backend_alias()

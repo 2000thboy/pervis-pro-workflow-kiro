@@ -5,23 +5,27 @@ import {
     Image as ImageIcon, 
     MoreHorizontal,
     GripHorizontal,
-    Video
+    Video,
+    Download
 } from 'lucide-react';
 import { searchVisualAssets } from '../services/apiClient';
 import { useLanguage } from './LanguageContext';
 import { Inspector } from './Inspector';
+import { ExportDialog } from './Export';
 
 interface Props {
   scenes: SceneGroup[];
   beats: Beat[];
   onUpdateBeat: (beat: Beat) => void;
   onNext: () => void;
+  projectId?: string;
 }
 
-export const StepBeatBoard: React.FC<Props> = ({ scenes, beats, onUpdateBeat, onNext }) => {
+export const StepBeatBoard: React.FC<Props> = ({ scenes, beats, onUpdateBeat, onNext, projectId }) => {
   const { t } = useLanguage();
   const [selectedBeatId, setSelectedBeatId] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   
   // Inspector State
   const [previewMode, setPreviewMode] = useState<'fit' | 'fill'>('fill');
@@ -101,12 +105,20 @@ export const StepBeatBoard: React.FC<Props> = ({ scenes, beats, onUpdateBeat, on
                         <span className="text-yellow-500 font-bold">{getProgress()}%</span>
                      </div>
                 </div>
-                <button 
-                    onClick={onNext} 
-                    className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded shadow-lg shadow-indigo-900/20 transition-all"
-                >
-                    {t('board.enter_timeline')} <ArrowRight size={14} />
-                </button>
+                <div className="flex items-center gap-2">
+                    <button 
+                        onClick={() => setShowExportDialog(true)}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded border border-zinc-700 transition-all"
+                    >
+                        <Download size={14} /> 导出故事板
+                    </button>
+                    <button 
+                        onClick={onNext} 
+                        className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded shadow-lg shadow-indigo-900/20 transition-all"
+                    >
+                        {t('board.enter_timeline')} <ArrowRight size={14} />
+                    </button>
+                </div>
             </div>
 
             {/* Board Scroll Area */}
@@ -220,6 +232,16 @@ export const StepBeatBoard: React.FC<Props> = ({ scenes, beats, onUpdateBeat, on
                  </div>
              )}
         </div>
+
+        {/* Export Dialog */}
+        <ExportDialog
+            isOpen={showExportDialog}
+            onClose={() => setShowExportDialog(false)}
+            mode="board"
+            projectId={projectId || ''}
+            beats={beats.map(b => ({ id: b.id, title: b.content.substring(0, 30) }))}
+            scenes={scenes.map(s => ({ id: s.id, title: s.title }))}
+        />
 
     </div>
   );

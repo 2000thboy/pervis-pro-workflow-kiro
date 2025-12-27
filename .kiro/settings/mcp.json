@@ -13,7 +13,8 @@
         "describe_table",
         "create_table",
         "write_query",
-        "read_query"
+        "read_query",
+        "append_insight"
       ]
     },
     "filesystem": {
@@ -25,14 +26,7 @@
         "./Pervis PRO"
       ],
       "disabled": false,
-      "autoApprove": [
-        "list_directory",
-        "read_file",
-        "read_multiple_files",
-        "search_files",
-        "get_file_info",
-        "read_text_file"
-      ]
+      "autoApprove": ["*"]
     },
     "sequential-thinking": {
       "command": "npx",
@@ -65,36 +59,6 @@
         "get_current_time",
         "convert_time"
       ]
-    },
-    "puppeteer": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-puppeteer"
-      ],
-      "disabled": false,
-      "autoApprove": []
-    },
-    "everything": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-everything"
-      ],
-      "disabled": false,
-      "autoApprove": []
-    },
-    "brave-search": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-brave-search"
-      ],
-      "env": {
-        "BRAVE_API_KEY": "<YOUR_BRAVE_API_KEY>"
-      },
-      "disabled": true,
-      "autoApprove": []
     },
     "github": {
       "command": "npx",

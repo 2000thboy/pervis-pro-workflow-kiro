@@ -1,13 +1,18 @@
-# KiroSpec Instructions
+<!-- OPENSPEC:START -->
+# OpenSpec Instructions
 
 These instructions are for AI assistants working in this project.
 
-KiroSpec is the only official spec source for this repository.
+Always open `@/openspec/AGENTS.md` when the request:
+- Mentions planning or proposals (words like proposal, spec, change, plan)
+- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
+- Sounds ambiguous and you need the authoritative spec before coding
 
-When the request involves planning, proposals, scope changes, architecture shifts, or anything ambiguous:
-- Read the relevant specs under `@/.kiro/specs/` first
-- Apply constraints in `@/KIRO_FREEZE_PROMPT.md` when present
+Use `@/openspec/AGENTS.md` to learn:
+- How to create and apply change proposals
+- Spec format and conventions
+- Project structure and guidelines
 
-When implementing work:
-- Follow the task order in the relevant `tasks.md`
-- Keep behavior aligned with `requirements.md` and `design.md` in the same spec folder
+Keep this managed block so 'openspec update' can refresh the instructions.
+
+<!-- OPENSPEC:END -->

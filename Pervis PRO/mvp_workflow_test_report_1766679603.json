@@ -1,0 +1,121 @@
+{
+  "start_time": "2025-12-26T00:20:02.899524",
+  "phases": {
+    "phase1_environment": {
+      "status": "completed",
+      "checks": {
+        "asset_root": "✅ 存在",
+        "test_dir": "✅ 存在 (57 个视频)",
+        "ollama": "✅ 运行中 (模型: 2)",
+        "vision_model": "⚠️ llava-llama3 未安装",
+        "ffmpeg": "⚠️ [WinError 2] 系统找不到指定的文件。",
+        "agents": "✅ 加载成功"
+      }
+    },
+    "phase2_indexing": {
+      "status": "completed",
+      "indexed": 0,
+      "tagged": 0,
+      "total_assets": 0
+    },
+    "phase3_wizard": {
+      "status": "completed",
+      "steps": {
+        "script_parse": {
+          "scenes": 3,
+          "characters": 2,
+          "duration": 19.2
+        },
+        "logline": {
+          "error": "'NoneType' object is not subscriptable"
+        },
+        "project": {
+          "project_id": "mvp_test_1766679602",
+          "title": "鬼灭之刃 MAD 混剪",
+          "type": "short_film",
+          "duration": 3
+        },
+        "director_review": {
+          "status": "rejected",
+          "passed": [
+            "内容不为空"
+          ],
+          "suggestions": []
+        }
+      }
+    },
+    "phase4_beatboard": {
+      "status": "completed",
+      "scenes": [
+        {
+          "scene_id": "scene_001",
+          "heading": "INT. 战斗场景 - 日",
+          "candidates": [],
+          "error": "StoryboardAgentService.recall_assets() got an unexpected keyword argument 'search_tags'"
+        },
+        {
+          "scene_id": "scene_002",
+          "heading": "善逸霹雳一闪",
+          "candidates": [],
+          "error": "StoryboardAgentService.recall_assets() got an unexpected keyword argument 'search_tags'"
+        },
+        {
+          "scene_id": "scene_003",
+          "heading": "EXT. 森林 - 夜",
+          "candidates": [],
+          "error": "StoryboardAgentService.recall_assets() got an unexpected keyword argument 'search_tags'"
+        },
+        {
+          "scene_id": "scene_004",
+          "heading": "INT. 最终决战 - 黄昏",
+          "candidates": [],
+          "error": "StoryboardAgentService.recall_assets() got an unexpected keyword argument 'search_tags'"
+        }
+      ],
+      "total_scenes": 4
+    },
+    "phase5_preview": {
+      "status": "completed",
+      "timeline": [
+        {
+          "scene_id": "scene_001",
+          "heading": "INT. 战斗场景 - 日",
+          "start_time": 0.0,
+          "duration": 30,
+          "end_time": 30.0,
+          "asset": null
+        },
+        {
+          "scene_id": "scene_002",
+          "heading": "善逸霹雳一闪",
+          "start_time": 30.0,
+          "duration": 15,
+          "end_time": 45.0,
+          "asset": null
+        },
+        {
+          "scene_id": "scene_003",
+          "heading": "EXT. 森林 - 夜",
+          "start_time": 45.0,
+          "duration": 20,
+          "end_time": 65.0,
+          "asset": null
+        },
+        {
+          "scene_id": "scene_004",
+          "heading": "INT. 最终决战 - 黄昏",
+          "start_time": 65.0,
+          "duration": 25,
+          "end_time": 90.0,
+          "asset": null
+        }
+      ],
+      "total_duration": 90.0,
+      "total_clips": 4,
+      "clips_with_assets": 0
+    }
+  },
+  "success": true,
+  "errors": [],
+  "end_time": "2025-12-26T00:20:03.700325"
+}

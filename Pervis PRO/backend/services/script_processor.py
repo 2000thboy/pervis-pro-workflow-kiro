@@ -5,6 +5,7 @@ Phase 2: 集成Gemini和数据库的完整剧本分析流程
 
 from typing import List, Dict, Any
 from sqlalchemy.orm import Session
+from services.gemini_client import GeminiClient
 from services.database_service import DatabaseService
 from models.base import ScriptAnalysisRequest, ScriptAnalysisResponse, Beat, Character
 import time
@@ -37,14 +38,10 @@ class ScriptProcessor:
                     beats=[],
                     characters=[],
                     processing_time=time.time() - start_time,
-                    meta={"logline": request.logline or "", "synopsis": ""},
                     error={
                         "error_code": "SCENE_TOO_LONG",
                         "message": "检测到超长场次，建议人工拆分",
-                        "details": validation_result["long_scenes"],
-                        "trace_id": str(uuid.uuid4()),
-                        "retryable": False,
-                        "retry": {"supported": False, "max_attempts": 0},
+                        "details": validation_result["long_scenes"]
                     }
                 )
 
@@ -61,13 +58,7 @@ class ScriptProcessor:
                     beats=[],
                     characters=[],
                     processing_time=time.time() - start_time,
-                    meta={"logline": request.logline or "", "synopsis": ""},
-                    error=self._normalize_error(
-                        ai_result,
-                        default_error_code="AI_ANALYSIS_ERROR",
-                        default_message="AI分析失败",
-                        retryable_default=True,
-                    ),
+                    error=ai_result
                 )
             
             ai_data = ai_result["data"]
@@ -130,11 +121,7 @@ class ScriptProcessor:
                 beats=beats,
                 characters=characters,
                 processing_time=processing_time,
-                project_id=project.id,
-                meta={
-                    "logline": ai_data.get("logline", request.logline or ""),
-                    "synopsis": ai_data.get("synopsis", ""),
-                },
+                project_id=project.id
             )
             
         except Exception as e:
@@ -143,47 +130,13 @@ class ScriptProcessor:
                 beats=[],
                 characters=[],
                 processing_time=time.time() - start_time,
-                meta={"logline": request.logline or "", "synopsis": ""},
-                error=self._normalize_error(
-                    {
-                        "error_code": "SCRIPT_PROCESSING_ERROR",
-                        "message": "剧本处理过程中发生错误",
-                        "details": str(e),
-                    },
-                    default_error_code="SCRIPT_PROCESSING_ERROR",
-                    default_message="剧本处理过程中发生错误",
-                    retryable_default=True,
-                ),
-            )
-
-    def _normalize_error(
-        self,
-        error: Any,
-        default_error_code: str,
-        default_message: str,
-        retryable_default: bool,
-    ) -> Dict[str, Any]:
-        if isinstance(error, dict):
-            normalized: Dict[str, Any] = dict(error)
-        else:
-            normalized = {"details": str(error)}
-
-        normalized.setdefault("error_code", default_error_code)
-        normalized.setdefault("message", default_message)
-        normalized.setdefault("trace_id", str(uuid.uuid4()))
-        normalized.setdefault("retryable", retryable_default)
-
-        if "retry" not in normalized:
-            if normalized.get("retryable"):
-                normalized["retry"] = {
-                    "supported": True,
-                    "suggested_after_seconds": 1,
-                    "max_attempts": 3,
+                error={
+                    "error_code": "SCRIPT_PROCESSING_ERROR",
+                    "message": "剧本处理过程中发生错误",
+                    "details": str(e),
+                    "trace_id": str(uuid.uuid4())
                 }
-            else:
-                normalized["retry"] = {"supported": False, "max_attempts": 0}
-
-        return normalized
+            )
 
     def _validate_script_structure(self, script_text: str) -> Dict[str, Any]:
         """

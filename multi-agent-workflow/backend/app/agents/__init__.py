@@ -82,6 +82,14 @@ from .backend_agent import (
     HealthStatus,
     MonitoringTarget,
 )
+from .storyboard_agent import (
+    StoryboardAgent,
+    AssetCandidate,
+    RecallResult,
+    RoughCutResult,
+    RecallStrategy,
+    CandidateStatus,
+)
 
 __all__ = [
     "BaseAgent",
@@ -147,4 +155,10 @@ __all__ = [
     "ErrorCategory",
     "HealthStatus",
     "MonitoringTarget",
+    "StoryboardAgent",
+    "AssetCandidate",
+    "RecallResult",
+    "RoughCutResult",
+    "RecallStrategy",
+    "CandidateStatus",
 ]

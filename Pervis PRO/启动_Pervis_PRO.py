@@ -1,12 +1,6 @@
-import os
 import sys
+import os
 import subprocess
-
-# 自动切换到后端虚拟环境
-venv_python = os.path.join(os.path.dirname(__file__), r"backend\venv\Scripts\python.exe")
-if os.path.isfile(venv_python) and sys.executable != venv_python:
-    os.execv(venv_python, [venv_python, __file__] + sys.argv[1:])
-
 import time
 
 def main():
@@ -19,7 +13,7 @@ def main():
     except ImportError:
         print("📦 检测到缺少组件 (customtkinter)，正在自动安装...")
         try:
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "customtkinter", "requests", "-i", "https://pypi.tuna.tsinghua.edu.cn/simple"])
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "customtkinter", "-i", "https://pypi.tuna.tsinghua.edu.cn/simple"])
             print("✅ 安装成功！")
             import customtkinter # 验证
         except Exception as e:
@@ -31,7 +25,6 @@ def main():
     # 2. 设置环境路径
     current_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.append(current_dir)
-    sys.path.append(os.path.join(current_dir, "launcher"))
     
     # 3. 启动仪表盘
     try:
@@ -45,11 +38,4 @@ def main():
         input("按任意键退出...")
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        # 任意未捕获异常都打印到控制台
-        import traceback
-        traceback.print_exc()
-        print("\n❌ 启动器异常退出：", e)
-        input("\n按回车键关闭窗口...")
+    main()

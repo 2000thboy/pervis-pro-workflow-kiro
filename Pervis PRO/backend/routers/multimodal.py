@@ -6,7 +6,7 @@ Phase 4: 融合文本、音频、视觉的综合搜索API
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
-from services.multimodal_search import MultimodalSearchEngine
+from services.multimodal_search import MultimodalSearchService as MultimodalSearchEngine
 from services.visual_processor import VisualProcessor
 from pydantic import BaseModel
 from typing import List, Dict, Optional

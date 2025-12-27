@@ -9,7 +9,16 @@
 
 - 本项目运行在 Windows 系统上
 - 使用 `py` 命令代替 `python` 执行 Python 脚本
-- 测试命令从 `multi-agent-workflow/backend` 目录执行
+- 测试命令从 `Pervis PRO/backend` 目录执行
+
+## 命令执行注意事项
+
+- **避免使用需要交互式输入的命令**，防止终端卡住等待用户输入
+- npm/yarn 命令加 `-y` 或 `--yes` 跳过确认提示
+- git commit 必须用 `-m "message"` 指定提交信息
+- 安装脚本优先使用静默模式 (silent/quiet mode)
+- pip 安装使用 `--yes` 或避免需要确认的操作
+- 如果必须执行可能需要输入的命令，先告知用户可能需要手动干预
 
 ## 测试规范
 
@@ -35,17 +44,18 @@
 ### 测试执行
 
 - 运行测试: `py -m pytest tests/<测试文件>.py -v --tb=short`
-- 从 `multi-agent-workflow/backend` 目录执行测试命令
+- 从 `Pervis PRO/backend` 目录执行测试命令
 
 ## 项目结构
 
 ```
-multi-agent-workflow/
+Pervis PRO/
 ├── backend/
-│   ├── app/
-│   │   ├── agents/      # Agent 实现
-│   │   ├── core/        # 核心组件 (消息总线、通信协议等)
-│   │   └── ...
+│   ├── core/            # 核心组件 (消息总线、通信协议、BaseAgent)
+│   ├── services/
+│   │   └── agents/      # Agent 实现
+│   ├── routers/         # API 路由
+│   ├── models/          # 数据模型
 │   └── tests/           # 测试文件
 ├── frontend/            # React 前端
 └── launcher/            # 桌面启动器
@@ -53,7 +63,7 @@ multi-agent-workflow/
 
 ## Agent 开发规范
 
-- 所有 Agent 继承自 `BaseAgent` 基类
-- 使用 `MessageBus` 进行 Agent 间通信
-- Agent 类型定义在 `agent_types.py` 的 `AgentType` 枚举中
-- 导出新 Agent 时更新 `app/agents/__init__.py`
+- 所有 Agent 继承自 `core.BaseAgent` 基类
+- 使用 `core.MessageBus` 进行 Agent 间通信
+- Agent 类型定义在 `core.agent_types.py` 的 `AgentType` 枚举中
+- Agent 实现放在 `services/agents/` 目录

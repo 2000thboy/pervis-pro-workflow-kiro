@@ -15,7 +15,7 @@ import uvicorn
 import os
 import logging
 
-from routers import script, assets, search, feedback, transcription, multimodal, batch, export, tags, vector, timeline, render, analysis, images, projects, autocut, storage, config, ai
+from routers import script, assets, search, feedback, transcription, multimodal, batch, export, tags, vector, timeline, render, analysis, images, projects, autocut, storage, config, ai, asset_libraries, wizard, image_generation, system, websocket, keyframes
 from database import init_database, get_db
 
 # 配置日志
@@ -74,6 +74,13 @@ app.include_router(autocut.router, tags=["自动剪辑"])
 app.include_router(storage.router, prefix="/api/storage", tags=["存储管理"])
 app.include_router(config.router, prefix="/api/config", tags=["模型配置"])
 app.include_router(ai.router, tags=["AI服务"])
+app.include_router(asset_libraries.router, tags=["素材库管理"])
+app.include_router(asset_libraries.project_router, tags=["项目素材库"])
+app.include_router(wizard.router, prefix="/api/wizard", tags=["项目立项向导"])
+app.include_router(image_generation.router, prefix="/api/image-generation", tags=["AI图片生成"])
+app.include_router(system.router, prefix="/api/system", tags=["系统管理"])
+app.include_router(websocket.router, tags=["WebSocket"])
+app.include_router(keyframes.router, prefix="/api/keyframes", tags=["关键帧管理"])
 
 @app.get("/")
 async def root():

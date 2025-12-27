@@ -20,13 +20,15 @@ class TestLLMProviderConfiguration:
     def test_gemini_provider_requires_api_key(self):
         """
         Property 2: API Key 配置验证
-        当 LLM_PROVIDER 为 gemini 且 GEMINI_API_KEY 未设置时，应抛出 ValueError
+        当 LLM_PROVIDER 为 gemini 且 GEMINI_API_KEY 未设置时，
+        如果 LLM_AUTO_FALLBACK=false，应抛出 ValueError
         Validates: Requirements 1.3
         """
-        # 清除环境变量
+        # 清除环境变量，禁用自动回退
         with patch.dict(os.environ, {
             'LLM_PROVIDER': 'gemini',
-            'GEMINI_API_KEY': ''
+            'GEMINI_API_KEY': '',
+            'LLM_AUTO_FALLBACK': 'false'
         }, clear=False):
             # 重新加载模块以应用新的环境变量
             from services import llm_provider

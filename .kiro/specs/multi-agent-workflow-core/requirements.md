@@ -1,5 +1,16 @@
 # 多Agent协作工作流核心系统需求文档
 
+> ⚠️ **整合说明**: 本 Spec 的核心代码已整合到 `Pervis PRO/backend/core/` 目录。
+> 
+> - 消息总线: `Pervis PRO/backend/core/message_bus.py`
+> - Agent 基类: `Pervis PRO/backend/core/base_agent.py`
+> - 通信协议: `Pervis PRO/backend/core/communication_protocol.py`
+> - Agent 类型: `Pervis PRO/backend/core/agent_types.py`
+> - Agent 实现: `Pervis PRO/backend/services/agents/`
+> - 架构文档: `Pervis PRO/docs/MULTI_AGENT_ARCHITECTURE.md`
+>
+> 整合日期: 2025-12-27
+
 ## 介绍
 
 本文档定义了一个基于多Agent协作的智能视频制作系统的核心工作流需求。该系统通过8个专业Agent的协作，实现从项目立项到最终交付的全流程自动化管理。

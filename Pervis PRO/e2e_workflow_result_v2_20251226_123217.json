@@ -1,0 +1,1068 @@
+{
+  "test_info": {
+    "script_name": "深夜食堂",
+    "project_id": "test_project_20251226_123150",
+    "start_time": "2025-12-26T12:31:50.849809",
+    "end_time": "2025-12-26T12:32:17.470795",
+    "total_duration_ms": 26620.985999999997
+  },
+  "summary": {
+    "total_stages": 9,
+    "passed": 9,
+    "failed": 0
+  },
+  "stages": [
+    {
+      "name": "剧本解析",
+      "description": "使用 Script_Agent 解析剧本，提取场次、角色、对话",
+      "status": "passed",
+      "result": {
+        "parse_result": {
+          "scenes": [
+            {
+              "scene_id": "scene_cc568f9a",
+              "scene_number": 1,
+              "heading": "场景：深夜食堂内 - 夜",
+              "location": "深夜食堂内",
+              "time_of_day": "夜",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：凌晨1点 深夜食堂内，暖黄色的灯光下，老板阿德正在擦拭吧台。 店内只有一位客人——穿着西装的中年男子陈志明，独自喝着清酒。 门帘被掀开，一个背着吉他的年轻女孩小美走了进来。",
+              "dialogue": [
+                {
+                  "character": "阿德",
+                  "text": "欢迎光临。这么晚了，想吃点什么？"
+                },
+                {
+                  "character": "小美",
+                  "text": "有什么推荐的吗？"
+                },
+                {
+                  "character": "阿德",
+                  "text": "今天的关东煮很新鲜，还有刚做的蛋包饭。"
+                },
+                {
+                  "character": "小美",
+                  "text": "那就来一份蛋包饭吧。（把吉他放在旁边的椅子上）"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "你是搞音乐的？"
+                },
+                {
+                  "character": "小美",
+                  "text": "嗯，刚从livehouse演出完。"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "年轻真好。（苦笑）我年轻时也想当歌手。"
+                }
+              ],
+              "characters": [
+                "阿德",
+                "小美",
+                "陈志明"
+              ],
+              "estimated_duration": 26.4
+            },
+            {
+              "scene_id": "scene_161342b1",
+              "scene_number": 2,
+              "heading": "场景：深夜食堂内 - 夜",
+              "location": "深夜食堂内",
+              "time_of_day": "夜",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：凌晨1点20分 阿德端上蛋包饭，小美开始吃。陈志明又点了一杯清酒。 门帘再次被掀开，一对年轻情侣走进来——小杰和小琳。",
+              "dialogue": [
+                {
+                  "character": "小杰",
+                  "text": "老板，两碗拉面！"
+                },
+                {
+                  "character": "小琳",
+                  "text": "哇，你是音乐人吗？"
+                },
+                {
+                  "character": "小美",
+                  "text": "算是吧，还在努力中。"
+                },
+                {
+                  "character": "小琳",
+                  "text": "好酷啊！我们刚看完电影，肚子饿了就来这里。"
+                },
+                {
+                  "character": "阿德",
+                  "text": "好的，两碗拉面马上来。"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "你今晚演出怎么样？"
+                },
+                {
+                  "character": "小美",
+                  "text": "观众不多，但我尽力了。"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "坚持下去，总会有人听到的。"
+                }
+              ],
+              "characters": [
+                "小杰",
+                "小琳",
+                "小美",
+                "阿德",
+                "陈志明"
+              ],
+              "estimated_duration": 26.2
+            },
+            {
+              "scene_id": "scene_1142e655",
+              "scene_number": 3,
+              "heading": "场景：深夜食堂内 - 夜",
+              "location": "深夜食堂内",
+              "time_of_day": "夜",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：凌晨1点40分 阿德端上两碗热腾腾的拉面。小杰和小琳开心地吃着。 陈志明的手机响了，他看了一眼，没有接。",
+              "dialogue": [
+                {
+                  "character": "小琳",
+                  "text": "叔叔，你怎么一个人在这里喝酒？"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "加班到现在，不想回家。"
+                },
+                {
+                  "character": "小杰",
+                  "text": "工作很辛苦吧？"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "工作倒还好，就是...（停顿）算了，不说了。"
+                },
+                {
+                  "character": "阿德",
+                  "text": "这个请你，下酒正好。"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "谢谢老板。"
+                },
+                {
+                  "character": "小美",
+                  "text": "叔叔，你刚才说年轻时想当歌手？"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "是啊，二十年前的事了。后来为了生活，放弃了。"
+                }
+              ],
+              "characters": [
+                "小琳",
+                "陈志明",
+                "小杰",
+                "阿德",
+                "小美"
+              ],
+              "estimated_duration": 25.5
+            },
+            {
+              "scene_id": "scene_a5ebe790",
+              "scene_number": 4,
+              "heading": "场景：深夜食堂内 - 夜",
+              "location": "深夜食堂内",
+              "time_of_day": "夜",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：凌晨2点 店内气氛变得温馨。小美拿起吉他，轻轻弹了几个和弦。 小美开始弹唱一首温柔的民谣。 阿德停下手中的活，静静地听着。 陈志明的眼眶渐渐湿润。",
+              "dialogue": [
+                {
+                  "character": "小美",
+                  "text": "叔叔，我弹一首歌给你听吧。"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "给我？"
+                },
+                {
+                  "character": "小美",
+                  "text": "嗯，送给所有为了生活放弃梦想的人。"
+                },
+                {
+                  "character": "小琳",
+                  "text": "好浪漫啊！"
+                },
+                {
+                  "character": "小杰",
+                  "text": "我们也想听！"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "这首歌...真好听。"
+                },
+                {
+                  "character": "阿德",
+                  "text": "是啊，很久没听到这么纯粹的音乐了。"
+                }
+              ],
+              "characters": [
+                "小美",
+                "陈志明",
+                "小琳",
+                "小杰",
+                "阿德"
+              ],
+              "estimated_duration": 25.1
+            },
+            {
+              "scene_id": "scene_252b4ae9",
+              "scene_number": 5,
+              "heading": "场景：深夜食堂内 - 夜",
+              "location": "深夜食堂内",
+              "time_of_day": "夜",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：凌晨2点20分 歌曲结束，大家鼓掌。陈志明擦了擦眼角。",
+              "dialogue": [
+                {
+                  "character": "小琳",
+                  "text": "太感动了！"
+                },
+                {
+                  "character": "小杰",
+                  "text": "你一定会红的！"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "小姑娘，谢谢你。我...我决定了。"
+                },
+                {
+                  "character": "小美",
+                  "text": "决定什么？"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "明天我要跟老婆好好谈谈。这些年我只顾着工作，忽略了家人。"
+                },
+                {
+                  "character": "阿德",
+                  "text": "想通了就好。"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "老板，今晚所有人的账我来付。"
+                },
+                {
+                  "character": "小美",
+                  "text": "不用啦，叔叔。"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "就当是感谢你的歌。（对阿德）老板，再来一碗拉面，打包带走。"
+                },
+                {
+                  "character": "阿德",
+                  "text": "好的，给嫂子带的？"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "是啊，她最爱吃你家的拉面。"
+                }
+              ],
+              "characters": [
+                "小琳",
+                "小杰",
+                "陈志明",
+                "小美",
+                "阿德"
+              ],
+              "estimated_duration": 30.5
+            },
+            {
+              "scene_id": "scene_11adbf22",
+              "scene_number": 6,
+              "heading": "场景：深夜食堂门口 - 夜",
+              "location": "深夜食堂门口",
+              "time_of_day": "夜",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：凌晨2点40分 陈志明提着打包的拉面，站在门口。小美、小杰、小琳也准备离开。 陈志明转身离去，脚步比来时轻快了许多。",
+              "dialogue": [
+                {
+                  "character": "陈志明",
+                  "text": "小美，加油。总有一天，我会在电视上看到你。"
+                },
+                {
+                  "character": "小美",
+                  "text": "谢谢叔叔！您也要幸福哦。"
+                },
+                {
+                  "character": "小琳",
+                  "text": "叔叔再见！"
+                },
+                {
+                  "character": "小杰",
+                  "text": "拉面要趁热吃哦！"
+                },
+                {
+                  "character": "陈志明",
+                  "text": "再见，大家。"
+                }
+              ],
+              "characters": [
+                "陈志明",
+                "小美",
+                "小琳",
+                "小杰"
+              ],
+              "estimated_duration": 18.6
+            },
+            {
+              "scene_id": "scene_74fb2f65",
+              "scene_number": 7,
+              "heading": "场景：深夜食堂内 - 夜",
+              "location": "深夜食堂内",
+              "time_of_day": "夜",
+              "int_ext": "",
+              "description": "",
+              "action": "时间：凌晨2点50分 店内只剩下阿德一个人。他开始收拾桌子，脸上带着淡淡的微笑。 门帘被掀开，一个穿着外卖服的年轻人阿强走进来。 阿德开始煮面，热气腾腾。 镜头缓缓拉远，深夜食堂的招牌在夜色中发着温暖的光。 【完】",
+              "dialogue": [
+                {
+                  "character": "阿强",
+                  "text": "老板，还有吃的吗？"
+                },
+                {
+                  "character": "阿德",
+                  "text": "有，想吃什么？"
+                },
+                {
+                  "character": "阿强",
+                  "text": "随便来点，跑了一晚上外卖，饿死了。"
+                },
+                {
+                  "character": "阿德",
+                  "text": "好，给你做碗热汤面。"
+                },
+                {
+                  "character": "阿强",
+                  "text": "谢谢老板。（坐下）今晚生意怎么样？"
+                },
+                {
+                  "character": "阿德",
+                  "text": "还不错，遇到了几个有意思的客人。"
+                },
+                {
+                  "character": "阿强",
+                  "text": "深夜食堂嘛，什么人都有。"
+                },
+                {
+                  "character": "阿德",
+                  "text": "是啊，每个人都有自己的故事。"
+                }
+              ],
+              "characters": [
+                "阿强",
+                "阿德"
+              ],
+              "estimated_duration": 30.700000000000003
+            }
+          ],
+          "characters": [
+            {
+              "character_id": "char_1a383c43",
+              "name": "阿德",
+              "dialogue_count": 11,
+              "first_appearance": 1,
+              "scenes": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7
+              ],
+              "bio": "",
+              "tags": {}
+            },
+            {
+              "character_id": "char_a782cd43",
+              "name": "小美",
+              "dialogue_count": 11,
+              "first_appearance": 1,
+              "scenes": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "bio": "",
+              "tags": {}
+            },
+            {
+              "character_id": "char_c8591011",
+              "name": "陈志明",
+              "dialogue_count": 17,
+              "first_appearance": 1,
+              "scenes": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "bio": "",
+              "tags": {}
+            },
+            {
+              "character_id": "char_25f102d8",
+              "name": "小杰",
+              "dialogue_count": 5,
+              "first_appearance": 2,
+              "scenes": [
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "bio": "",
+              "tags": {}
+            },
+            {
+              "character_id": "char_3fc0c7fb",
+              "name": "小琳",
+              "dialogue_count": 6,
+              "first_appearance": 2,
+              "scenes": [
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "bio": "",
+              "tags": {}
+            },
+            {
+              "character_id": "char_8148d632",
+              "name": "阿强",
+              "dialogue_count": 4,
+              "first_appearance": 7,
+              "scenes": [
+                7
+              ],
+              "bio": "",
+              "tags": {}
+            }
+          ],
+          "total_scenes": 7,
+          "total_characters": 6,
+          "estimated_duration": 183.0,
+          "logline": "",
+          "synopsis": ""
+        },
+        "logline": "深夜食堂里，一个为生活放弃梦想的中年男子，在听到年轻歌手的演唱后，决定重新审视自己的人生，回归家庭。",
+        "synopsis": {
+          "synopsis": "凌晨的深夜食堂，中年上班族陈志明独自喝酒。年轻歌手小美和情侣小杰、小琳相继到来。在交谈中，陈志明透露自己年轻时也有音乐梦想。小美为他弹唱一曲，触动了他的心弦。最终，陈志明决定回归家庭，带着拉面回家给妻子。深夜食堂见证了每个人的故事。"
+        }
+      },
+      "error": null,
+      "duration_ms": 23.419
+    },
+    {
+      "name": "角色分析",
+      "description": "分析角色特征，生成人物小传和标签",
+      "status": "passed",
+      "result": {
+        "character_bios": {
+          "阿德": {
+            "bio": "深夜食堂的老板，温和善良，善于倾听。用美食温暖每一位深夜来客。",
+            "dialogue_count": 11,
+            "scenes": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              7
+            ]
+          },
+          "小美": {
+            "bio": "年轻的独立音乐人，背着吉他追逐梦想。用音乐温暖他人，坚持自己的道路。",
+            "dialogue_count": 11,
+            "scenes": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          "陈志明": {
+            "bio": "中年上班族，曾有音乐梦想但为生活放弃。工作繁忙导致忽略家庭，在深夜食堂找到了重新出发的勇气。",
+            "dialogue_count": 17,
+            "scenes": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          "小杰": {
+            "bio": "年轻男生，小琳的男朋友。热情开朗，喜欢深夜看电影后来食堂吃宵夜。",
+            "dialogue_count": 5,
+            "scenes": [
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          "小琳": {
+            "bio": "年轻女生，小杰的女朋友。活泼可爱，对音乐人充满好奇和崇拜。",
+            "dialogue_count": 6,
+            "scenes": [
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          "阿强": {
+            "bio": "外卖骑手，深夜工作辛苦。是深夜食堂的常客，代表着城市中默默奋斗的普通人。",
+            "dialogue_count": 4,
+            "scenes": [
+              7
+            ]
+          }
+        },
+        "character_tags": {
+          "阿德": {
+            "gender": "男",
+            "age_range": "中年",
+            "role_type": "主角",
+            "occupation": "食堂老板"
+          },
+          "小美": {
+            "gender": "女",
+            "age_range": "青年",
+            "role_type": "主角",
+            "occupation": "音乐人"
+          },
+          "陈志明": {
+            "gender": "男",
+            "age_range": "中年",
+            "role_type": "主角",
+            "occupation": "上班族"
+          },
+          "小杰": {
+            "gender": "男",
+            "age_range": "青年",
+            "role_type": "配角",
+            "occupation": "学生/职员"
+          },
+          "小琳": {
+            "gender": "女",
+            "age_range": "青年",
+            "role_type": "配角",
+            "occupation": "学生/职员"
+          },
+          "阿强": {
+            "gender": "男",
+            "age_range": "青年",
+            "role_type": "配角",
+            "occupation": "外卖骑手"
+          }
+        },
+        "total_characters": 6
+      },
+      "error": null,
+      "duration_ms": 1.0
+    },
+    {
+      "name": "场次分析",
+      "description": "分析每个场次的详细信息，包括地点、时间、角色、时长",
+      "status": "passed",
+      "result": {
+        "scenes": [
+          {
+            "scene_number": 1,
+            "location": "深夜食堂内",
+            "time": "夜",
+            "estimated_duration": 26.4,
+            "characters": [
+              "阿德",
+              "小美",
+              "陈志明"
+            ],
+            "dialogue_count": 7,
+            "action_summary": "时间：凌晨1点 深夜食堂内，暖黄色的灯光下，老板阿德正在擦拭吧台。 店内只有一位客人——穿着西装的中年男子陈志明，独自喝着清酒。 门帘被掀开，一个背着吉他的年轻女孩小美走了进来。"
+          },
+          {
+            "scene_number": 2,
+            "location": "深夜食堂内",
+            "time": "夜",
+            "estimated_duration": 26.2,
+            "characters": [
+              "小杰",
+              "小琳",
+              "小美",
+              "阿德",
+              "陈志明"
+            ],
+            "dialogue_count": 8,
+            "action_summary": "时间：凌晨1点20分 阿德端上蛋包饭，小美开始吃。陈志明又点了一杯清酒。 门帘再次被掀开，一对年轻情侣走进来——小杰和小琳。"
+          },
+          {
+            "scene_number": 3,
+            "location": "深夜食堂内",
+            "time": "夜",
+            "estimated_duration": 25.5,
+            "characters": [
+              "小琳",
+              "陈志明",
+              "小杰",
+              "阿德",
+              "小美"
+            ],
+            "dialogue_count": 8,
+            "action_summary": "时间：凌晨1点40分 阿德端上两碗热腾腾的拉面。小杰和小琳开心地吃着。 陈志明的手机响了，他看了一眼，没有接。"
+          },
+          {
+            "scene_number": 4,
+            "location": "深夜食堂内",
+            "time": "夜",
+            "estimated_duration": 25.1,
+            "characters": [
+              "小美",
+              "陈志明",
+              "小琳",
+              "小杰",
+              "阿德"
+            ],
+            "dialogue_count": 7,
+            "action_summary": "时间：凌晨2点 店内气氛变得温馨。小美拿起吉他，轻轻弹了几个和弦。 小美开始弹唱一首温柔的民谣。 阿德停下手中的活，静静地听着。 陈志明的眼眶渐渐湿润。"
+          },
+          {
+            "scene_number": 5,
+            "location": "深夜食堂内",
+            "time": "夜",
+            "estimated_duration": 30.5,
+            "characters": [
+              "小琳",
+              "小杰",
+              "陈志明",
+              "小美",
+              "阿德"
+            ],
+            "dialogue_count": 11,
+            "action_summary": "时间：凌晨2点20分 歌曲结束，大家鼓掌。陈志明擦了擦眼角。"
+          },
+          {
+            "scene_number": 6,
+            "location": "深夜食堂门口",
+            "time": "夜",
+            "estimated_duration": 18.6,
+            "characters": [
+              "陈志明",
+              "小美",
+              "小琳",
+              "小杰"
+            ],
+            "dialogue_count": 5,
+            "action_summary": "时间：凌晨2点40分 陈志明提着打包的拉面，站在门口。小美、小杰、小琳也准备离开。 陈志明转身离去，脚步比来时轻快了许多。"
+          },
+          {
+            "scene_number": 7,
+            "location": "深夜食堂内",
+            "time": "夜",
+            "estimated_duration": 30.700000000000003,
+            "characters": [
+              "阿强",
+              "阿德"
+            ],
+            "dialogue_count": 8,
+            "action_summary": "时间：凌晨2点50分 店内只剩下阿德一个人。他开始收拾桌子，脸上带着淡淡的微笑。 门帘被掀开，一个穿着外卖服的年轻人阿强走进来。 阿德开始煮面，热气腾腾。 镜头缓缓拉远，深夜食堂的招牌在夜色中发着温暖..."
+          }
+        ],
+        "total_duration_seconds": 183.0,
+        "total_duration_minutes": 3.05,
+        "location_summary": {
+          "深夜食堂内": 6,
+          "深夜食堂门口": 1
+        },
+        "time_distribution": {
+          "夜": 7
+        }
+      },
+      "error": null,
+      "duration_ms": 0.0
+    },
+    {
+      "name": "导演审核",
+      "description": "Director_Agent 审核 Logline 和 Synopsis",
+      "status": "passed",
+      "result": {
+        "logline_review": {
+          "status": "approved",
+          "passed_checks": [
+            "内容不为空",
+            "字数合理（50）"
+          ],
+          "failed_checks": [],
+          "suggestions": [],
+          "reason": "审核通过",
+          "confidence": 0.9
+        },
+        "synopsis_review": {
+          "status": "approved",
+          "passed_checks": [
+            "内容不为空",
+            "字数合理（116）"
+          ],
+          "failed_checks": [],
+          "suggestions": [],
+          "reason": "审核通过",
+          "confidence": 0.9
+        },
+        "overall_status": "approved"
+      },
+      "error": null,
+      "duration_ms": 0.0
+    },
+    {
+      "name": "市场分析",
+      "description": "Market_Agent 分析目标受众和市场定位",
+      "status": "passed",
+      "result": {
+        "analysis_id": "mkt_a2e2672915c6",
+        "project_id": "test_project_20251226_123150",
+        "audience": {
+          "primary_age_range": "18-35",
+          "gender_distribution": "均衡",
+          "interests": [
+            "独立电影",
+            "艺术片",
+            "电影节"
+          ],
+          "viewing_habits": [
+            "流媒体",
+            "电影节",
+            "短视频平台"
+          ],
+          "platforms": [
+            "YouTube",
+            "Vimeo",
+            "B站",
+            "电影节"
+          ]
+        },
+        "market_position": "独立短片市场，面向电影爱好者和专业观众",
+        "competitors": [],
+        "distribution_channels": [
+          "电影节投递",
+          "流媒体平台",
+          "社交媒体推广"
+        ],
+        "marketing_suggestions": [
+          "参加国内外短片电影节",
+          "在 B站/YouTube 发布预告片",
+          "建立社交媒体账号进行宣传"
+        ],
+        "risk_factors": [
+          "市场竞争激烈",
+          "观众注意力分散",
+          "宣发预算有限"
+        ],
+        "opportunities": [
+          "新媒体平台降低发行门槛",
+          "垂直领域受众精准",
+          "口碑传播效应"
+        ],
+        "estimated_budget_range": "",
+        "confidence": 0.5,
+        "is_dynamic": false,
+        "created_at": "2025-12-26T12:31:53.052246"
+      },
+      "error": null,
+      "duration_ms": 2178.0179999999996
+    },
+    {
+      "name": "版本管理",
+      "description": "PM_Agent 管理版本和决策记录",
+      "status": "passed",
+      "result": {
+        "version_info": {
+          "version_id": "ver_a39f075bfe11",
+          "version_name": "Logline_v1",
+          "version_number": 1,
+          "content_type": "logline",
+          "entity_id": null,
+          "entity_name": null,
+          "content": "深夜食堂里，一个为生活放弃梦想的中年男子，在听到年轻歌手的演唱后，决定重新审视自己的人生，回归家庭。",
+          "source": "script_agent",
+          "status": "draft",
+          "created_at": "2025-12-26T12:31:53.053880",
+          "created_by": "system"
+        },
+        "decision": {
+          "decision_id": "dec_430b0cfe3459",
+          "project_id": "test_project_20251226_123150",
+          "decision_type": "approve",
+          "target_type": "version",
+          "target_id": "ver_a39f075bfe11",
+          "previous_value": null,
+          "new_value": null,
+          "reason": "",
+          "created_at": "2025-12-26T12:31:53.053880"
+        },
+        "display_info": {
+          "current_version": "Logline_v1",
+          "version_count": 1,
+          "last_modified": "2025-12-26T12:31:53.053880"
+        }
+      },
+      "error": null,
+      "duration_ms": 2.642
+    },
+    {
+      "name": "系统校验",
+      "description": "System_Agent 校验数据一致性和 API 健康状态",
+      "status": "passed",
+      "result": {
+        "validation": {
+          "validation_id": "val_9b192f150f7b",
+          "project_id": "test_project_20251226_123150",
+          "is_valid": false,
+          "issues": [
+            {
+              "issue_id": "api_3461fbf9",
+              "severity": "error",
+              "category": "api",
+              "message": "API 不可用: /api/health",
+              "field": null,
+              "suggestion": "请检查后端服务是否正常运行"
+            },
+            {
+              "issue_id": "api_5265b2da",
+              "severity": "error",
+              "category": "api",
+              "message": "API 不可用: /api/wizard/health",
+              "field": null,
+              "suggestion": "请检查后端服务是否正常运行"
+            },
+            {
+              "issue_id": "api_320a4e17",
+              "severity": "error",
+              "category": "api",
+              "message": "API 不可用: /api/projects",
+              "field": null,
+              "suggestion": "请检查后端服务是否正常运行"
+            }
+          ],
+          "tag_consistency": {
+            "is_consistent": true,
+            "conflicts": [],
+            "suggestions": []
+          },
+          "api_health": [
+            {
+              "endpoint": "/api/health",
+              "status": "unhealthy",
+              "response_time_ms": 2344.847,
+              "error": null
+            },
+            {
+              "endpoint": "/api/wizard/health",
+              "status": "unhealthy",
+              "response_time_ms": 2397.23,
+              "error": null
+            },
+            {
+              "endpoint": "/api/projects",
+              "status": "unhealthy",
+              "response_time_ms": 4706.981,
+              "error": null
+            }
+          ],
+          "error_count": 3,
+          "warning_count": 0,
+          "created_at": "2025-12-26T12:31:53.215835"
+        },
+        "tag_consistency": {
+          "is_consistent": true,
+          "conflicts": [],
+          "suggestions": []
+        },
+        "api_health": [
+          {
+            "endpoint": "/api/health",
+            "status": "unhealthy",
+            "response_time_ms": 2405.597,
+            "error": null
+          },
+          {
+            "endpoint": "/api/wizard/health",
+            "status": "unhealthy",
+            "response_time_ms": 2371.479,
+            "error": null
+          },
+          {
+            "endpoint": "/api/projects",
+            "status": "unhealthy",
+            "response_time_ms": 2537.004,
+            "error": null
+          }
+        ]
+      },
+      "error": null,
+      "duration_ms": 18329.586
+    },
+    {
+      "name": "素材召回",
+      "description": "Art_Agent 根据场景描述生成视觉标签",
+      "status": "passed",
+      "result": {
+        "recall_results": [
+          {
+            "scene_id": "scene_1",
+            "scene_location": "深夜食堂内",
+            "visual_tags": {
+              "scene_type": "未知",
+              "time": "未知",
+              "shot_type": "未知",
+              "mood": "未知",
+              "action": "未知",
+              "characters": "未知",
+              "free_tags": [],
+              "summary": "文件: scene_1.jpg"
+            },
+            "has_match": false,
+            "candidates": [],
+            "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+          },
+          {
+            "scene_id": "scene_2",
+            "scene_location": "深夜食堂内",
+            "visual_tags": {
+              "scene_type": "未知",
+              "time": "未知",
+              "shot_type": "未知",
+              "mood": "未知",
+              "action": "未知",
+              "characters": "未知",
+              "free_tags": [],
+              "summary": "文件: scene_2.jpg"
+            },
+            "has_match": false,
+            "candidates": [],
+            "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+          },
+          {
+            "scene_id": "scene_3",
+            "scene_location": "深夜食堂内",
+            "visual_tags": {
+              "scene_type": "未知",
+              "time": "未知",
+              "shot_type": "未知",
+              "mood": "未知",
+              "action": "未知",
+              "characters": "未知",
+              "free_tags": [],
+              "summary": "文件: scene_3.jpg"
+            },
+            "has_match": false,
+            "candidates": [],
+            "placeholder_message": "未找到匹配的素材，请上传更多素材或调整搜索条件"
+          }
+        ],
+        "total_scenes_processed": 3
+      },
+      "error": null,
+      "duration_ms": 6086.321
+    },
+    {
+      "name": "导出准备",
+      "description": "准备导出配置，检查可用的导出格式",
+      "status": "passed",
+      "result": {
+        "export_config": {
+          "document_export": {
+            "available": true,
+            "formats": [
+              "DOCX",
+              "PDF",
+              "Markdown"
+            ],
+            "includes": [
+              "剧本",
+              "角色表",
+              "场次表",
+              "市场分析报告"
+            ]
+          },
+          "nle_export": {
+            "available": true,
+            "formats": [
+              "FCPXML",
+              "EDL",
+              "AAF"
+            ],
+            "includes": [
+              "时间线",
+              "素材引用",
+              "标记点"
+            ]
+          },
+          "image_export": {
+            "available": true,
+            "formats": [
+              "PNG",
+              "JPG",
+              "PDF"
+            ],
+            "includes": [
+              "故事板",
+              "角色卡",
+              "场景图"
+            ]
+          },
+          "data_export": {
+            "available": true,
+            "formats": [
+              "JSON",
+              "CSV",
+              "XML"
+            ],
+            "includes": [
+              "项目数据",
+              "标签数据",
+              "版本历史"
+            ]
+          }
+        },
+        "export_preview": {
+          "project_id": "test_project_20251226_123150",
+          "project_name": "深夜食堂",
+          "total_scenes": 7,
+          "total_characters": 6,
+          "estimated_duration": 183.0,
+          "export_ready": true
+        }
+      },
+      "error": null,
+      "duration_ms": 0.0
+    }
+  ]
+}

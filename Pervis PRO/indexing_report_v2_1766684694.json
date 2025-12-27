@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-12-26T01:44:54.642491",
+  "asset_root": "U:\\PreVis_Assets",
+  "stats": {
+    "total_files": 100,
+    "indexed": 100,
+    "embedded": 100,
+    "failed": 0,
+    "elapsed_seconds": 26.118886,
+    "rate": 3.8286472095325963,
+    "embedding_rate": 100.0,
+    "tag_coverage_pct": {
+      "scene_type": 3.0,
+      "time_of_day": 2.0,
+      "shot_size": 4.0,
+      "camera_move": 0.0,
+      "action_type": 21.0,
+      "mood": 5.0,
+      "characters": 7.000000000000001,
+      "vfx": 15.0,
+      "environment": 0.0,
+      "source_work": 10.0,
+      "free_tags": 91.0
+    }
+  },
+  "config": {
+    "use_llm": false,
+    "use_embedding": true,
+    "llm_model": "qwen2.5:7b",
+    "embedding_model": "nomic-embed-text"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-12-27T13:32:36.751650",
+  "total": 12,
+  "passed": 11,
+  "failed": 1,
+  "success_rate": "91.7%",
+  "passed_tests": [
+    "基础/后端健康检查",
+    "Wizard/健康检查 (Agents: 5)",
+    "Wizard/创建草稿 (ID: draft_04cabc...)",
+    "Wizard/获取草稿",
+    "System/健康检查 (3/6 OK)",
+    "System/通知列表 (共 0 条)",
+    "System/快速健康检查",
+    "Export/导出历史查询",
+    "Assets/素材列表 (共 20 个)",
+    "AI/健康检查 (状态: healthy)",
+    "Timeline/时间轴列表 (共 20 个)"
+  ],
+  "failed_tests": [
+    "Search/文本搜索: HTTP 404"
+  ]
+}

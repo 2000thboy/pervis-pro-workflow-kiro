@@ -1,0 +1,21 @@
+{
+  "project_id": "test_project_20251226_234424",
+  "start_time": "2025-12-26T23:44:24.785093",
+  "end_time": "2025-12-26T23:44:38.016179",
+  "total_duration_ms": 13231,
+  "steps": [
+    {
+      "name": "健康检查",
+      "agent": "System",
+      "status": "failed",
+      "duration_ms": 13231,
+      "input_summary": "无",
+      "output_summary": "无",
+      "review_result": null,
+      "error": "主 API 不可用: 503"
+    }
+  ],
+  "final_output": null,
+  "success": false,
+  "error": "主 API 不可用: 503"
+}

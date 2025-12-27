@@ -1,0 +1,97 @@
+{
+  "project_id": "e2e-test-20251226133613",
+  "script_title": "城市边缘",
+  "total_time_seconds": 83.1902711391449,
+  "stages": [
+    {
+      "name": "1",
+      "description": "AI 剧本解析",
+      "status": "failed",
+      "duration_ms": 10.582447052001953,
+      "result_summary": null,
+      "error": "object ScriptParseResult can't be used in 'await' expression"
+    },
+    {
+      "name": "2",
+      "description": "AI 角色分析",
+      "status": "completed",
+      "duration_ms": 37325.81639289856,
+      "result_summary": "{'characters_analyzed': 4}",
+      "error": null
+    },
+    {
+      "name": "3",
+      "description": "AI 场次分析",
+      "status": "completed",
+      "duration_ms": 34084.61785316467,
+      "result_summary": "{'scenes_analyzed': 5, 'total_duration_seconds': 600}",
+      "error": null
+    },
+    {
+      "name": "4",
+      "description": "导演审核",
+      "status": "failed",
+      "duration_ms": 0.0,
+      "result_summary": null,
+      "error": "DirectorAgentService.review() missing 1 required positional argument: 'task_type'"
+    },
+    {
+      "name": "5",
+      "description": "市场分析",
+      "status": "failed",
+      "duration_ms": 1.7824172973632812,
+      "result_summary": null,
+      "error": "MarketAgentService.analyze_market() missing 1 required positional argument: 'project_data'"
+    },
+    {
+      "name": "6",
+      "description": "版本管理",
+      "status": "failed",
+      "duration_ms": 2.094745635986328,
+      "result_summary": null,
+      "error": "PMAgentService.record_version() missing 2 required positional arguments: 'content_type' and 'content'"
+    },
+    {
+      "name": "7",
+      "description": "系统校验",
+      "status": "completed",
+      "duration_ms": 11339.850425720215,
+      "result_summary": "{'result': \"ValidationResult(validation_id='val_ace290b098dc', project_id='e2e-test-20251226133613', is_valid=False, issues=[ValidationIssue(issue_id='req_01865a47', severity='error', category='conten",
+      "error": null
+    },
+    {
+      "name": "8",
+      "description": "素材库搜索召回",
+      "status": "completed",
+      "duration_ms": 165.11178016662598,
+      "result_summary": "{'libraries_used': 2, 'scenes_searched': 5, 'total_matches': 0}",
+      "error": null
+    },
+    {
+      "name": "9",
+      "description": "时间轴生成",
+      "status": "completed",
+      "duration_ms": 125.50711631774902,
+      "result_summary": "{'timeline_id': 'b83f4586-3acf-4ade-b2a1-ed326b42ec36', 'clips_created': 5, 'total_duration': 600}",
+      "error": null
+    },
+    {
+      "name": "10",
+      "description": "粗剪渲染输出",
+      "status": "completed",
+      "duration_ms": 133.897066116333,
+      "result_summary": "{'render_task_id': '58824c26-4732-4427-b9d9-0517bae15ef9', 'output_path': 'exports\\\\rough_cut_e2e-test-20251226133613.mp4', 'ffmpeg_available': False}",
+      "error": null
+    }
+  ],
+  "summary": {
+    "completed": 6,
+    "failed": 4,
+    "total": 10
+  },
+  "output": {
+    "timeline_id": "b83f4586-3acf-4ade-b2a1-ed326b42ec36",
+    "output_path": "exports\\rough_cut_e2e-test-20251226133613.mp4"
+  },
+  "timestamp": "2025-12-26T13:37:36.599493"
+}

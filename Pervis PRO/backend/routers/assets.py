@@ -1,8 +1,10 @@
 """
 素材管理路由
 Phase 2: 集成AssetProcessor服务进行真实文件处理
+Phase 1.3: 集成视频预处理管道（PySceneDetect + Gemini + Milvus）
 """
 
+import logging
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, BackgroundTasks, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -11,8 +13,43 @@ from services.asset_processor import AssetProcessor
 from models.base import AssetUploadResponse, AssetStatusResponse, AssetSegment, ProcessingStatus
 import asyncio
 from typing import List, Optional
+from pydantic import BaseModel, Field
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+# ============================================================================
+# 视频预处理相关模型
+# ============================================================================
+
+class VideoPreprocessRequest(BaseModel):
+    """视频预处理请求"""
+    video_path: str = Field(..., description="视频文件路径")
+    video_id: Optional[str] = Field(None, description="视频ID")
+    generate_tags: bool = Field(True, description="是否生成标签")
+    generate_embeddings: bool = Field(True, description="是否生成向量嵌入")
+
+
+class VideoPreprocessResponse(BaseModel):
+    """视频预处理响应"""
+    video_id: str
+    status: str
+    message: str
+    total_segments: int = 0
+    error: Optional[str] = None
+
+
+class PreprocessProgressResponse(BaseModel):
+    """预处理进度响应"""
+    video_id: str
+    status: str
+    progress: float
+    message: str
+    total_segments: int
+    processed_segments: int
+    error: Optional[str] = None
 
 @router.post("/upload", response_model=AssetUploadResponse)
 async def upload_asset(
@@ -213,3 +250,174 @@ async def get_asset(asset_id: str, db: Session = Depends(get_db)):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取素材失败: {str(e)}")
+
+
+
+# ============================================================================
+# 视频预处理端点（Phase 1.3）
+# ============================================================================
+
+@router.post("/preprocess", response_model=VideoPreprocessResponse)
+async def preprocess_video(
+    request: VideoPreprocessRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    """
+    视频预处理接口
+    
+    触发视频预处理管道：
+    1. PySceneDetect 镜头分割
+    2. 确保片段 ≤10秒
+    3. Gemini 标签生成
+    4. 向量嵌入生成
+    
+    Requirements: 16.3, 16.4
+    """
+    try:
+        from services.video_preprocessor import get_video_preprocessor, PreprocessStatus
+        from services.milvus_store import get_video_store, VideoSegment
+        from uuid import uuid4
+        
+        preprocessor = get_video_preprocessor()
+        video_id = request.video_id or str(uuid4())
+        
+        # 启动后台预处理任务
+        async def run_preprocess():
+            try:
+                segments = await preprocessor.preprocess(
+                    video_path=request.video_path,
+                    video_id=video_id,
+                    generate_tags=request.generate_tags,
+                    generate_embeddings=request.generate_embeddings
+                )
+                
+                # 存储到向量数据库
+                video_store = get_video_store()
+                await video_store.initialize()
+                
+                for seg_info in segments:
+                    segment = VideoSegment(
+                        segment_id=seg_info.segment_id,
+                        video_id=seg_info.video_id,
+                        video_path=seg_info.video_path,
+                        start_time=seg_info.start_time,
+                        end_time=seg_info.end_time,
+                        duration=seg_info.duration,
+                        tags=seg_info.tags,
+                        thumbnail_path=seg_info.thumbnail_path,
+                        description=seg_info.description,
+                        embedding=seg_info.tags.get("embedding")
+                    )
+                    await video_store.insert(segment)
+                
+                logger.info(f"视频预处理完成: {video_id}, {len(segments)} 个片段")
+                
+            except Exception as e:
+                logger.error(f"视频预处理失败: {e}")
+        
+        background_tasks.add_task(asyncio.create_task, run_preprocess())
+        
+        return VideoPreprocessResponse(
+            video_id=video_id,
+            status="processing",
+            message="预处理任务已启动"
+        )
+        
+    except ImportError as e:
+        logger.warning(f"预处理服务未安装: {e}")
+        return VideoPreprocessResponse(
+            video_id=request.video_id or "unknown",
+            status="error",
+            message="预处理服务未安装",
+            error=str(e)
+        )
+    except Exception as e:
+        logger.error(f"启动预处理失败: {e}")
+        raise HTTPException(status_code=500, detail=f"启动预处理失败: {str(e)}")
+
+
+@router.get("/preprocess/{video_id}/progress", response_model=PreprocessProgressResponse)
+async def get_preprocess_progress(video_id: str):
+    """
+    获取视频预处理进度
+    
+    Requirements: 16.3
+    """
+    try:
+        from services.video_preprocessor import get_video_preprocessor
+        
+        preprocessor = get_video_preprocessor()
+        progress = preprocessor.get_progress(video_id)
+        
+        if progress is None:
+            raise HTTPException(status_code=404, detail=f"未找到预处理任务: {video_id}")
+        
+        return PreprocessProgressResponse(
+            video_id=video_id,
+            status=progress.status.value,
+            progress=progress.progress,
+            message=progress.message,
+            total_segments=progress.total_segments,
+            processed_segments=progress.processed_segments,
+            error=progress.error
+        )
+        
+    except HTTPException:
+        raise
+    except ImportError:
+        raise HTTPException(status_code=503, detail="预处理服务未安装")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取进度失败: {str(e)}")
+
+
+@router.post("/preprocess/{video_id}/retry", response_model=VideoPreprocessResponse)
+async def retry_preprocess(
+    video_id: str,
+    background_tasks: BackgroundTasks
+):
+    """
+    重试失败的预处理任务
+    
+    Requirements: 16.4
+    """
+    try:
+        from services.video_preprocessor import get_video_preprocessor, PreprocessStatus
+        
+        preprocessor = get_video_preprocessor()
+        progress = preprocessor.get_progress(video_id)
+        
+        if progress is None:
+            raise HTTPException(status_code=404, detail=f"未找到预处理任务: {video_id}")
+        
+        if progress.status != PreprocessStatus.FAILED:
+            return VideoPreprocessResponse(
+                video_id=video_id,
+                status=progress.status.value,
+                message="任务未失败，无需重试"
+            )
+        
+        # 重新启动预处理
+        async def run_retry():
+            try:
+                await preprocessor.preprocess(
+                    video_path=progress.video_path,
+                    video_id=video_id
+                )
+            except Exception as e:
+                logger.error(f"重试预处理失败: {e}")
+        
+        background_tasks.add_task(asyncio.create_task, run_retry())
+        
+        return VideoPreprocessResponse(
+            video_id=video_id,
+            status="processing",
+            message="重试任务已启动"
+        )
+        
+    except HTTPException:
+        raise
+    except ImportError:
+        raise HTTPException(status_code=503, detail="预处理服务未安装")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"重试失败: {str(e)}")

@@ -20,12 +20,62 @@ from sqlalchemy.sql import func
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from database import Base, engine, SessionLocal, ImageAsset, ImageVector
+    from database import Base, engine, SessionLocal
     print("✅ 成功导入现有数据库配置")
 except ImportError as e:
     print(f"❌ 导入数据库配置失败: {e}")
     print("请确保在backend目录下运行此脚本")
     sys.exit(1)
+
+# 定义新的表结构
+class ImageAsset(Base):
+    """图片资产表"""
+    __tablename__ = "image_assets"
+    
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    project_id = Column(String(36), nullable=False)  # 外键关联到projects表
+    
+    # 文件信息
+    filename = Column(String(255), nullable=False)
+    original_path = Column(String(500), nullable=False)
+    thumbnail_path = Column(String(500))
+    mime_type = Column(String(100))
+    file_size = Column(Integer)  # 字节
+    width = Column(Integer)
+    height = Column(Integer)
+    
+    # AI分析结果
+    description = Column(Text)  # AI生成的图片描述
+    tags = Column(JSON)  # {"objects": [], "scenes": [], "emotions": [], "styles": []}
+    color_palette = Column(JSON)  # {"dominant": "#FF0000", "palette": ["#FF0000", ...]}
+    
+    # 处理状态
+    processing_status = Column(String(50), default="pending")  # pending, processing, completed, failed
+    processing_progress = Column(Float, default=0.0)
+    error_message = Column(Text)
+    
+    # 时间戳
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class ImageVector(Base):
+    """图片向量表"""
+    __tablename__ = "image_vectors"
+    
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    image_id = Column(String(36), nullable=False)  # 外键关联到image_assets表
+    
+    # 向量信息
+    vector_type = Column(String(50), nullable=False)  # 'clip', 'description'
+    vector_data = Column(Text, nullable=False)  # JSON格式存储向量数据
+    content_text = Column(Text)  # 对应的文本内容
+    
+    # 元数据
+    model_version = Column(String(100))  # 使用的模型版本
+    confidence_score = Column(Float)  # 置信度评分
+    vector_dimension = Column(Integer, default=512)  # 向量维度
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 def upgrade():
     """升级数据库 - 创建新表"""

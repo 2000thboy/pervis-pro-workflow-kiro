@@ -1,6 +1,4 @@
 import os
-import json
-import uuid
 from typing import Iterable, Mapping, Optional
 
 import aiohttp
@@ -39,27 +37,10 @@ async def _proxy_request(
     body = await request.body()
 
     timeout = aiohttp.ClientTimeout(total=60)
-    try:
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.request(method, target_url, data=body, headers=headers) as resp:
-                resp_body = await resp.read()
-                resp_headers = dict(resp.headers)
-                resp_status = resp.status
-    except Exception as e:
-        payload = {
-            "status": "error",
-            "error_code": "DAM_PROXY_ERROR",
-            "message": "DAM服务不可用或代理请求失败",
-            "details": str(e),
-            "trace_id": str(uuid.uuid4()),
-            "retryable": True,
-            "retry": {"supported": True, "suggested_after_seconds": 2, "max_attempts": 3},
-        }
-        return Response(
-            content=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
-            status_code=502,
-            headers={"content-type": "application/json; charset=utf-8"},
-        )
+    async with aiohttp.ClientSession(timeout=timeout) as session:
+        async with session.request(method, target_url, data=body, headers=headers) as resp:
+            resp_body = await resp.read()
+            resp_headers = dict(resp.headers)
 
     if allowed_response_headers is None:
         forwarded_headers = _filter_hop_by_hop_headers(resp_headers)
@@ -75,7 +56,7 @@ async def _proxy_request(
 
     return Response(
         content=resp_body,
-        status_code=resp_status,
+        status_code=resp.status,
         headers=forwarded_headers,
     )
 
@@ -99,3 +80,4 @@ def create_dam_proxy_router(prefix: str) -> APIRouter:
         return await _proxy_request(request, dam_base_url, f"{prefix}/{path}")
 
     return router
+

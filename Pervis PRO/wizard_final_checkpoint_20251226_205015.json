@@ -1,0 +1,107 @@
+{
+  "timestamp": "2025-12-26T20:49:30.760383",
+  "tests": [
+    {
+      "name": "前端组件文件完整性",
+      "status": "FAIL",
+      "message": "缺失: ['Pervis PRO/frontend/components/ProjectWizard/index.tsx', 'Pervis PRO/frontend/components/ProjectWizard/types.ts', 'Pervis PRO/frontend/components/ProjectWizard/api.ts', 'Pervis PRO/frontend/components/ProjectWizard/WizardContext.tsx', 'Pervis PRO/frontend/components/ProjectWizard/WizardStep1_BasicInfo.tsx', 'Pervis PRO/frontend/components/ProjectWizard/WizardStep2_Script.tsx', 'Pervis PRO/frontend/components/ProjectWizard/WizardStep3_Characters.tsx', 'Pervis PRO/frontend/components/ProjectWizard/WizardStep4_Scenes.tsx', 'Pervis PRO/frontend/components/ProjectWizard/WizardStep5_References.tsx', 'Pervis PRO/frontend/components/ProjectWizard/WizardStep6_Confirm.tsx', 'Pervis PRO/frontend/components/ProjectWizard/AgentStatusPanel.tsx', 'Pervis PRO/frontend/components/ProjectWizard/VersionHistoryPanel.tsx', 'Pervis PRO/frontend/components/ProjectWizard/CandidateSwitcher.tsx', 'Pervis PRO/frontend/components/ProjectWizard/MissingContentDialog.tsx', 'Pervis PRO/frontend/components/ProjectWizard/MarketAnalysisPanel.tsx', 'Pervis PRO/frontend/components/ProjectWizard/DataTypeIndicator.tsx', 'Pervis PRO/frontend/components/ProjectWizard/exports.ts']",
+      "details": {}
+    },
+    {
+      "name": "后端服务文件完整性",
+      "status": "FAIL",
+      "message": "缺失: ['Pervis PRO/backend/services/agent_service.py', 'Pervis PRO/backend/services/agents/script_agent.py', 'Pervis PRO/backend/services/agents/art_agent.py', 'Pervis PRO/backend/services/agents/director_agent.py', 'Pervis PRO/backend/services/agents/pm_agent.py', 'Pervis PRO/backend/services/agents/storyboard_agent.py', 'Pervis PRO/backend/services/agents/market_agent.py', 'Pervis PRO/backend/services/agents/system_agent.py', 'Pervis PRO/backend/services/milvus_store.py', 'Pervis PRO/backend/services/video_preprocessor.py', 'Pervis PRO/backend/routers/wizard.py']",
+      "details": {}
+    },
+    {
+      "name": "基础健康检查",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "Wizard 健康检查",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "剧本解析 API",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "Logline 生成",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "人物小传生成",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "Director_Agent 审核",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "创建项目",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "记录版本",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "获取版本历史",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "素材召回",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "市场分析生成",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "有效项目验证",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "无效项目验证",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    },
+    {
+      "name": "创建草稿",
+      "status": "FAIL",
+      "message": "状态码: 503",
+      "details": {}
+    }
+  ],
+  "summary": {
+    "total": 16,
+    "passed": 0,
+    "failed": 16,
+    "skipped": 0
+  }
+}

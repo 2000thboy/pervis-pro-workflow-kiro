@@ -106,14 +106,7 @@ JSON格式：
                 "message": "AI返回的JSON格式无效",
                 "details": str(e),
                 "trace_id": str(uuid.uuid4()),
-                "raw_text": response.text if 'response' in locals() else None,
-                "raw_response": response.text if 'response' in locals() else None,
-                "retryable": True,
-                "retry": {
-                    "supported": True,
-                    "suggested_after_seconds": 1,
-                    "max_attempts": 3,
-                },
+                "raw_response": response.text if 'response' in locals() else None
             }
         except Exception as e:
             return {
@@ -121,13 +114,7 @@ JSON格式：
                 "error_code": "AI_SERVICE_ERROR", 
                 "message": "剧本分析失败",
                 "details": str(e),
-                "trace_id": str(uuid.uuid4()),
-                "retryable": True,
-                "retry": {
-                    "supported": True,
-                    "suggested_after_seconds": 2,
-                    "max_attempts": 3,
-                },
+                "trace_id": str(uuid.uuid4())
             }
     
     async def analyze_video_content(self, filename: str, description: str = "", 
@@ -286,8 +273,14 @@ Beat内容: {beat_content}
                 return truncated
             except:
                 pass
-
-        raise json.JSONDecodeError("Failed to repair JSON", text, 0)
+        
+        # 如果修复失败，返回默认结构
+        return json.dumps({
+            "logline": "剧本分析被截断",
+            "synopsis": "AI响应不完整，请重试",
+            "characters": [],
+            "beats": []
+        })
     
     def _validate_script_analysis(self, data: Dict[str, Any]):
         """

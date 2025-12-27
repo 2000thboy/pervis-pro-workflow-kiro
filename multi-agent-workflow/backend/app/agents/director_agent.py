@@ -9,12 +9,16 @@
 - 解决Agent间的冲突
 - 调配工作台和资源
 - 项目总体决策
+- 项目记忆：带上下文审核、风格一致性检查、历史版本对比（0-Fix.4）
 """
 import asyncio
+import json
 import logging
+import sys
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Set, TYPE_CHECKING
 from dataclasses import dataclass, field
 
 from .base_agent import BaseAgent, AgentLifecycleState
@@ -26,6 +30,10 @@ from ..core.communication_protocol import (
     ProtocolStatus,
     ProtocolResponse,
 )
+
+# 类型检查时导入，运行时延迟加载
+if TYPE_CHECKING:
+    from services.agent_llm_adapter import AgentLLMAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -98,6 +106,78 @@ class AgentAssignment:
         }
 
 
+@dataclass
+class ProjectContext:
+    """
+    项目上下文 - 用于 Director_Agent 的项目记忆（0-Fix.4）
+    
+    存储项目规格、艺术风格、历史版本等信息，
+    供审核时进行一致性检查和历史对比。
+    """
+    project_id: str
+    # 项目规格
+    specs: Dict[str, Any] = field(default_factory=dict)  # 时长、画幅、帧率、分辨率
+    # 艺术风格
+    style_context: Dict[str, Any] = field(default_factory=dict)  # 风格、对标项目
+    # 内容版本历史
+    content_versions: List[Dict[str, Any]] = field(default_factory=list)
+    # 用户决策记录
+    user_decisions: List[Dict[str, Any]] = field(default_factory=list)
+    # 被拒绝的版本（避免重复）
+    rejected_versions: List[Dict[str, Any]] = field(default_factory=list)
+    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    
+    def add_version(self, content_type: str, content: Any, source: str = "agent"):
+        """添加内容版本"""
+        version = {
+            "version_id": f"v{len(self.content_versions) + 1}",
+            "content_type": content_type,
+            "content": content,
+            "source": source,
+            "created_at": datetime.utcnow().isoformat()
+        }
+        self.content_versions.append(version)
+        self.updated_at = datetime.utcnow().isoformat()
+        return version
+    
+    def add_decision(self, decision_type: str, accepted: bool, content: Any, reason: str = ""):
+        """记录用户决策"""
+        decision = {
+            "decision_id": f"d{len(self.user_decisions) + 1}",
+            "decision_type": decision_type,
+            "accepted": accepted,
+            "content": content,
+            "reason": reason,
+            "created_at": datetime.utcnow().isoformat()
+        }
+        self.user_decisions.append(decision)
+        
+        # 如果被拒绝，记录到 rejected_versions
+        if not accepted:
+            self.rejected_versions.append({
+                "content_type": decision_type,
+                "content": content,
+                "reason": reason,
+                "rejected_at": datetime.utcnow().isoformat()
+            })
+        
+        self.updated_at = datetime.utcnow().isoformat()
+        return decision
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "project_id": self.project_id,
+            "specs": self.specs,
+            "style_context": self.style_context,
+            "content_versions": self.content_versions,
+            "user_decisions": self.user_decisions,
+            "rejected_versions": self.rejected_versions,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at
+        }
+
+
 class DirectorAgent(BaseAgent):
     """
     导演Agent - 项目总控和决策中心
@@ -107,6 +187,7 @@ class DirectorAgent(BaseAgent):
     - 解决Agent间的冲突（作为最终决策者）
     - 调配工作台和资源
     - 管理项目总体进度
+    - 项目记忆：带上下文审核、风格一致性检查、历史版本对比（0-Fix.4）
     
     需求: 1.3 - 发生Agent冲突时作为最终决策者解决冲突
     需求: 2.5 - 人工审核通过后调配所有工作台开始协作
@@ -136,7 +217,10 @@ class DirectorAgent(BaseAgent):
                 "agent_coordination",
                 "task_assignment",
                 "workflow_management",
-                "resource_allocation"
+                "resource_allocation",
+                "context_review",        # 0-Fix.4: 带上下文审核
+                "style_consistency",     # 0-Fix.4: 风格一致性检查
+                "history_comparison"     # 0-Fix.4: 历史版本对比
             ],
             config=config
         )
@@ -157,6 +241,11 @@ class DirectorAgent(BaseAgent):
         }
         # Agent优先级（用于冲突解决）
         self._agent_priorities: Dict[str, int] = {}
+        
+        # 0-Fix.4: 项目上下文存储
+        self._project_contexts: Dict[str, ProjectContext] = {}
+        # 0-Fix.4: LLM 适配器（延迟加载）
+        self._llm_adapter: Optional["AgentLLMAdapter"] = None
         
         logger.info("导演Agent创建完成")
 
@@ -183,6 +272,29 @@ class DirectorAgent(BaseAgent):
             self._handle_task_complete
         )
         logger.info("导演Agent初始化完成")
+    
+    def _get_llm_adapter(self) -> Optional["AgentLLMAdapter"]:
+        """
+        延迟加载 LLM 适配器（0-Fix.4）
+        
+        Returns:
+            AgentLLMAdapter 实例，如果加载失败返回 None
+        """
+        if self._llm_adapter is None:
+            try:
+                # 添加 Pervis PRO 后端路径
+                pervis_backend = Path(__file__).parent.parent.parent.parent.parent / "Pervis PRO" / "backend"
+                if str(pervis_backend) not in sys.path:
+                    sys.path.insert(0, str(pervis_backend))
+                
+                from services.agent_llm_adapter import get_agent_llm_adapter
+                self._llm_adapter = get_agent_llm_adapter()
+                logger.info("DirectorAgent LLM 适配器加载成功")
+            except ImportError as e:
+                logger.warning(f"无法加载 LLM 适配器: {e}")
+            except Exception as e:
+                logger.error(f"LLM 适配器初始化失败: {e}")
+        return self._llm_adapter
     
     async def _on_start(self):
         """启动钩子"""
@@ -705,3 +817,458 @@ class DirectorAgent(BaseAgent):
     ):
         """设置冲突解决策略"""
         self._resolution_strategies[conflict_type] = strategy
+    
+    # ========================================================================
+    # 项目记忆功能（0-Fix.4）
+    # ========================================================================
+    
+    def get_or_create_project_context(self, project_id: str) -> ProjectContext:
+        """
+        获取或创建项目上下文
+        
+        Args:
+            project_id: 项目ID
+        
+        Returns:
+            ProjectContext 实例
+        """
+        if project_id not in self._project_contexts:
+            self._project_contexts[project_id] = ProjectContext(project_id=project_id)
+            logger.info(f"创建项目上下文: {project_id}")
+        return self._project_contexts[project_id]
+    
+    def set_project_specs(
+        self,
+        project_id: str,
+        specs: Dict[str, Any]
+    ) -> ProjectContext:
+        """
+        设置项目规格
+        
+        Args:
+            project_id: 项目ID
+            specs: 项目规格（时长、画幅、帧率、分辨率等）
+        
+        Returns:
+            更新后的 ProjectContext
+        """
+        context = self.get_or_create_project_context(project_id)
+        context.specs.update(specs)
+        context.updated_at = datetime.utcnow().isoformat()
+        logger.info(f"更新项目规格: {project_id}")
+        return context
+    
+    def set_style_context(
+        self,
+        project_id: str,
+        style_context: Dict[str, Any]
+    ) -> ProjectContext:
+        """
+        设置艺术风格上下文
+        
+        Args:
+            project_id: 项目ID
+            style_context: 艺术风格（风格类型、对标项目等）
+        
+        Returns:
+            更新后的 ProjectContext
+        """
+        context = self.get_or_create_project_context(project_id)
+        context.style_context.update(style_context)
+        context.updated_at = datetime.utcnow().isoformat()
+        logger.info(f"更新艺术风格: {project_id}")
+        return context
+    
+    async def review_with_context(
+        self,
+        project_id: str,
+        content: Any,
+        content_type: str
+    ) -> Dict[str, Any]:
+        """
+        带上下文的审核（0-Fix.4）
+        
+        使用项目上下文进行内容审核，检查：
+        1. 内容完整性（不为空、字数合理）
+        2. 格式正确性
+        3. 与项目规格一致性
+        4. 与艺术风格一致性
+        
+        Args:
+            project_id: 项目ID
+            content: 待审核内容
+            content_type: 内容类型（logline, synopsis, character_bio, etc.）
+        
+        Returns:
+            审核结果：
+            {
+                "status": "approved/suggestions/rejected",
+                "passed_checks": [...],
+                "failed_checks": [...],
+                "suggestions": [...],
+                "source": "llm/rule"
+            }
+        """
+        context = self.get_or_create_project_context(project_id)
+        adapter = self._get_llm_adapter()
+        
+        if adapter:
+            try:
+                response = await adapter.review_content(
+                    content=content,
+                    content_type=content_type,
+                    project_context=context.to_dict()
+                )
+                if response.success and response.parsed_data:
+                    result = response.parsed_data
+                    result["source"] = "llm"
+                    
+                    # 记录版本
+                    context.add_version(content_type, content, source="agent")
+                    
+                    logger.info(f"LLM 审核完成: {content_type} -> {result.get('status')}")
+                    return result
+                else:
+                    logger.warning(f"LLM 审核失败: {response.error_message}")
+            except Exception as e:
+                logger.error(f"LLM 调用异常: {e}")
+        
+        # 回退：基于规则审核
+        return self._review_with_context_by_rule(context, content, content_type)
+    
+    def _review_with_context_by_rule(
+        self,
+        context: ProjectContext,
+        content: Any,
+        content_type: str
+    ) -> Dict[str, Any]:
+        """
+        基于规则的审核（回退方案）
+        
+        Args:
+            context: 项目上下文
+            content: 待审核内容
+            content_type: 内容类型
+        
+        Returns:
+            审核结果
+        """
+        passed_checks = []
+        failed_checks = []
+        suggestions = []
+        
+        # 检查内容不为空
+        if content:
+            passed_checks.append("内容不为空")
+        else:
+            failed_checks.append("内容为空")
+            return {
+                "status": "rejected",
+                "passed_checks": passed_checks,
+                "failed_checks": failed_checks,
+                "suggestions": ["请提供有效内容"],
+                "source": "rule"
+            }
+        
+        # 检查字数
+        content_str = json.dumps(content, ensure_ascii=False) if isinstance(content, dict) else str(content)
+        word_count = len(content_str)
+        
+        # 不同类型的字数要求
+        word_limits = {
+            "logline": (10, 100),
+            "synopsis": (100, 2000),
+            "character_bio": (50, 1000),
+            "scene_description": (20, 500)
+        }
+        
+        if content_type in word_limits:
+            min_words, max_words = word_limits[content_type]
+            if word_count < min_words:
+                failed_checks.append(f"字数过少（{word_count} < {min_words}）")
+                suggestions.append(f"建议增加内容，至少 {min_words} 字")
+            elif word_count > max_words:
+                failed_checks.append(f"字数过多（{word_count} > {max_words}）")
+                suggestions.append(f"建议精简内容，不超过 {max_words} 字")
+            else:
+                passed_checks.append(f"字数合理（{word_count}）")
+        else:
+            passed_checks.append("字数检查跳过（未知类型）")
+        
+        # 检查项目规格一致性
+        if context.specs:
+            passed_checks.append("项目规格已设置")
+        else:
+            suggestions.append("建议先设置项目规格（时长、画幅、帧率）")
+        
+        # 确定状态
+        if failed_checks:
+            status = "suggestions" if passed_checks else "rejected"
+        else:
+            status = "approved"
+        
+        # 记录版本
+        context.add_version(content_type, content, source="agent")
+        
+        return {
+            "status": status,
+            "passed_checks": passed_checks,
+            "failed_checks": failed_checks,
+            "suggestions": suggestions,
+            "source": "rule"
+        }
+    
+    async def check_style_consistency(
+        self,
+        project_id: str,
+        content: Any
+    ) -> Dict[str, Any]:
+        """
+        艺术风格一致性检查（0-Fix.4）
+        
+        检查内容是否符合项目已确定的艺术风格。
+        
+        Args:
+            project_id: 项目ID
+            content: 待检查内容
+        
+        Returns:
+            检查结果：
+            {
+                "is_consistent": true/false,
+                "consistency_score": 0.9,
+                "matching_elements": [...],
+                "conflicting_elements": [...],
+                "suggestions": [...],
+                "source": "llm/rule"
+            }
+        """
+        context = self.get_or_create_project_context(project_id)
+        
+        # 如果没有设置艺术风格，直接通过
+        if not context.style_context:
+            return {
+                "is_consistent": True,
+                "consistency_score": 1.0,
+                "matching_elements": [],
+                "conflicting_elements": [],
+                "suggestions": ["建议先设置项目艺术风格"],
+                "source": "rule"
+            }
+        
+        adapter = self._get_llm_adapter()
+        
+        if adapter:
+            try:
+                response = await adapter.check_style_consistency(
+                    content=content,
+                    style_context=context.style_context
+                )
+                if response.success and response.parsed_data:
+                    result = response.parsed_data
+                    result["source"] = "llm"
+                    logger.info(f"LLM 风格检查完成: consistent={result.get('is_consistent')}")
+                    return result
+                else:
+                    logger.warning(f"LLM 风格检查失败: {response.error_message}")
+            except Exception as e:
+                logger.error(f"LLM 调用异常: {e}")
+        
+        # 回退：基于规则检查
+        return self._check_style_consistency_by_rule(context, content)
+    
+    def _check_style_consistency_by_rule(
+        self,
+        context: ProjectContext,
+        content: Any
+    ) -> Dict[str, Any]:
+        """
+        基于规则的风格一致性检查（回退方案）
+        
+        Args:
+            context: 项目上下文
+            content: 待检查内容
+        
+        Returns:
+            检查结果
+        """
+        style = context.style_context
+        content_str = json.dumps(content, ensure_ascii=False) if isinstance(content, dict) else str(content)
+        content_lower = content_str.lower()
+        
+        matching_elements = []
+        conflicting_elements = []
+        
+        # 检查风格关键词
+        style_type = style.get("style_type", "")
+        if style_type:
+            style_keywords = {
+                "realistic": ["真实", "写实", "纪实", "realistic"],
+                "stylized": ["风格化", "艺术", "stylized"],
+                "cartoon": ["卡通", "动画", "cartoon"],
+                "anime": ["动漫", "二次元", "anime"],
+                "noir": ["黑色", "noir", "暗黑"]
+            }
+            
+            keywords = style_keywords.get(style_type.lower(), [])
+            for kw in keywords:
+                if kw in content_lower:
+                    matching_elements.append(f"包含风格关键词: {kw}")
+        
+        # 检查对标项目
+        reference_projects = style.get("reference_projects", [])
+        for ref in reference_projects:
+            if ref.lower() in content_lower:
+                matching_elements.append(f"提及对标项目: {ref}")
+        
+        # 计算一致性分数
+        if matching_elements:
+            consistency_score = min(1.0, 0.5 + len(matching_elements) * 0.1)
+        else:
+            consistency_score = 0.5  # 无法判断时给中等分数
+        
+        return {
+            "is_consistent": consistency_score >= 0.5,
+            "consistency_score": consistency_score,
+            "matching_elements": matching_elements,
+            "conflicting_elements": conflicting_elements,
+            "suggestions": [] if consistency_score >= 0.7 else ["建议增加与项目风格相关的描述"],
+            "source": "rule"
+        }
+    
+    async def compare_with_history(
+        self,
+        project_id: str,
+        content: Any,
+        content_type: str
+    ) -> Dict[str, Any]:
+        """
+        历史版本对比（0-Fix.4）
+        
+        对比当前内容与历史版本，避免重复被拒绝的内容。
+        
+        Args:
+            project_id: 项目ID
+            content: 当前内容
+            content_type: 内容类型
+        
+        Returns:
+            对比结果：
+            {
+                "is_similar_to_rejected": true/false,
+                "similar_rejected_version": {...} or null,
+                "similarity_score": 0.9,
+                "version_count": 5,
+                "suggestions": [...],
+                "source": "rule"
+            }
+        """
+        context = self.get_or_create_project_context(project_id)
+        
+        content_str = json.dumps(content, ensure_ascii=False) if isinstance(content, dict) else str(content)
+        
+        # 检查是否与被拒绝的版本相似
+        similar_rejected = None
+        max_similarity = 0.0
+        
+        for rejected in context.rejected_versions:
+            if rejected.get("content_type") != content_type:
+                continue
+            
+            rejected_content = rejected.get("content", "")
+            rejected_str = json.dumps(rejected_content, ensure_ascii=False) if isinstance(rejected_content, dict) else str(rejected_content)
+            
+            # 简单的相似度计算（基于共同字符）
+            similarity = self._calculate_similarity(content_str, rejected_str)
+            
+            if similarity > max_similarity:
+                max_similarity = similarity
+                if similarity > 0.8:  # 相似度阈值
+                    similar_rejected = rejected
+        
+        # 获取同类型的版本数量
+        version_count = len([v for v in context.content_versions if v.get("content_type") == content_type])
+        
+        suggestions = []
+        if similar_rejected:
+            suggestions.append(f"当前内容与被拒绝的版本相似（相似度: {max_similarity:.0%}）")
+            suggestions.append(f"被拒绝原因: {similar_rejected.get('reason', '未知')}")
+            suggestions.append("建议进行更大幅度的修改")
+        
+        return {
+            "is_similar_to_rejected": similar_rejected is not None,
+            "similar_rejected_version": similar_rejected,
+            "similarity_score": max_similarity,
+            "version_count": version_count,
+            "suggestions": suggestions,
+            "source": "rule"
+        }
+    
+    def _calculate_similarity(self, str1: str, str2: str) -> float:
+        """
+        计算两个字符串的相似度
+        
+        使用简单的 Jaccard 相似度（基于字符集合）
+        
+        Args:
+            str1: 字符串1
+            str2: 字符串2
+        
+        Returns:
+            相似度（0-1）
+        """
+        if not str1 or not str2:
+            return 0.0
+        
+        # 使用字符级别的 Jaccard 相似度
+        set1 = set(str1)
+        set2 = set(str2)
+        
+        intersection = len(set1 & set2)
+        union = len(set1 | set2)
+        
+        if union == 0:
+            return 0.0
+        
+        return intersection / union
+    
+    def record_user_decision(
+        self,
+        project_id: str,
+        decision_type: str,
+        accepted: bool,
+        content: Any,
+        reason: str = ""
+    ) -> Dict[str, Any]:
+        """
+        记录用户决策（0-Fix.4）
+        
+        Args:
+            project_id: 项目ID
+            decision_type: 决策类型（logline, synopsis, character_bio, etc.）
+            accepted: 是否接受
+            content: 相关内容
+            reason: 决策原因
+        
+        Returns:
+            决策记录
+        """
+        context = self.get_or_create_project_context(project_id)
+        decision = context.add_decision(decision_type, accepted, content, reason)
+        
+        logger.info(f"记录用户决策: {project_id}/{decision_type} -> {'接受' if accepted else '拒绝'}")
+        
+        return decision
+    
+    def get_project_context(self, project_id: str) -> Optional[Dict[str, Any]]:
+        """
+        获取项目上下文
+        
+        Args:
+            project_id: 项目ID
+        
+        Returns:
+            项目上下文字典，如果不存在返回 None
+        """
+        context = self._project_contexts.get(project_id)
+        return context.to_dict() if context else None

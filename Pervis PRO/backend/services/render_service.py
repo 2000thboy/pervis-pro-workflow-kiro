@@ -45,6 +45,7 @@ class RenderService:
         self.timeline_service = TimelineService(db)
         self.output_dir = Path("storage/renders")
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self._event_service = None
         
         # 渲染质量预设
         self.quality_presets = {
@@ -53,6 +54,16 @@ class RenderService:
             'high': {'crf': 18, 'preset': 'slow', 'bitrate': '8000k'},
             'ultra': {'crf': 15, 'preset': 'slower', 'bitrate': '15000k'}
         }
+    
+    def _get_event_service(self):
+        """延迟加载 EventService"""
+        if self._event_service is None:
+            try:
+                from services.event_service import event_service
+                self._event_service = event_service
+            except Exception as e:
+                logger.warning(f"EventService 加载失败: {e}")
+        return self._event_service
     
     async def check_render_requirements(self, timeline_id: str) -> Dict[str, Any]:
         """检查渲染前置条件"""
@@ -325,8 +336,56 @@ class RenderService:
             self.db.execute(text(update_sql), update_fields)
             self.db.commit()
             
+            # 发送 WebSocket 事件
+            self._emit_render_event(task_id, status, progress, error_message)
+            
         except Exception as e:
             logger.error(f"更新任务状态失败: {e}")
+    
+    def _emit_render_event(self, task_id: str, status: str, progress: float, error_message: Optional[str] = None):
+        """发送渲染事件到 WebSocket"""
+        event_service = self._get_event_service()
+        if not event_service:
+            return
+        
+        try:
+            import asyncio
+            
+            async def emit():
+                if status == "processing":
+                    await event_service.emit_task_progress(
+                        task_id=task_id,
+                        progress=int(progress),
+                        message=f"渲染进度: {int(progress)}%",
+                        task_type="render",
+                        task_name="视频渲染"
+                    )
+                elif status == "completed":
+                    await event_service.emit_task_completed(
+                        task_id=task_id,
+                        task_type="render",
+                        task_name="视频渲染",
+                        result={"progress": 100}
+                    )
+                elif status == "failed":
+                    await event_service.emit_task_failed(
+                        task_id=task_id,
+                        task_type="render",
+                        task_name="视频渲染",
+                        error=error_message or "渲染失败",
+                        can_retry=True
+                    )
+            
+            # 尝试获取当前事件循环
+            try:
+                loop = asyncio.get_running_loop()
+                asyncio.create_task(emit())
+            except RuntimeError:
+                # 没有运行中的事件循环，创建新的
+                asyncio.run(emit())
+                
+        except Exception as e:
+            logger.warning(f"发送渲染事件失败: {e}")
     
     async def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:
         """获取任务状态"""

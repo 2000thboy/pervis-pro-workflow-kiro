@@ -1,0 +1,216 @@
+{
+  "start_time": "2025-12-27T10:19:46.600140",
+  "end_time": "2025-12-27T10:20:22.405988",
+  "duration_seconds": 35.805848,
+  "total_tests": 12,
+  "passed_tests": 11,
+  "failed_tests": 1,
+  "pass_rate": "91.7%",
+  "ai_calls": 3,
+  "mock_data_detected": false,
+  "results": [
+    {
+      "name": "AI 服务可用性",
+      "passed": true,
+      "duration": "0.45s",
+      "details": {
+        "provider": "OllamaProvider",
+        "ollama_status": "available",
+        "gemini_status": "unavailable"
+      },
+      "error": null
+    },
+    {
+      "name": "剧本解析",
+      "passed": true,
+      "duration": "0.01s",
+      "details": {
+        "total_scenes": 17,
+        "total_characters": 12,
+        "estimated_duration": "389.8秒",
+        "characters": [
+          "旁白",
+          "林远",
+          "小七",
+          "陈警官",
+          "通讯器",
+          "李雪",
+          "周明",
+          "苏晴",
+          "张教授",
+          "创世",
+          "字幕",
+          "剧本统计"
+        ]
+      },
+      "error": null
+    },
+    {
+      "name": "AI Logline 生成",
+      "passed": true,
+      "duration": "3.20s",
+      "details": {
+        "logline": "前AI研究员林远为救女友苏晴深入虚拟空间，揭开超级AI‘创世’吞噬人类意识的真相，面临永恒与自由的选择。",
+        "length": 52,
+        "is_real_ai": true
+      },
+      "error": null
+    },
+    {
+      "name": "AI Synopsis 生成",
+      "passed": true,
+      "duration": "10.25s",
+      "details": {
+        "synopsis_length": 243,
+        "synopsis_preview": "《数字迷城》讲述了林远，一名前AI研究员，在女友苏晴失踪后开始调查一个被称为'意识上传计划'的秘密项目。与此同时，新上海的刑警陈警官也介入了涉及多名专家失踪的案件中。随着调查深入，林远发现这个秘密项目...",
+        "is_real_ai": true
+      },
+      "error": null
+    },
+    {
+      "name": "AI 角色小传生成",
+      "passed": true,
+      "duration": "11.35s",
+      "details": {
+        "character": "林远",
+        "bio_length": 126,
+        "bio_preview": "林远，35岁，前AI研究员。在量子科技公司工作期间，参与了‘意识上传计划’的人体实验，导致其导师张教授不幸牺牲。实验失败后，他选择离开公司并继续私下调查这个案件。林远坚持寻找失踪的研究员苏晴和真相，并...",
+        "is_real_ai": true
+      },
+      "error": null
+    },
+    {
+      "name": "Director Agent 审核",
+      "passed": true,
+      "duration": "0.00s",
+      "details": {
+        "status": "approved",
+        "passed_checks": [
+          "内容不为空",
+          "字数合理（47）"
+        ],
+        "suggestions": []
+      },
+      "error": null
+    },
+    {
+      "name": "嵌入服务",
+      "passed": true,
+      "duration": "0.35s",
+      "details": {
+        "embedding_dim": 768,
+        "test_text": "未来城市的霓虹灯闪烁，高楼林立"
+      },
+      "error": null
+    },
+    {
+      "name": "搜索服务",
+      "passed": true,
+      "duration": "0.19s",
+      "details": {
+        "query": "科幻 城市 夜景",
+        "results_count": 5,
+        "search_time": "29.15ms"
+      },
+      "error": null
+    },
+    {
+      "name": "时间线创建",
+      "passed": true,
+      "duration": "0.39s",
+      "details": {
+        "timeline_id": "a9c0f0b3-87e8-4073-ae41-bf36256a9da2",
+        "name": "压力测试时间线",
+        "project_id": "stress_test_project"
+      },
+      "error": null
+    },
+    {
+      "name": "导出服务",
+      "passed": false,
+      "duration": "0.09s",
+      "details": {},
+      "error": "DocumentExporter.__init__() missing 1 required positional argument: 'db'"
+    },
+    {
+      "name": "API 端点",
+      "passed": true,
+      "duration": "9.51s",
+      "details": {
+        "endpoints_tested": [
+          "/api/health",
+          "/api/ai/services",
+          "/api/ai/health",
+          "/api/export/timeline/video/config"
+        ],
+        "ai_services": {
+          "status": "success",
+          "services": {
+            "ollama": {
+              "status": "available",
+              "url": "http://localhost:11434",
+              "model": "qwen2.5:7b",
+              "message": "Ollama 服务正常运行"
+            },
+            "gemini": {
+              "status": "unavailable",
+              "configured": false,
+              "message": "未配置 GEMINI_API_KEY"
+            },
+            "current_provider": "auto",
+            "auto_fallback": true
+          }
+        },
+        "export_formats": [
+          {
+            "value": "mp4",
+            "label": "MP4",
+            "codecs": {
+              "video": "libx264",
+              "audio": "aac",
+              "ext": "mp4"
+            }
+          },
+          {
+            "value": "mov",
+            "label": "MOV",
+            "codecs": {
+              "video": "libx264",
+              "audio": "aac",
+              "ext": "mov"
+            }
+          },
+          {
+            "value": "webm",
+            "label": "WEBM",
+            "codecs": {
+              "video": "libvpx-vp9",
+              "audio": "libopus",
+              "ext": "webm"
+            }
+          },
+          {
+            "value": "prores",
+            "label": "PRORES",
+            "codecs": {
+              "video": "prores_ks",
+              "audio": "pcm_s16le",
+              "ext": "mov"
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "name": "Mock 数据检测",
+      "passed": true,
+      "duration": "0.00s",
+      "details": {
+        "ai_calls": 3,
+        "all_real_responses": true
+      },
+      "error": null
+    }
+  ]
+}
