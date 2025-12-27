@@ -2,7 +2,7 @@
 
 ## 上下文存储
 
-使用 SQLite MCP 存储对话上下文，数据库路径：`./multi-agent-workflow/data/workflow.db`
+使用 SQLite MCP 存储对话上下文，数据库路径：`./Pervis PRO/data/workflow.db`
 
 ### 数据表结构
 
