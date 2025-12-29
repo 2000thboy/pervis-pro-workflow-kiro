@@ -272,5 +272,124 @@ ollama list
 | Phase 6: 关键帧提取 | 2 天 |
 | Phase 7: CLIP 视觉嵌入 | 2 天 |
 | Phase 8: 多模态搜索 | 2 天 |
+| **Phase 9: 音频标签与 RAG** | **3 天** |
+| **总计** | **17 天** |
+
+---
+
+## Phase 9: 音频标签与 RAG 系统（新增 2025-12-29）
+
+> **需求来源**: Requirements 9.1-9.5
+> **预计工时**: 3 天
+
+### 9.1 音频标签数据模型
+
+- [ ] 9.1.1 创建音频标签数据结构
+  - 创建 `backend/models/audio_tags.py`
+  - 实现 `AudioTags` 数据类
+  - 定义音频类型、BGM 风格、情绪、节奏等枚举
+  - _Requirements: 9.1_
+
+- [ ] 9.1.2 创建数据库迁移
+  - 添加 `audio_assets` 表
+  - 添加 `audio_tags` 表
+  - 添加音频向量存储表
+  - _Requirements: 9.1_
+
+### 9.2 音频特征提取服务
+
+- [ ] 9.2.1 创建音频预处理服务
+  - 创建 `backend/services/audio_preprocessor.py`
+  - 实现格式转换（统一为 WAV/MP3）
+  - 实现重采样（44100Hz）
+  - 实现特征提取（时长、采样率、声道数）
+  - _Requirements: 9.5.1_
+
+- [ ] 9.2.2 实现 BPM 检测
+  - 使用 librosa 库检测 BPM
+  - 计算 BPM 范围分类
+  - _Requirements: 9.1_
+
+- [ ] 9.2.3 实现波形生成
+  - 生成波形数据数组（用于前端显示）
+  - 缓存波形数据
+  - _Requirements: 9.5.1_
+
+### 9.3 音频标签生成服务
+
+- [ ] 9.3.1 创建音频标签生成器
+  - 创建 `backend/services/audio_tag_generator.py`
+  - 基于音频特征生成标签
+  - 调用 LLM 分析音频描述
+  - _Requirements: 9.5.1_
+
+- [ ] 9.3.2 实现批量标签生成
+  - 支持批量处理音频文件
+  - 显示处理进度
+  - _Requirements: 9.5.2_
+
+### 9.4 音频向量嵌入服务
+
+- [ ] 9.4.1 创建音频嵌入服务
+  - 创建 `backend/services/audio_embedding.py`
+  - 支持 CLAP/AudioCLIP 模型（可选）
+  - 支持基于文本描述的嵌入（回退方案）
+  - _Requirements: 9.2_
+
+- [ ] 9.4.2 创建音频向量存储
+  - 创建 `backend/services/audio_vector_store.py`
+  - 实现向量存储和索引
+  - 实现相似度搜索
+  - _Requirements: 9.2_
+
+### 9.5 音频 RAG 检索服务
+
+- [ ] 9.5.1 创建音频搜索服务
+  - 创建 `backend/services/audio_search_service.py`
+  - 实现标签搜索
+  - 实现向量搜索
+  - 实现混合搜索
+  - _Requirements: 9.3_
+
+- [ ] 9.5.2 实现场景匹配推荐
+  - 根据场景描述推荐音频
+  - 考虑情绪、节奏、时长匹配
+  - _Requirements: 9.3_
+
+### 9.6 音频 RAG API
+
+- [ ] 9.6.1 创建音频搜索 API
+  - 创建 `backend/routers/audio_search.py`
+  - 实现 `POST /api/search/audio` 端点
+  - 实现 `POST /api/search/audio/scene-match` 端点
+  - _Requirements: 9.3_
+
+- [ ] 9.6.2 创建音频预处理 API
+  - 实现 `POST /api/audio/preprocess` 端点
+  - 实现 `GET /api/audio/preprocess/{task_id}/progress` 端点
+  - _Requirements: 9.5.2, 9.5.3_
+
+### Phase 9 Checkpoint
+
+- [ ] 验证音频标签生成正确
+- [ ] 验证音频向量嵌入正常
+- [ ] 验证音频搜索功能正常
+- [ ] 验证场景匹配推荐正常
+- [ ] 验证预处理管道正常
+- 验证日期: 待定
+- **Phase 9 状态: 待开始**
+
+## 时间估算
+
+| 阶段 | 工时 |
+|------|------|
+| Phase 1: 标签层级 | 2 天 |
+| Phase 2: 向量嵌入 | 2 天 |
+| Phase 3: 混合搜索 | 2 天 |
+| Phase 4: 批量索引 | 1 天 |
+| Phase 5: 测试验证 | 1 天 |
+| Phase 6: 关键帧提取 | 2 天 |
+| Phase 7: CLIP 视觉嵌入 | 2 天 |
+| Phase 8: 多模态搜索 | 2 天 |
 | **总计** | **14 天** |
 

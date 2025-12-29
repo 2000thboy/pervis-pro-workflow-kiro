@@ -44,6 +44,14 @@
   - 场景描述 → 场景标签 → 项目资产
 - Requirement 19: 标签到素材的自动关联
 
+**Design/Tasks 更新状态 (2025-12-29)**:
+- ✅ `pervis-frontend-workspace/design.md` - 新增预演模式增强设计（数据隔离、音频轨道、音视频分离、重新分析）
+- ✅ `pervis-frontend-workspace/tasks.md` - 新增 Phase 5 任务（预演模式增强）
+- ✅ `pervis-asset-tagging/design.md` - 新增音频标签与 RAG 系统设计
+- ✅ `pervis-asset-tagging/tasks.md` - 新增 Phase 9 任务（音频标签与 RAG）
+- ✅ `pervis-project-wizard/design.md` - 新增剧本数据到项目资产打通设计
+- ✅ `pervis-project-wizard/tasks.md` - 新增 Phase 12 任务（剧本→资产标签打通）
+
 ---
 
 ## 二、已完成的 Spec

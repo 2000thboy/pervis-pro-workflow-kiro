@@ -734,3 +734,106 @@ npm run dev
   - ✅ 图片生成后可正常显示
   - 验证日期: 2025-12-29
   - **Phase 11 状态: 完成 ✅**
+
+---
+
+## Phase 12: 剧本数据到项目资产自动打通（新增 2025-12-29）
+
+> **需求来源**: Requirement 18-19
+> **预计工时**: 2-3 天
+
+### 12.1 数据模型创建
+
+- [ ] 12.1.1 创建角色标签数据模型
+  - 创建 `backend/models/character_tags.py`
+  - 实现 `CharacterTags` 数据类
+  - 包含外观、服装、性格、道具、视觉标签字段
+  - _Requirements: 18.2_
+
+- [ ] 12.1.2 创建场景标签数据模型
+  - 创建 `backend/models/scene_tags.py`
+  - 实现 `SceneTags` 数据类
+  - 包含场景类型、时间、地点、情绪、环境标签、动作标签字段
+  - _Requirements: 18.3_
+
+- [ ] 12.1.3 创建项目资产关联数据模型
+  - 创建 `backend/models/project_asset_association.py`
+  - 实现 `ProjectAssetAssociation` 数据类
+  - 包含来源类型、匹配分数、匹配原因、确认状态字段
+  - _Requirements: 19.2_
+
+- [ ] 12.1.4 创建数据库迁移
+  - 创建 `backend/migrations/010_add_script_to_asset_tables.py`
+  - 添加 `character_tags` 表
+  - 添加 `scene_tags` 表
+  - 添加 `project_asset_associations` 表
+  - 创建必要的索引
+  - _Requirements: 18.4_
+
+### 12.2 标签生成服务
+
+- [ ] 12.2.1 创建剧本到标签转换服务
+  - 创建 `backend/services/script_to_tags_service.py`
+  - 实现 `generate_character_tags()` - 从人物小传生成角色标签
+  - 实现 `generate_scene_tags()` - 从场景描述生成场景标签
+  - 集成 LLM 进行智能标签提取
+  - _Requirements: 18.1_
+
+- [ ] 12.2.2 集成到 Script_Agent
+  - 修改 `backend/services/agents/script_agent.py`
+  - 在剧本解析完成后自动调用标签生成
+  - 将生成的标签存储到数据库
+  - _Requirements: 18.1, 18.4_
+
+### 12.3 自动素材匹配服务
+
+- [ ] 12.3.1 创建素材匹配服务
+  - 创建 `backend/services/asset_matching_service.py`
+  - 实现 `match_assets_for_character()` - 为角色匹配素材
+  - 实现 `match_assets_for_scene()` - 为场景匹配素材
+  - 实现混合排序算法（标签 + 向量）
+  - _Requirements: 19.1_
+
+- [ ] 12.3.2 实现匹配结果存储
+  - 将匹配结果存储到 `project_asset_associations` 表
+  - 记录匹配分数和匹配原因
+  - 支持用户确认/拒绝操作
+  - _Requirements: 19.2, 19.4_
+
+### 12.4 API 端点
+
+- [ ] 12.4.1 创建标签生成 API
+  - 实现 `POST /api/wizard/generate-character-tags`
+  - 实现 `POST /api/wizard/generate-scene-tags`
+  - 实现 `POST /api/wizard/batch-generate-tags`
+  - _Requirements: 18.6_
+
+- [ ] 12.4.2 创建素材关联 API
+  - 实现 `GET /api/wizard/asset-associations/{project_id}`
+  - 实现 `PUT /api/wizard/asset-association/{id}` - 确认/拒绝关联
+  - 实现 `POST /api/wizard/rematch-assets` - 重新匹配
+  - _Requirements: 19.4, 19.5_
+
+### 12.5 前端集成
+
+- [ ] 12.5.1 在向导步骤中显示标签
+  - 在 `WizardStep3_Characters.tsx` 显示生成的角色标签
+  - 在 `WizardStep4_Scenes.tsx` 显示生成的场景标签
+  - 提供标签编辑功能
+  - _Requirements: 18.6_
+
+- [ ] 12.5.2 显示匹配的素材
+  - 在角色/场景详情中显示匹配的素材列表
+  - 支持确认/拒绝/替换操作
+  - 显示匹配分数和原因
+  - _Requirements: 19.3, 19.4_
+
+### Phase 12 Checkpoint
+
+- [ ] 验证角色标签从人物小传正确生成
+- [ ] 验证场景标签从场景描述正确生成
+- [ ] 验证标签成功存储到数据库
+- [ ] 验证素材匹配功能正常
+- [ ] 验证 Beatboard 可以使用项目资产关联
+- 验证日期: 待定
+- **Phase 12 状态: 待开始**

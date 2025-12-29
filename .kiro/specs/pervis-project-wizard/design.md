@@ -2521,3 +2521,430 @@ class AnnotatedData:
 - [x] **Market_Agent 设计完成（Req 11）**
 - [x] **System_Agent 设计完成（Req 12）**
 - [x] **数据标注规范设计完成（Req 14）**
+
+
+---
+
+## 剧本数据到项目资产的自动打通设计（新增 2025-12-29）
+
+> **需求来源**: Requirement 18-19
+> **目标**: 实现剧本解析后的人物小传和场景描述自动转换为标签，并关联到项目资产
+
+### 1. 剧本数据到标签转换架构
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                 剧本数据到项目资产自动打通架构                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  Script_Agent 完成剧本解析                                          │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 1: 人物小传 → 角色标签                                 │   │
+│  │  ├── 提取外观描述（身高、体型、发型、肤色）                  │   │
+│  │  ├── 提取服装风格（现代/古装/制服）                          │   │
+│  │  ├── 提取性格特征（用于匹配表演风格）                        │   │
+│  │  ├── 提取关联道具                                            │   │
+│  │  └── 生成视觉标签列表                                        │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 2: 场景描述 → 场景标签                                 │   │
+│  │  ├── 提取场景类型（INT/EXT）                                 │   │
+│  │  ├── 提取时间（DAY/NIGHT/DAWN/DUSK）                         │   │
+│  │  ├── 提取地点描述                                            │   │
+│  │  ├── 提取情绪氛围                                            │   │
+│  │  ├── 生成环境标签列表                                        │   │
+│  │  └── 生成动作标签列表                                        │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 3: 存储到项目资产库                                    │   │
+│  │  ├── 写入 character_tags 表                                  │   │
+│  │  ├── 写入 scene_tags 表                                      │   │
+│  │  └── 建立关联索引                                            │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│         │                                                            │
+│         ▼                                                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  Step 4: 自动素材匹配                                        │   │
+│  │  ├── 基于标签相似度搜索                                      │   │
+│  │  ├── 基于向量相似度搜索                                      │   │
+│  │  ├── 混合排序返回 Top N                                      │   │
+│  │  └── 存储到项目资产关联表                                    │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 2. 角色标签数据结构
+
+```python
+@dataclass
+class CharacterTags:
+    """角色标签 - 从人物小传自动生成"""
+    character_id: str           # 角色 ID
+    character_name: str         # 角色名称
+    project_id: str             # 项目 ID
+    
+    # 外观描述
+    appearance: Dict[str, str]  # {
+                                #   "height": "高/中等/矮",
+                                #   "build": "健壮/普通/纤细",
+                                #   "hair": "黑色长发/金色短发/...",
+                                #   "skin": "白皙/小麦色/...",
+                                #   "age_range": "青年/中年/老年"
+                                # }
+    
+    # 服装风格
+    costume: str                # 现代/古装/制服/休闲/正装
+    costume_details: List[str]  # ["西装", "领带", "皮鞋"]
+    
+    # 性格特征（用于匹配表演风格）
+    personality: List[str]      # ["勇敢", "冲动", "正义感强"]
+    
+    # 关联道具
+    props: List[str]            # ["刀", "手机", "眼镜"]
+    
+    # 视觉标签（用于素材匹配）
+    visual_tags: List[str]      # ["男性", "黑发", "现代装", "战斗"]
+    
+    # 元数据
+    source: str                 # "script_agent" | "user_input"
+    confidence: float           # 置信度 (0-1)
+    created_at: datetime
+    updated_at: datetime
+```
+
+### 3. 场景标签数据结构
+
+```python
+@dataclass
+class SceneTags:
+    """场景标签 - 从场景描述自动生成"""
+    scene_id: str               # 场次 ID
+    scene_number: int           # 场次编号
+    project_id: str             # 项目 ID
+    
+    # 基础信息
+    scene_type: str             # INT | EXT | INT-EXT
+    time_of_day: str            # DAY | NIGHT | DAWN | DUSK
+    location: str               # 地点描述
+    
+    # 情绪氛围
+    mood: str                   # TENSE | SAD | HAPPY | CALM | HORROR | ROMANTIC | EPIC
+    
+    # 环境标签
+    environment_tags: List[str] # ["城市", "街道", "夜景", "霓虹灯"]
+    
+    # 动作标签
+    action_tags: List[str]      # ["追逐", "对话", "打斗"]
+    
+    # 角色出场
+    characters_present: List[str]  # 出场角色 ID 列表
+    
+    # 元数据
+    source: str                 # "script_agent" | "user_input"
+    confidence: float           # 置信度 (0-1)
+    created_at: datetime
+    updated_at: datetime
+```
+
+### 4. 项目资产关联表设计
+
+```python
+@dataclass
+class ProjectAssetAssociation:
+    """项目资产关联 - 存储标签到素材的匹配结果"""
+    id: str                     # 关联 ID
+    project_id: str             # 项目 ID
+    
+    # 来源信息
+    source_type: str            # CHARACTER | SCENE
+    source_id: str              # 角色 ID 或 场次 ID
+    
+    # 匹配的素材
+    asset_id: str               # 素材 ID
+    asset_type: str             # VIDEO | IMAGE | AUDIO
+    
+    # 匹配信息
+    match_score: float          # 匹配分数 (0-1)
+    match_reason: str           # 匹配原因描述
+    match_tags: List[str]       # 匹配的标签列表
+    
+    # 用户操作
+    is_manual: bool             # 是否手动关联
+    is_confirmed: bool          # 是否已确认
+    is_rejected: bool           # 是否已拒绝
+    
+    # 元数据
+    created_at: datetime
+    updated_at: datetime
+```
+
+### 5. 标签生成服务设计
+
+```python
+class ScriptToTagsService:
+    """剧本数据到标签转换服务"""
+    
+    def __init__(self, llm_adapter: AgentLLMAdapter):
+        self.llm = llm_adapter
+    
+    async def generate_character_tags(
+        self, 
+        character_name: str, 
+        character_bio: str,
+        script_context: str
+    ) -> CharacterTags:
+        """从人物小传生成角色标签"""
+        prompt = f"""
+        请分析以下人物小传，提取角色的视觉特征和标签：
+        
+        角色名称：{character_name}
+        人物小传：{character_bio}
+        剧本上下文：{script_context}
+        
+        请返回 JSON 格式：
+        {{
+            "appearance": {{"height": "...", "build": "...", "hair": "...", "skin": "...", "age_range": "..."}},
+            "costume": "...",
+            "costume_details": [...],
+            "personality": [...],
+            "props": [...],
+            "visual_tags": [...]
+        }}
+        """
+        result = await self.llm.generate(prompt, response_format="json")
+        return CharacterTags(**result, character_name=character_name)
+    
+    async def generate_scene_tags(
+        self,
+        scene_number: int,
+        scene_heading: str,
+        scene_description: str,
+        scene_action: str
+    ) -> SceneTags:
+        """从场景描述生成场景标签"""
+        prompt = f"""
+        请分析以下场景信息，提取场景的视觉特征和标签：
+        
+        场次编号：{scene_number}
+        场景标题：{scene_heading}
+        场景描述：{scene_description}
+        动作描述：{scene_action}
+        
+        请返回 JSON 格式：
+        {{
+            "scene_type": "INT|EXT|INT-EXT",
+            "time_of_day": "DAY|NIGHT|DAWN|DUSK",
+            "location": "...",
+            "mood": "TENSE|SAD|HAPPY|CALM|HORROR|ROMANTIC|EPIC",
+            "environment_tags": [...],
+            "action_tags": [...]
+        }}
+        """
+        result = await self.llm.generate(prompt, response_format="json")
+        return SceneTags(**result, scene_number=scene_number)
+```
+
+### 6. 自动素材匹配服务设计
+
+```python
+class AssetMatchingService:
+    """自动素材匹配服务"""
+    
+    def __init__(self, search_service: SearchService, vector_store: VectorStore):
+        self.search = search_service
+        self.vector_store = vector_store
+    
+    async def match_assets_for_character(
+        self,
+        character_tags: CharacterTags,
+        top_k: int = 10
+    ) -> List[ProjectAssetAssociation]:
+        """为角色匹配素材"""
+        # 1. 构建搜索查询
+        search_tags = character_tags.visual_tags
+        search_text = f"{character_tags.character_name} {' '.join(character_tags.personality)}"
+        
+        # 2. 标签搜索
+        tag_results = await self.search.search_by_tags(search_tags, top_k=20)
+        
+        # 3. 向量搜索
+        query_embedding = await self.vector_store.embed_text(search_text)
+        vector_results = await self.vector_store.search(query_embedding, top_k=20)
+        
+        # 4. 混合排序
+        merged = self._merge_results(tag_results, vector_results)[:top_k]
+        
+        # 5. 创建关联记录
+        associations = []
+        for result in merged:
+            associations.append(ProjectAssetAssociation(
+                source_type="CHARACTER",
+                source_id=character_tags.character_id,
+                asset_id=result.asset_id,
+                match_score=result.score,
+                match_reason=self._generate_match_reason(result, character_tags),
+                match_tags=result.matched_tags
+            ))
+        
+        return associations
+    
+    async def match_assets_for_scene(
+        self,
+        scene_tags: SceneTags,
+        top_k: int = 10
+    ) -> List[ProjectAssetAssociation]:
+        """为场景匹配素材"""
+        # 类似角色匹配逻辑
+        pass
+    
+    def _merge_results(self, tag_results, vector_results) -> List:
+        """混合排序结果"""
+        # 使用 RRF (Reciprocal Rank Fusion) 或加权平均
+        pass
+    
+    def _generate_match_reason(self, result, tags) -> str:
+        """生成匹配原因描述"""
+        matched = result.matched_tags
+        return f"匹配标签: {', '.join(matched[:3])}"
+```
+
+### 7. 标签到素材关联 API
+
+```python
+# 生成角色标签
+POST /api/wizard/generate-character-tags
+{
+    "project_id": "xxx",
+    "character_id": "char_001",
+    "character_name": "张三",
+    "character_bio": "一个勇敢的年轻人..."
+}
+
+# 响应
+{
+    "character_tags": {
+        "character_id": "char_001",
+        "appearance": {...},
+        "costume": "现代休闲",
+        "visual_tags": ["男性", "青年", "黑发", "现代装"]
+    },
+    "matched_assets": [
+        {
+            "asset_id": "asset_001",
+            "match_score": 0.85,
+            "match_reason": "匹配标签: 男性, 青年, 现代装"
+        }
+    ]
+}
+
+# 生成场景标签
+POST /api/wizard/generate-scene-tags
+{
+    "project_id": "xxx",
+    "scene_id": "scene_001",
+    "scene_heading": "INT. 咖啡厅 - 日",
+    "scene_description": "一家温馨的咖啡厅..."
+}
+
+# 批量生成并匹配
+POST /api/wizard/batch-generate-tags
+{
+    "project_id": "xxx",
+    "generate_character_tags": true,
+    "generate_scene_tags": true,
+    "auto_match_assets": true
+}
+
+# 手动调整关联
+PUT /api/wizard/asset-association/{association_id}
+{
+    "is_confirmed": true,
+    "is_rejected": false
+}
+
+# 重新匹配
+POST /api/wizard/rematch-assets
+{
+    "project_id": "xxx",
+    "source_type": "CHARACTER",  # 或 "SCENE" 或 "ALL"
+    "source_id": "char_001"      # 可选，不填则匹配所有
+}
+```
+
+### 8. 数据库迁移
+
+```python
+# migrations/010_add_script_to_asset_tables.py
+
+def upgrade():
+    # 角色标签表
+    op.create_table(
+        'character_tags',
+        sa.Column('id', sa.String, primary_key=True),
+        sa.Column('character_id', sa.String, nullable=False),
+        sa.Column('character_name', sa.String, nullable=False),
+        sa.Column('project_id', sa.String, nullable=False),
+        sa.Column('appearance', sa.JSON),
+        sa.Column('costume', sa.String),
+        sa.Column('costume_details', sa.JSON),
+        sa.Column('personality', sa.JSON),
+        sa.Column('props', sa.JSON),
+        sa.Column('visual_tags', sa.JSON),
+        sa.Column('source', sa.String),
+        sa.Column('confidence', sa.Float),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime),
+    )
+    
+    # 场景标签表
+    op.create_table(
+        'scene_tags',
+        sa.Column('id', sa.String, primary_key=True),
+        sa.Column('scene_id', sa.String, nullable=False),
+        sa.Column('scene_number', sa.Integer),
+        sa.Column('project_id', sa.String, nullable=False),
+        sa.Column('scene_type', sa.String),
+        sa.Column('time_of_day', sa.String),
+        sa.Column('location', sa.String),
+        sa.Column('mood', sa.String),
+        sa.Column('environment_tags', sa.JSON),
+        sa.Column('action_tags', sa.JSON),
+        sa.Column('characters_present', sa.JSON),
+        sa.Column('source', sa.String),
+        sa.Column('confidence', sa.Float),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime),
+    )
+    
+    # 项目资产关联表
+    op.create_table(
+        'project_asset_associations',
+        sa.Column('id', sa.String, primary_key=True),
+        sa.Column('project_id', sa.String, nullable=False),
+        sa.Column('source_type', sa.String, nullable=False),
+        sa.Column('source_id', sa.String, nullable=False),
+        sa.Column('asset_id', sa.String, nullable=False),
+        sa.Column('asset_type', sa.String),
+        sa.Column('match_score', sa.Float),
+        sa.Column('match_reason', sa.String),
+        sa.Column('match_tags', sa.JSON),
+        sa.Column('is_manual', sa.Boolean, default=False),
+        sa.Column('is_confirmed', sa.Boolean, default=False),
+        sa.Column('is_rejected', sa.Boolean, default=False),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime),
+    )
+    
+    # 创建索引
+    op.create_index('idx_character_tags_project', 'character_tags', ['project_id'])
+    op.create_index('idx_scene_tags_project', 'scene_tags', ['project_id'])
+    op.create_index('idx_asset_assoc_project', 'project_asset_associations', ['project_id'])
+    op.create_index('idx_asset_assoc_source', 'project_asset_associations', ['source_type', 'source_id'])
+```
