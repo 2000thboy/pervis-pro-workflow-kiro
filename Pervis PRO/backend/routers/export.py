@@ -17,6 +17,65 @@ from services.nle_exporter import NLEExporter
 router = APIRouter()
 
 
+# ============================================================
+# 导出格式查询 API
+# ============================================================
+
+@router.get("/formats")
+async def get_export_formats():
+    """获取支持的导出格式列表"""
+    return {
+        "status": "success",
+        "formats": {
+            "script": {
+                "name": "剧本文档",
+                "formats": [
+                    {"value": "docx", "label": "Word文档 (.docx)", "description": "Microsoft Word格式"},
+                    {"value": "pdf", "label": "PDF文档 (.pdf)", "description": "便携式文档格式"},
+                    {"value": "md", "label": "Markdown (.md)", "description": "纯文本标记格式"}
+                ]
+            },
+            "beatboard": {
+                "name": "BeatBoard图片",
+                "formats": [
+                    {"value": "png", "label": "PNG图片", "description": "无损压缩图片"},
+                    {"value": "jpg", "label": "JPEG图片", "description": "有损压缩图片"}
+                ]
+            },
+            "nle": {
+                "name": "NLE工程",
+                "formats": [
+                    {"value": "fcpxml", "label": "Final Cut Pro XML", "description": "兼容FCP/Premiere/DaVinci"},
+                    {"value": "edl", "label": "EDL (CMX3600)", "description": "通用剪辑决策列表"}
+                ]
+            },
+            "video": {
+                "name": "视频导出",
+                "formats": [
+                    {"value": "mp4", "label": "MP4 (H.264)", "description": "通用视频格式"},
+                    {"value": "mov", "label": "MOV (QuickTime)", "description": "Apple QuickTime格式"},
+                    {"value": "webm", "label": "WebM (VP9)", "description": "Web视频格式"}
+                ],
+                "resolutions": [
+                    {"value": "720p", "label": "720p HD", "width": 1280, "height": 720},
+                    {"value": "1080p", "label": "1080p Full HD", "width": 1920, "height": 1080},
+                    {"value": "2k", "label": "2K QHD", "width": 2560, "height": 1440},
+                    {"value": "4k", "label": "4K UHD", "width": 3840, "height": 2160}
+                ],
+                "framerates": [24, 25, 30, 60],
+                "quality_presets": ["low", "medium", "high", "ultra"]
+            },
+            "audio": {
+                "name": "音频导出",
+                "formats": [
+                    {"value": "mp3", "label": "MP3", "description": "通用音频格式"},
+                    {"value": "wav", "label": "WAV", "description": "无损音频格式"}
+                ]
+            }
+        }
+    }
+
+
 # 请求模型
 class ScriptExportRequest(BaseModel):
     project_id: str

@@ -416,6 +416,13 @@ export const VisualTagConfirmPanel: React.FC<VisualTagConfirmPanelProps> = ({
                 )}
               </button>
             )}
+            {/* 关闭按钮 */}
+            <button
+              onClick={onCancel}
+              className="mt-4 px-4 py-2 text-zinc-400 hover:text-white text-sm transition-colors"
+            >
+              关闭
+            </button>
           </div>
         ) : (
           <>

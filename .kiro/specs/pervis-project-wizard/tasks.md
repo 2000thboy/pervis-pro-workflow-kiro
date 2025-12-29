@@ -690,3 +690,47 @@ cd "Pervis PRO/frontend"
 npm run dev
 # 浏览器访问: http://localhost:3000/index.html
 ```
+
+
+---
+
+## Phase 11: Bug 修复与优化 (2025-12-29)
+
+> **目标**: 修复用户反馈的问题，优化用户体验
+
+- [x] 11.1 启动器修复
+  - ✅ 修复虚拟环境 Python 路径检测
+  - ✅ 修复 npm 命令在 Windows 上的调用 (`npm.cmd` + `shell=True`)
+  - ✅ 添加启动日志显示 Python/Backend/Frontend 路径
+  - **文件**: `Pervis PRO/一键启动.py`
+
+- [x] 11.2 剧本生成功能优化
+  - ✅ 移除本地固定示例回退（API 失败时显示错误而非使用本地数据）
+  - ✅ 按钮文案改为"AI 生成剧本"
+  - ✅ 需要先填写标题或一句话故事才能生成
+  - ✅ 后端添加 `demo_script` 类型处理，根据标题和 logline 生成剧本
+  - ✅ 添加 `generate_raw()` 方法用于生成纯文本内容
+  - **文件**: 
+    - `Pervis PRO/frontend/components/ProjectWizard/WizardStep2_Script.tsx`
+    - `Pervis PRO/backend/routers/wizard.py`
+    - `Pervis PRO/backend/services/agent_llm_adapter.py`
+
+- [x] 11.3 视觉标签弹窗修复
+  - ✅ 在没有标签时添加"关闭"按钮，解决无法回退问题
+  - **文件**: `Pervis PRO/frontend/components/ProjectWizard/VisualTagConfirmPanel.tsx`
+
+- [x] 11.4 图片显示修复
+  - ✅ 确保 `generated_images` 目录在启动时创建
+  - ✅ 前端图片 URL 添加完整 base URL 前缀
+  - ✅ 添加图片加载失败处理
+  - **文件**: 
+    - `Pervis PRO/backend/director_main.py`
+    - `Pervis PRO/frontend/components/ProjectWizard/WizardStep3_Characters.tsx`
+
+- [x] 11.5 Phase 11 Checkpoint
+  - ✅ 启动器可正常启动所有服务
+  - ✅ 剧本生成基于标题和一句话故事
+  - ✅ 视觉标签弹窗可正常关闭
+  - ✅ 图片生成后可正常显示
+  - 验证日期: 2025-12-29
+  - **Phase 11 状态: 完成 ✅**

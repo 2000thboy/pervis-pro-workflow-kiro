@@ -174,40 +174,48 @@ class HealthChecker:
     async def _check_ffmpeg(self) -> CheckResult:
         """检查 FFmpeg 可用性"""
         try:
-            result = subprocess.run(
-                ["ffmpeg", "-version"],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
+            from services.ffmpeg_detector import ffmpeg_detector
             
-            if result.returncode == 0:
-                # 提取版本信息
-                version_line = result.stdout.split('\n')[0] if result.stdout else "unknown"
-                return CheckResult(
-                    name="ffmpeg",
-                    status=CheckStatus.OK,
-                    message="FFmpeg 可用",
-                    details={"version": version_line}
-                )
+            status = ffmpeg_detector.check_installation()
+            
+            if status.is_installed:
+                details = {
+                    "version": status.version,
+                    "path": status.path,
+                    "is_version_supported": status.is_version_supported
+                }
+                
+                # 检查是否在 PATH 中
+                in_path = ffmpeg_detector._is_in_path()
+                details["in_path"] = in_path
+                
+                if not status.is_version_supported:
+                    return CheckResult(
+                        name="ffmpeg",
+                        status=CheckStatus.WARNING,
+                        message=f"FFmpeg 版本过低: {status.version}，建议升级到 4.0+",
+                        details=details
+                    )
+                elif not in_path:
+                    return CheckResult(
+                        name="ffmpeg",
+                        status=CheckStatus.WARNING,
+                        message=f"FFmpeg 可用 (v{status.version})，但未添加到 PATH",
+                        details=details
+                    )
+                else:
+                    return CheckResult(
+                        name="ffmpeg",
+                        status=CheckStatus.OK,
+                        message=f"FFmpeg 可用 (v{status.version})",
+                        details=details
+                    )
             else:
                 return CheckResult(
                     name="ffmpeg",
                     status=CheckStatus.ERROR,
-                    message="FFmpeg 执行失败"
+                    message="FFmpeg 未安装或不在 PATH 中"
                 )
-        except FileNotFoundError:
-            return CheckResult(
-                name="ffmpeg",
-                status=CheckStatus.ERROR,
-                message="FFmpeg 未安装或不在 PATH 中"
-            )
-        except subprocess.TimeoutExpired:
-            return CheckResult(
-                name="ffmpeg",
-                status=CheckStatus.WARNING,
-                message="FFmpeg 响应超时"
-            )
         except Exception as e:
             return CheckResult(
                 name="ffmpeg",

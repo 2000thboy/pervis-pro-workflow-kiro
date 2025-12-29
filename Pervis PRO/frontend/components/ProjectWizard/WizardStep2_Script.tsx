@@ -2,6 +2,7 @@
  * 向导步骤2 - 剧本导入
  * 支持文件上传（TXT、PDF、DOCX、FDX）和文本粘贴
  * 显示 Script_Agent 解析状态和 Director_Agent 审核状态
+ * 支持 AI 生成剧本（基于标题和一句话故事）
  */
 
 import React, { useState, useCallback } from 'react';
@@ -14,7 +15,8 @@ import {
   Loader2,
   RefreshCw,
   Copy,
-  Trash2
+  Trash2,
+  Wand2
 } from 'lucide-react';
 import { useWizard } from './WizardContext';
 import { wizardApi } from './api';
@@ -25,6 +27,47 @@ export const WizardStep2_Script: React.FC = () => {
   
   const [isDragging, setIsDragging] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isGeneratingDemo, setIsGeneratingDemo] = useState(false);
+
+  // 生成示例剧本（Demo 用）
+  const handleGenerateDemoScript = async () => {
+    // 检查是否有标题或一句话故事
+    if (!basicInfo.title && !basicInfo.logline) {
+      setUploadError('请先在上一步填写项目标题或一句话故事');
+      return;
+    }
+    
+    setIsGeneratingDemo(true);
+    setUploadError(null);
+    setAgentStatus('Script_Agent', { status: 'working', message: '正在生成剧本...', progress: 30 });
+    
+    try {
+      // 调用 API 生成
+      const result = await wizardApi.generateContent({
+        project_id: state.projectId || 'temp',
+        content_type: 'demo_script',
+        context: { 
+          project_type: basicInfo.projectType,
+          title: basicInfo.title,
+          logline: basicInfo.logline
+        }
+      });
+      
+      if (result.content?.script) {
+        updateScript({ content: result.content.script, parseStatus: 'idle' });
+        setAgentStatus('Script_Agent', { status: 'completed', message: '剧本生成完成', progress: 100 });
+      } else {
+        throw new Error(result.error || 'AI 未返回剧本内容');
+      }
+    } catch (error: any) {
+      // API 失败时显示错误，不回退到本地示例
+      const errorMessage = error.response?.data?.error || error.message || '生成失败';
+      setUploadError(`剧本生成失败: ${errorMessage}`);
+      setAgentStatus('Script_Agent', { status: 'failed', message: errorMessage, progress: 0 });
+    } finally {
+      setIsGeneratingDemo(false);
+    }
+  };
 
   // 处理文件上传
   const handleFileUpload = useCallback(async (file: File) => {
@@ -256,6 +299,23 @@ INT. 咖啡馆 - 日
           >
             <RefreshCw size={14} />
             <span>重新解析</span>
+          </button>
+        )}
+
+        {/* AI 生成剧本（基于标题和一句话故事） */}
+        {!script.content.trim() && (
+          <button
+            onClick={handleGenerateDemoScript}
+            disabled={isGeneratingDemo || (!basicInfo.title && !basicInfo.logline)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-all"
+            title={(!basicInfo.title && !basicInfo.logline) ? '请先在上一步填写标题或一句话故事' : 'AI 根据标题和故事生成剧本'}
+          >
+            {isGeneratingDemo ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <Wand2 size={14} />
+            )}
+            <span>AI 生成剧本</span>
           </button>
         )}
       </div>

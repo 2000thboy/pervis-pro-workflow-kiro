@@ -212,8 +212,16 @@ class FFmpegDetector:
     # 支持的最低版本
     MIN_VERSION = "4.0.0"
     
+    # Windows 常见 FFmpeg 安装路径
+    COMMON_PATHS_WINDOWS = [
+        r"C:\ffmpeg\bin\ffmpeg.exe",
+        r"C:\Program Files\ffmpeg\bin\ffmpeg.exe",
+        r"C:\Program Files (x86)\ffmpeg\bin\ffmpeg.exe",
+    ]
+    
     def __init__(self):
         self.guide_generator = InstallationGuideGenerator()
+        self._cached_ffmpeg_path: Optional[str] = None
     
     def check_installation(self) -> FFmpegStatus:
         """
@@ -222,10 +230,16 @@ class FFmpegDetector:
         Returns:
             FFmpegStatus对象
         """
+        # 首先尝试 PATH 中的 ffmpeg
+        ffmpeg_cmd = self._find_ffmpeg_executable()
+        
+        if not ffmpeg_cmd:
+            logger.warning("FFmpeg not found in PATH or common locations")
+            return self._create_not_installed_status()
+        
         try:
-            # 检查FFmpeg是否在PATH中
             result = subprocess.run(
-                ['ffmpeg', '-version'],
+                [ffmpeg_cmd, '-version'],
                 capture_output=True,
                 text=True,
                 timeout=10
@@ -234,38 +248,132 @@ class FFmpegDetector:
             if result.returncode == 0:
                 # FFmpeg已安装，解析版本信息
                 version = self._parse_version(result.stdout)
-                path = self._get_ffmpeg_path()
                 is_supported = self.validate_version(version, self.MIN_VERSION)
+                
+                # 检查是否不在 PATH 中
+                in_path = self._is_in_path()
                 
                 status = FFmpegStatus(
                     is_installed=True,
                     version=version,
-                    path=path,
+                    path=ffmpeg_cmd,
                     is_version_supported=is_supported
                 )
                 
                 # 如果版本不支持，提供升级指导
                 if not is_supported:
                     status.installation_guide = self._get_upgrade_guide()
+                elif not in_path:
+                    # FFmpeg 已安装但不在 PATH 中，提供 PATH 配置建议
+                    guide = self._get_path_config_guide(ffmpeg_cmd)
+                    status.installation_guide = guide
                 
-                logger.info(f"FFmpeg detected: version {version}, path {path}")
+                logger.info(f"FFmpeg detected: version {version}, path {ffmpeg_cmd}, in_path={in_path}")
                 return status
             else:
-                # FFmpeg命令执行失败
                 return self._create_not_installed_status()
                 
-        except FileNotFoundError:
-            # FFmpeg命令不存在
-            logger.warning("FFmpeg not found in PATH")
-            return self._create_not_installed_status()
         except subprocess.TimeoutExpired:
-            # 命令超时
             logger.error("FFmpeg version check timed out")
             return self._create_not_installed_status()
         except Exception as e:
-            # 其他错误
             logger.error(f"Error checking FFmpeg installation: {e}")
             return self._create_not_installed_status()
+    
+    def _find_ffmpeg_executable(self) -> Optional[str]:
+        """
+        查找 FFmpeg 可执行文件
+        优先检查 PATH，然后检查常见安装路径
+        
+        Returns:
+            FFmpeg 可执行文件路径，未找到返回 None
+        """
+        # 如果有缓存，直接返回
+        if self._cached_ffmpeg_path:
+            if os.path.exists(self._cached_ffmpeg_path):
+                return self._cached_ffmpeg_path
+            self._cached_ffmpeg_path = None
+        
+        # 1. 首先尝试 PATH 中的 ffmpeg
+        try:
+            result = subprocess.run(
+                ['ffmpeg', '-version'],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if result.returncode == 0:
+                self._cached_ffmpeg_path = 'ffmpeg'
+                return 'ffmpeg'
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            pass
+        
+        # 2. 检查 Windows 常见安装路径
+        if platform.system() == "Windows":
+            for path in self.COMMON_PATHS_WINDOWS:
+                if os.path.exists(path):
+                    self._cached_ffmpeg_path = path
+                    logger.info(f"Found FFmpeg at common path: {path}")
+                    return path
+            
+            # 3. 检查用户目录下的常见位置
+            user_paths = [
+                os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Programs', 'ffmpeg', 'bin', 'ffmpeg.exe'),
+                os.path.join(os.environ.get('USERPROFILE', ''), 'ffmpeg', 'bin', 'ffmpeg.exe'),
+            ]
+            for path in user_paths:
+                if path and os.path.exists(path):
+                    self._cached_ffmpeg_path = path
+                    logger.info(f"Found FFmpeg at user path: {path}")
+                    return path
+        
+        return None
+    
+    def _is_in_path(self) -> bool:
+        """检查 ffmpeg 是否在系统 PATH 中"""
+        try:
+            result = subprocess.run(
+                ['ffmpeg', '-version'],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            return result.returncode == 0
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            return False
+    
+    def _get_path_config_guide(self, ffmpeg_path: str) -> InstallationGuide:
+        """生成 PATH 配置指导"""
+        bin_dir = os.path.dirname(ffmpeg_path)
+        
+        commands = [
+            "# FFmpeg 已安装但未添加到系统 PATH",
+            f"# FFmpeg 位置: {ffmpeg_path}",
+            "",
+            "# 方法1: 临时添加到 PATH (当前会话)",
+            f'$env:PATH = "{bin_dir};$env:PATH"',
+            "",
+            "# 方法2: 永久添加到用户 PATH",
+            f'[Environment]::SetEnvironmentVariable("PATH", "{bin_dir};" + [Environment]::GetEnvironmentVariable("PATH", "User"), "User")',
+            "",
+            "# 方法3: 通过系统设置添加",
+            "# 1. 打开 系统属性 -> 高级 -> 环境变量",
+            f"# 2. 在用户变量或系统变量中找到 PATH",
+            f"# 3. 添加: {bin_dir}",
+        ]
+        
+        notes = [
+            f"FFmpeg 已安装在 {ffmpeg_path}",
+            "建议将 FFmpeg 添加到系统 PATH 以便全局使用",
+            "添加后需要重启终端或 IDE 使更改生效",
+        ]
+        
+        return InstallationGuide(
+            os_type="windows",
+            method="path_config",
+            commands=commands,
+            notes=notes
+        )
     
     def _parse_version(self, version_output: str) -> Optional[str]:
         """
@@ -424,6 +532,15 @@ class FFmpegDetector:
         """
         status = self.check_installation()
         return status.is_installed and status.is_version_supported
+    
+    def get_executable(self) -> Optional[str]:
+        """
+        获取可用的 FFmpeg 可执行文件路径
+        
+        Returns:
+            FFmpeg 可执行文件路径，未找到返回 None
+        """
+        return self._find_ffmpeg_executable()
 
 
 # 全局实例

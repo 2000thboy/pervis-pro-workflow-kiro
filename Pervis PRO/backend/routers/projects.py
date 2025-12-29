@@ -23,7 +23,7 @@ class ProjectCreate(BaseModel):
 class ProjectResponse(BaseModel):
     id: str
     title: str
-    script_raw: str
+    script_raw: Optional[str] = ""
     logline: Optional[str] = ""
     created_at: str
     beats_count: int = 0
@@ -202,12 +202,17 @@ async def get_project(project_id: str, db: Session = Depends(get_db)):
             {"project_id": project_id}
         ).fetchone()[0]
         
+        # 处理 created_at 字段类型转换
+        created_at = project_data[4]
+        if created_at is not None and not isinstance(created_at, str):
+            created_at = str(created_at)
+        
         return ProjectResponse(
             id=project_data[0],
             title=project_data[1],
             script_raw=project_data[2],
             logline=project_data[3] or "",
-            created_at=project_data[4],
+            created_at=created_at or datetime.now().isoformat(),
             beats_count=beats_count
         )
         
@@ -232,12 +237,17 @@ async def list_projects(db: Session = Depends(get_db)):
                 {"project_id": project_row[0]}
             ).fetchone()[0]
             
+            # 处理 created_at 字段类型转换
+            created_at = project_row[4]
+            if created_at is not None and not isinstance(created_at, str):
+                created_at = str(created_at)
+            
             projects.append(ProjectResponse(
                 id=project_row[0],
                 title=project_row[1],
-                script_raw=project_row[2],
+                script_raw=project_row[2] or "",
                 logline=project_row[3] or "",
-                created_at=project_row[4],
+                created_at=created_at or datetime.now().isoformat(),
                 beats_count=beats_count
             ))
         

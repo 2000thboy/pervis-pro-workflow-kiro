@@ -22,8 +22,7 @@ from sqlalchemy import (
     Column, DateTime, Float, Integer, JSON, String, Text,
     create_engine, inspect
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 logger = logging.getLogger(__name__)
 

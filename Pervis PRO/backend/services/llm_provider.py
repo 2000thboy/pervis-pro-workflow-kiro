@@ -197,7 +197,7 @@ class OllamaProvider(LLMProvider):
             logger.debug(f"Ollama availability check failed: {e}")
             return False
 
-    async def _chat_completion(self, messages: List[Dict[str, str]], json_mode: bool = True) -> Dict[str, Any]:
+    async def _chat_completion(self, messages: List[Dict[str, str]], json_mode: bool = True, timeout_seconds: int = 30) -> Dict[str, Any]:
         # Ollama 原生 API 使用 /api/chat 端点
         url = f"{self.base_url}/api/chat"
         headers = {
@@ -213,7 +213,7 @@ class OllamaProvider(LLMProvider):
 
         async with aiohttp.ClientSession() as session:
             try:
-                async with session.post(url, json=payload, headers=headers, timeout=aiohttp.ClientTimeout(total=60)) as resp:
+                async with session.post(url, json=payload, headers=headers, timeout=aiohttp.ClientTimeout(total=timeout_seconds, connect=5)) as resp:
                     if resp.status != 200:
                         err_text = await resp.text()
                         logger.error(f"Ollama Error: {resp.status} - {err_text}")
@@ -238,8 +238,8 @@ class OllamaProvider(LLMProvider):
                     "message": f"无法连接到AI服务 (Ollama)。请检查 {self.base_url} 是否可访问。"
                 }
             except asyncio.TimeoutError:
-                logger.error("Ollama request timeout")
-                return {"status": "error", "message": "AI服务请求超时，请稍后重试"}
+                logger.error(f"Ollama request timeout after {timeout_seconds}s")
+                return {"status": "error", "error_code": "TIMEOUT", "message": f"AI服务请求超时({timeout_seconds}秒)，请稍后重试或使用手动输入"}
             except Exception as e:
                 logger.error(f"Unexpected Error: {e}")
                 return {"status": "error", "message": f"AI服务异常: {str(e)}"}

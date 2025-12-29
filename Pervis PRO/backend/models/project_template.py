@@ -12,7 +12,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import Column, DateTime, Integer, JSON, String, Text
 
 # 导入数据库基类
@@ -162,8 +162,7 @@ class TemplateResponse(BaseModel):
     created_at: str
     updated_at: str
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TemplateListResponse(BaseModel):

@@ -158,8 +158,17 @@ export const WizardStep3_Characters: React.FC = () => {
       }
     } catch (error: any) {
       console.error('生成人设图失败:', error);
-      setAgentStatus('Art_Agent', { status: 'failed', message: error.message || '生成失败', progress: 0 });
-      alert(`生成失败: ${error.message || '未知错误'}`);
+      // 解析错误消息
+      let errorMessage = '生成失败';
+      if (error.response?.status === 402 || error.message?.includes('402') || error.message?.includes('余额不足') || error.message?.includes('Insufficient credit')) {
+        errorMessage = 'Replicate API 余额不足，请前往 replicate.com 充值后重试';
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      setAgentStatus('Art_Agent', { status: 'failed', message: errorMessage, progress: 0 });
+      alert(`生成失败: ${errorMessage}`);
     } finally {
       setIsGeneratingImage(null);
     }
@@ -295,7 +304,15 @@ export const WizardStep3_Characters: React.FC = () => {
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-amber-500/20 to-yellow-500/20 rounded-lg flex items-center justify-center text-lg font-bold text-amber-400 flex-shrink-0 overflow-hidden">
                   {char.generatedImage ? (
-                    <img src={char.generatedImage} alt={char.name} className="w-full h-full object-cover" />
+                    <img 
+                      src={char.generatedImage.startsWith('http') ? char.generatedImage : `http://127.0.0.1:8000${char.generatedImage}`} 
+                      alt={char.name} 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => {
+                        // 图片加载失败时显示首字母
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
                   ) : (
                     char.name.charAt(0)
                   )}

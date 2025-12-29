@@ -1,10 +1,11 @@
 /**
  * 向导步骤1 - 基本信息
  * 项目名称、类型、时长、画幅、帧率、分辨率
+ * 支持 AI 生成项目名称和 Logline（Demo 演示用）
  */
 
-import React from 'react';
-import { Film, Clock, Monitor, Zap, Maximize2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, Monitor, Zap, Maximize2, Sparkles, Loader2, Wand2 } from 'lucide-react';
 import { useWizard } from './WizardContext';
 import {
   PROJECT_TYPE_CONFIG,
@@ -13,10 +14,120 @@ import {
   RESOLUTION_OPTIONS,
   ProjectType
 } from './types';
+import { wizardApi } from './api';
+
+// Demo 用的示例项目名称
+const DEMO_PROJECT_NAMES: Record<ProjectType, string[]> = {
+  short_film: ['城市边缘', '最后一班地铁', '咖啡馆的秘密', '雨中的告别', '时间旅行者'],
+  feature_film: ['星际迷途', '暗夜追踪', '命运交叉点', '最后的守护者', '时空裂缝'],
+  advertisement: ['未来科技', '品质生活', '绿色家园', '智能出行', '健康新选择'],
+  music_video: ['夜空中的星', '城市节拍', '心跳旋律', '追梦人', '光影交错'],
+  custom: ['创意项目', '实验短片', '艺术探索', '概念演示', '视觉实验']
+};
+
+// Demo 用的示例 Logline
+const DEMO_LOGLINES: Record<ProjectType, string[]> = {
+  short_film: [
+    '一个孤独的程序员在深夜的咖啡馆遇见了改变他人生的神秘女子。',
+    '当最后一班地铁驶入站台，两个陌生人的命运开始交织。',
+    '一封迟到十年的信，揭开了一段被遗忘的爱情故事。'
+  ],
+  feature_film: [
+    '一位失忆的宇航员必须在外星球上找回记忆，才能拯救地球。',
+    '当城市陷入黑暗，一个普通人发现自己是唯一能阻止灾难的人。',
+    '两个来自不同时空的人相遇，却发现他们的命运早已注定。'
+  ],
+  advertisement: [
+    '科技改变生活，让每一天都充满可能。',
+    '品质源于细节，生活因此不同。',
+    '绿色出行，为地球减负，为未来加分。'
+  ],
+  music_video: [
+    '在霓虹闪烁的城市中，寻找属于自己的节奏。',
+    '每一个音符都是一段故事，每一段旋律都是一次心跳。',
+    '当音乐响起，所有的距离都不再遥远。'
+  ],
+  custom: [
+    '打破常规，探索视觉艺术的无限可能。',
+    '用镜头语言讲述独特的故事。',
+    '创意无界，想象力是唯一的限制。'
+  ]
+};
 
 export const WizardStep1_BasicInfo: React.FC = () => {
-  const { state, updateBasicInfo } = useWizard();
+  const { state, updateBasicInfo, setAgentStatus } = useWizard();
   const { basicInfo } = state;
+  
+  const [isGeneratingName, setIsGeneratingName] = useState(false);
+  const [isGeneratingLogline, setIsGeneratingLogline] = useState(false);
+
+  // AI 生成项目名称（Demo 用）
+  const handleGenerateName = async () => {
+    setIsGeneratingName(true);
+    setAgentStatus('PM_Agent', { status: 'working', message: '正在生成项目名称...', progress: 50 });
+    
+    try {
+      // 尝试调用 API
+      const result = await wizardApi.generateContent({
+        project_id: state.projectId || 'temp',
+        content_type: 'project_name',
+        context: { project_type: basicInfo.projectType }
+      });
+      
+      if (result.content?.name) {
+        updateBasicInfo({ title: result.content.name });
+      } else {
+        // 使用本地 Demo 数据
+        const names = DEMO_PROJECT_NAMES[basicInfo.projectType];
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        updateBasicInfo({ title: randomName });
+      }
+      setAgentStatus('PM_Agent', { status: 'completed', message: '项目名称生成完成', progress: 100 });
+    } catch {
+      // API 失败时使用本地 Demo 数据
+      const names = DEMO_PROJECT_NAMES[basicInfo.projectType];
+      const randomName = names[Math.floor(Math.random() * names.length)];
+      updateBasicInfo({ title: randomName });
+      setAgentStatus('PM_Agent', { status: 'completed', message: '使用示例名称', progress: 100 });
+    } finally {
+      setIsGeneratingName(false);
+    }
+  };
+
+  // AI 生成 Logline（Demo 用）
+  const handleGenerateLogline = async () => {
+    setIsGeneratingLogline(true);
+    setAgentStatus('Script_Agent', { status: 'working', message: '正在生成 Logline...', progress: 50 });
+    
+    try {
+      const result = await wizardApi.generateContent({
+        project_id: state.projectId || 'temp',
+        content_type: 'logline',
+        context: { 
+          project_type: basicInfo.projectType,
+          title: basicInfo.title 
+        }
+      });
+      
+      if (result.content?.logline) {
+        updateBasicInfo({ logline: result.content.logline });
+      } else {
+        // 使用本地 Demo 数据
+        const loglines = DEMO_LOGLINES[basicInfo.projectType];
+        const randomLogline = loglines[Math.floor(Math.random() * loglines.length)];
+        updateBasicInfo({ logline: randomLogline });
+      }
+      setAgentStatus('Script_Agent', { status: 'completed', message: 'Logline 生成完成', progress: 100 });
+    } catch {
+      // API 失败时使用本地 Demo 数据
+      const loglines = DEMO_LOGLINES[basicInfo.projectType];
+      const randomLogline = loglines[Math.floor(Math.random() * loglines.length)];
+      updateBasicInfo({ logline: randomLogline });
+      setAgentStatus('Script_Agent', { status: 'completed', message: '使用示例 Logline', progress: 100 });
+    } finally {
+      setIsGeneratingLogline(false);
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
@@ -25,13 +136,28 @@ export const WizardStep1_BasicInfo: React.FC = () => {
         <label className="block text-sm font-medium text-zinc-300">
           项目名称 <span className="text-red-400">*</span>
         </label>
-        <input
-          type="text"
-          value={basicInfo.title}
-          onChange={(e) => updateBasicInfo({ title: e.target.value })}
-          placeholder="输入项目名称..."
-          className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-colors"
-        />
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={basicInfo.title}
+            onChange={(e) => updateBasicInfo({ title: e.target.value })}
+            placeholder="输入项目名称..."
+            className="flex-1 px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-colors"
+          />
+          <button
+            onClick={handleGenerateName}
+            disabled={isGeneratingName}
+            className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-all"
+            title="AI 生成项目名称"
+          >
+            {isGeneratingName ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Wand2 size={16} />
+            )}
+            <span className="hidden sm:inline">AI 生成</span>
+          </button>
+        </div>
       </div>
 
       {/* 项目类型 */}
@@ -160,9 +286,24 @@ export const WizardStep1_BasicInfo: React.FC = () => {
 
       {/* Logline */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-zinc-300">
-          一句话概要（Logline）
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="block text-sm font-medium text-zinc-300">
+            一句话概要（Logline）
+          </label>
+          <button
+            onClick={handleGenerateLogline}
+            disabled={isGeneratingLogline}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-black text-xs font-medium rounded-lg disabled:opacity-50 transition-all"
+            title="AI 生成 Logline"
+          >
+            {isGeneratingLogline ? (
+              <Loader2 size={12} className="animate-spin" />
+            ) : (
+              <Sparkles size={12} />
+            )}
+            <span>AI 生成</span>
+          </button>
+        </div>
         <textarea
           value={basicInfo.logline}
           onChange={(e) => updateBasicInfo({ logline: e.target.value })}
@@ -171,7 +312,7 @@ export const WizardStep1_BasicInfo: React.FC = () => {
           className="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-colors resize-none"
         />
         <div className="text-xs text-zinc-500">
-          可选，也可以在下一步由 AI 自动生成
+          可选，点击 AI 生成按钮快速创建，或在下一步由 AI 自动生成
         </div>
       </div>
 

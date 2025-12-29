@@ -3,7 +3,7 @@
  * Phase 7: 前端 API 集成
  */
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://127.0.0.1:8000';
 
 // 通用请求函数
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {

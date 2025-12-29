@@ -12,7 +12,7 @@ import {
     ExportHistoryItem
 } from './types';
 
-const API_BASE = 'http://localhost:8000/api/export';
+const API_BASE = 'http://127.0.0.1:8000/api/export';
 
 // 通用请求函数
 async function request<T>(url: string, options?: RequestInit): Promise<T> {

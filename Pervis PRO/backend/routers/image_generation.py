@@ -95,8 +95,8 @@ async def get_service_status():
     
     return ServiceStatusResponse(
         configured=service.is_configured,
-        provider="replicate",
-        message="服务已配置" if service.is_configured else "未配置 REPLICATE_API_TOKEN"
+        provider=service.provider_name,
+        message=f"服务已配置 ({service.provider_name})" if service.is_configured else "未配置 GEMINI_API_KEY 或 REPLICATE_API_TOKEN"
     )
 
 
@@ -175,7 +175,14 @@ async def generate_character_image(request: GenerateCharacterImageRequest):
         
     except Exception as e:
         logger.error(f"角色图片生成失败: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        error_msg = str(e)
+        # 检查是否是余额不足错误
+        if "余额不足" in error_msg or "402" in error_msg or "Insufficient credit" in error_msg:
+            raise HTTPException(
+                status_code=402,
+                detail="Replicate API 余额不足，请前往 https://replicate.com/account/billing 充值后重试"
+            )
+        raise HTTPException(status_code=500, detail=error_msg)
 
 
 @router.post("/scene", response_model=ImageGenerationResponse)
@@ -210,7 +217,14 @@ async def generate_scene_image(request: GenerateSceneImageRequest):
         
     except Exception as e:
         logger.error(f"场景图片生成失败: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        error_msg = str(e)
+        # 检查是否是余额不足错误
+        if "余额不足" in error_msg or "402" in error_msg or "Insufficient credit" in error_msg:
+            raise HTTPException(
+                status_code=402,
+                detail="Replicate API 余额不足，请前往 https://replicate.com/account/billing 充值后重试"
+            )
+        raise HTTPException(status_code=500, detail=error_msg)
 
 
 @router.get("/task/{task_id}", response_model=ImageGenerationResponse)

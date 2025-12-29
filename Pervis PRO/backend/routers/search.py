@@ -14,7 +14,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from services.search_service import (
     HybridSearchService,
@@ -22,6 +22,12 @@ from services.search_service import (
     SearchRequest,
     SearchResponse,
     get_search_service,
+)
+from services.search_service_enhanced import (
+    EnhancedSearchService,
+    EnhancedSearchRequest,
+    MatchAlgorithm,
+    get_enhanced_search_service,
 )
 
 logger = logging.getLogger(__name__)
@@ -43,20 +49,43 @@ class SearchRequestModel(BaseModel):
     top_k: int = Field(default=5, ge=1, le=100, description="返回数量")
     min_score: float = Field(default=0.0, ge=0, le=1, description="最低分数阈值")
     
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "query": "炭治郎使用水之呼吸战斗",
-                "tags": {
-                    "action_type": "FIGHT",
-                    "characters": ["炭治郎"]
-                },
-                "mode": "HYBRID",
-                "tag_weight": 0.4,
-                "vector_weight": 0.6,
-                "top_k": 5
-            }
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "query": "炭治郎使用水之呼吸战斗",
+            "tags": {
+                "action_type": "FIGHT",
+                "characters": ["炭治郎"]
+            },
+            "mode": "HYBRID",
+            "tag_weight": 0.4,
+            "vector_weight": 0.6,
+            "top_k": 5
         }
+    })
+
+
+class EnhancedSearchRequestModel(BaseModel):
+    """增强版搜索请求模型"""
+    query: str = Field(default="", description="查询文本")
+    tags: Dict[str, Any] = Field(default_factory=dict, description="标签过滤")
+    mode: str = Field(default="HYBRID", description="搜索模式")
+    match_algorithm: str = Field(default="tfidf", description="标签匹配算法: weight, jaccard, tfidf")
+    tag_weight: float = Field(default=0.4, ge=0, le=1, description="标签权重")
+    vector_weight: float = Field(default=0.6, ge=0, le=1, description="向量权重")
+    top_k: int = Field(default=5, ge=1, le=100, description="返回数量")
+    min_score: float = Field(default=0.0, ge=0, le=1, description="最低分数阈值")
+    deduplicate: bool = Field(default=True, description="是否去重")
+    dedupe_threshold: float = Field(default=0.95, ge=0, le=1, description="去重阈值")
+    
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "query": "炭治郎使用水之呼吸战斗",
+            "tags": {"action_type": "FIGHT"},
+            "mode": "HYBRID",
+            "match_algorithm": "tfidf",
+            "deduplicate": True
+        }
+    })
 
 
 class SearchResultItemModel(BaseModel):
@@ -266,6 +295,69 @@ async def quick_search(
         raise HTTPException(status_code=500, detail=f"搜索失败: {str(e)}")
 
 
+@router.post("/enhanced", response_model=SearchResponseModel)
+async def search_assets_enhanced(request: EnhancedSearchRequestModel):
+    """
+    增强版搜索素材
+    
+    相比基础搜索，增强版提供：
+    - TF-IDF / Jaccard 标签匹配算法
+    - RRF (Reciprocal Rank Fusion) 结果融合
+    - 自动去重
+    - 批量向量查询优化
+    
+    标签匹配算法：
+    - weight: 简单权重匹配（原始）
+    - jaccard: Jaccard 相似度
+    - tfidf: TF-IDF 余弦相似度（推荐）
+    """
+    try:
+        service = get_enhanced_search_service()
+        
+        # 验证搜索模式
+        try:
+            mode = SearchMode(request.mode)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"无效的搜索模式: {request.mode}"
+            )
+        
+        # 验证匹配算法
+        try:
+            match_algorithm = MatchAlgorithm(request.match_algorithm)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"无效的匹配算法: {request.match_algorithm}，支持: weight, jaccard, tfidf"
+            )
+        
+        # 构建搜索请求
+        search_request = EnhancedSearchRequest(
+            query=request.query,
+            tags=request.tags,
+            mode=mode,
+            match_algorithm=match_algorithm,
+            tag_weight=request.tag_weight,
+            vector_weight=request.vector_weight,
+            top_k=request.top_k,
+            min_score=request.min_score,
+            deduplicate=request.deduplicate,
+            dedupe_threshold=request.dedupe_threshold,
+        )
+        
+        # 执行搜索
+        response = await service.search_enhanced(search_request)
+        
+        return response.to_dict()
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"增强搜索失败: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"增强搜索失败: {str(e)}")
+
+
 # ============================================================
 # 多模态搜索 API
 # ============================================================
@@ -299,17 +391,16 @@ class MultimodalSearchRequestModel(BaseModel):
     include_keyframes: bool = Field(default=True, description="是否返回关键帧")
     max_keyframes_per_asset: int = Field(default=3, ge=1, le=10, description="每个素材最多返回的关键帧数")
     
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "query": "炭治郎使用水之呼吸战斗",
-                "tags": {"action_type": "FIGHT"},
-                "mode": "MULTIMODAL",
-                "weights": {"text": 0.3, "visual": 0.4, "tag": 0.3},
-                "top_k": 5,
-                "include_keyframes": True
-            }
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "query": "炭治郎使用水之呼吸战斗",
+            "tags": {"action_type": "FIGHT"},
+            "mode": "MULTIMODAL",
+            "weights": {"text": 0.3, "visual": 0.4, "tag": 0.3},
+            "top_k": 5,
+            "include_keyframes": True
         }
+    })
 
 
 class MultimodalSearchResultModel(BaseModel):

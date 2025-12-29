@@ -171,7 +171,7 @@ export const api = {
     },
 
     async remoteExportScript(projectId: string, format: 'docx' | 'pdf' | 'md'): Promise<any> {
-        const response = await fetch(`http://localhost:8000/api/export/script`, {
+        const response = await fetch(`http://127.0.0.1:8000/api/export/script`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ project_id: projectId, format })
@@ -181,7 +181,7 @@ export const api = {
     },
 
     async remoteExportNLE(projectId: string, format: 'fcpxml' | 'edl'): Promise<any> {
-        const response = await fetch(`http://localhost:8000/api/export/nle`, {
+        const response = await fetch(`http://127.0.0.1:8000/api/export/nle`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ project_id: projectId, format, frame_rate: "24" })
@@ -413,7 +413,7 @@ export const api = {
 
     async remoteAnalyzeScript(content: string, mode: 'parse' | 'smart'): Promise<any> {
         try {
-            const response = await fetch('http://localhost:8000/api/script/analyze', {
+            const response = await fetch('http://127.0.0.1:8000/api/script/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -432,7 +432,7 @@ export const api = {
 
     async remoteSearchAssets(query: string, beatId?: string): Promise<any> {
         try {
-            const response = await fetch('http://localhost:8000/api/search/semantic', {
+            const response = await fetch('http://127.0.0.1:8000/api/search/semantic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -455,7 +455,7 @@ export const api = {
         synopsis: string;
         script_content: string;
     }> {
-        const response = await fetch('http://localhost:8000/api/script/demo', {
+        const response = await fetch('http://127.0.0.1:8000/api/script/demo', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ topic })
@@ -473,7 +473,7 @@ export const api = {
 
     async checkBackendHealth(): Promise<boolean> {
         try {
-            const res = await fetch('http://localhost:8000/api/health');
+            const res = await fetch('http://127.0.0.1:8000/api/health');
             return res.ok;
         } catch (e) {
             return false;

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Script_Agent 服务（编剧 Agent）
 
@@ -421,6 +421,14 @@ class ScriptAgentService:
                     content = bracket_match.group(1)
             
             return char_name, content
+        
+        # 匹配独立角色名行（2-4个中文字符，独立一行）
+        match = re.match(r'^([\u4e00-\u9fa5]{2,4})$', line)
+        if match:
+            char_name = match.group(1)
+            if char_name in excluded_prefixes:
+                return None
+            return char_name, ""
         
         return None
     

@@ -51,6 +51,7 @@ class AgentLLMResponse:
     task_type: str
     content: str
     parsed_data: Optional[Dict[str, Any]] = None
+    raw_content: Optional[str] = None  # 原始文本内容
     success: bool = True
     error_message: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.now)
@@ -69,9 +70,10 @@ class AgentLLMAdapter:
     支持 Gemini 和 Ollama 双 Provider，自动回退。
     """
     
-    def __init__(self):
+    def __init__(self, default_timeout: int = 30):
         self._provider = None
         self._initialized = False
+        self._default_timeout = default_timeout
     
     def _get_provider(self):
         """延迟加载 LLM Provider"""
@@ -86,18 +88,51 @@ class AgentLLMAdapter:
     def is_initialized(self) -> bool:
         return self._initialized
     
-    async def generate(self, request: AgentLLMRequest) -> AgentLLMResponse:
+    async def generate(self, request: AgentLLMRequest, timeout: int = None) -> AgentLLMResponse:
         """
-        通用生成方法
+        通用生成方法（带超时保护）
         
         Args:
             request: Agent LLM 请求
+            timeout: 超时时间（秒），默认使用 _default_timeout
         
         Returns:
             Agent LLM 响应
         """
+        import asyncio
         response_id = str(uuid4())
+        timeout = timeout or self._default_timeout
         
+        try:
+            # 使用 asyncio.wait_for 添加超时保护
+            result = await asyncio.wait_for(
+                self._generate_internal(request, response_id),
+                timeout=timeout
+            )
+            return result
+        except asyncio.TimeoutError:
+            logger.error(f"AgentLLMAdapter.generate 超时 ({timeout}s): {request.task_type}")
+            return AgentLLMResponse(
+                id=response_id,
+                agent_type=request.agent_type,
+                task_type=request.task_type,
+                content="",
+                success=False,
+                error_message=f"AI 服务响应超时（{timeout}秒），请稍后重试或手动输入"
+            )
+        except Exception as e:
+            logger.error(f"AgentLLMAdapter.generate 异常: {e}")
+            return AgentLLMResponse(
+                id=response_id,
+                agent_type=request.agent_type,
+                task_type=request.task_type,
+                content="",
+                success=False,
+                error_message=str(e)
+            )
+    
+    async def _generate_internal(self, request: AgentLLMRequest, response_id: str) -> AgentLLMResponse:
+        """内部生成方法（无超时保护）"""
         try:
             provider = self._get_provider()
             
@@ -690,6 +725,69 @@ class AgentLLMAdapter:
             task_type="check_tag_consistency",
             prompt=prompt
         ))
+    
+    # ========== 通用方法 ==========
+    
+    async def generate_raw(self, prompt: str, timeout: int = 60) -> AgentLLMResponse:
+        """
+        生成纯文本内容（不要求 JSON 格式）
+        
+        Args:
+            prompt: 提示词
+            timeout: 超时时间（秒）
+        
+        Returns:
+            包含原始文本的响应
+        """
+        import asyncio
+        response_id = str(uuid4())
+        
+        try:
+            provider = self._get_provider()
+            
+            # 使用 asyncio.wait_for 添加超时保护
+            async def _generate():
+                if hasattr(provider, '_chat_completion'):
+                    # OllamaProvider
+                    messages = [{"role": "user", "content": prompt}]
+                    result = await provider._chat_completion(messages, json_mode=False)
+                    return result.get("content", "") if isinstance(result, dict) else str(result)
+                else:
+                    # GeminiProvider
+                    text_result = await provider.client.generate_text(prompt)
+                    return text_result.get("data", {}).get("text", "")
+            
+            raw_content = await asyncio.wait_for(_generate(), timeout=timeout)
+            
+            return AgentLLMResponse(
+                id=response_id,
+                agent_type=AgentType.SCRIPT,
+                task_type="generate_raw",
+                content=raw_content,
+                raw_content=raw_content,
+                success=True
+            )
+            
+        except asyncio.TimeoutError:
+            logger.error(f"generate_raw 超时 ({timeout}s)")
+            return AgentLLMResponse(
+                id=response_id,
+                agent_type=AgentType.SCRIPT,
+                task_type="generate_raw",
+                content="",
+                success=False,
+                error_message=f"AI 服务响应超时（{timeout}秒）"
+            )
+        except Exception as e:
+            logger.error(f"generate_raw 失败: {e}")
+            return AgentLLMResponse(
+                id=response_id,
+                agent_type=AgentType.SCRIPT,
+                task_type="generate_raw",
+                content="",
+                success=False,
+                error_message=str(e)
+            )
 
 
 # 全局适配器实例

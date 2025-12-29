@@ -4,8 +4,7 @@ Migration 001: Add tag management and export features
 """
 
 from sqlalchemy import create_engine, Column, String, Integer, Float, Text, DateTime, JSON, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 import os
 

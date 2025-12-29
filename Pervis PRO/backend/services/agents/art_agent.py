@@ -256,28 +256,82 @@ class ArtAgentService:
     ) -> VisualTags:
         """
         生成视觉标签
-        """
-        adapter = self._get_llm_adapter()
-        if adapter:
-            try:
-                desc = description or Path(file_path).name
-                response = await adapter.generate_visual_tags(desc)
-                if response.success and response.parsed_data:
-                    data = response.parsed_data
-                    return VisualTags(
-                        scene_type=data.get("scene_type", "未知"),
-                        time=data.get("time", "未知"),
-                        shot_type=data.get("shot_type", "未知"),
-                        mood=data.get("mood", "未知"),
-                        action=data.get("action", "未知"),
-                        characters=data.get("characters", "未知"),
-                        free_tags=data.get("free_tags", []),
-                        summary=data.get("summary", "")
-                    )
-            except Exception as e:
-                logger.error(f"生成标签失败: {e}")
         
-        return VisualTags(summary=f"文件: {Path(file_path).name}")
+        必须使用视觉模型分析图片内容，不支持 LLM 回退（因为 LLM 无法看到图片）
+        """
+        file_type = self.get_file_type(file_path)
+        
+        # 非图片文件：返回错误
+        if file_type != "image":
+            logger.warning(f"不支持的文件类型: {file_type}, 文件: {file_path}")
+            return VisualTags(
+                summary=f"[错误] 不支持的文件类型: {file_type}，仅支持图片分析"
+            )
+        
+        # 文件不存在
+        if not Path(file_path).exists():
+            logger.error(f"文件不存在: {file_path}")
+            return VisualTags(
+                summary=f"[错误] 文件不存在: {Path(file_path).name}"
+            )
+        
+        # 使用视觉模型分析图片内容
+        try:
+            from services.ollama_vision import get_vision_provider
+            vision = get_vision_provider()
+            
+            if not vision:
+                logger.error("视觉模型服务未初始化")
+                return VisualTags(
+                    summary="[错误] 视觉模型服务未初始化，请检查 Ollama 是否已启动"
+                )
+            
+            if not vision.config.ENABLED:
+                logger.error("视觉模型已被禁用")
+                return VisualTags(
+                    summary="[错误] 视觉模型已禁用，请在配置中启用 OLLAMA_VISION_ENABLED"
+                )
+            
+            # 检查视觉模型是否可用
+            is_available = await vision.check_availability()
+            if not is_available:
+                logger.error(f"视觉模型不可用，模型: {vision.model}")
+                return VisualTags(
+                    summary=f"[错误] 视觉模型 {vision.model} 不可用，请确保 Ollama 已启动并安装了视觉模型"
+                )
+            
+            logger.info(f"使用视觉模型分析图片: {file_path}")
+            vision_result = await vision.analyze_image(file_path)
+            
+            # 检查分析结果
+            if not vision_result or vision_result.get("summary") == "无法分析图像内容":
+                logger.error(f"视觉模型分析失败: {file_path}")
+                return VisualTags(
+                    summary="[错误] 视觉模型分析失败，请重试或检查图片格式"
+                )
+            
+            # 成功：返回分析结果
+            return VisualTags(
+                scene_type=vision_result.get("scene_type", "未知"),
+                time=vision_result.get("time", "未知"),
+                shot_type=vision_result.get("shot_type", "未知"),
+                mood=vision_result.get("mood", "未知"),
+                action=vision_result.get("action", "未知"),
+                characters=vision_result.get("characters", "未知"),
+                free_tags=vision_result.get("free_tags", []),
+                summary=vision_result.get("summary", "")
+            )
+            
+        except ImportError as e:
+            logger.error(f"ollama_vision 模块导入失败: {e}")
+            return VisualTags(
+                summary="[错误] 视觉模型模块未安装，请检查依赖"
+            )
+        except Exception as e:
+            logger.error(f"视觉模型分析异常: {e}")
+            return VisualTags(
+                summary=f"[错误] 分析异常: {str(e)}"
+            )
     
     def create_thumbnail(
         self,

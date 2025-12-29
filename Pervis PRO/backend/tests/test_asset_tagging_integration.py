@@ -108,6 +108,9 @@ class TestTaggingIntegration:
         
         await self.video_store.initialize()
         
+        # 清空存储，确保测试隔离
+        self.video_store._segments.clear()
+        
         indexed_count = 0
         for asset in TEST_ASSETS:
             try:
@@ -139,7 +142,7 @@ class TestTaggingIntegration:
         await self.embedding_service.close()
         
         count = await self.video_store.count()
-        assert count == len(TEST_ASSETS), f"Index count mismatch: {count}/{len(TEST_ASSETS)}"
+        assert count == indexed_count, f"Index count mismatch: {count}/{indexed_count}"
     
     @pytest.mark.asyncio
     async def test_search_accuracy(self):

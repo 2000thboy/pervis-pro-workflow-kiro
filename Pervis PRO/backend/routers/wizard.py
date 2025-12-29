@@ -579,6 +579,34 @@ async def generate_content(request: GenerateContentRequest) -> GenerateContentRe
                 content = response.parsed_data
             source = ContentSource.ART_AGENT
         
+        elif request.content_type == "demo_script":
+            # 根据标题和一句话故事生成剧本
+            title = request.context.get("title", "未命名项目")
+            logline = request.context.get("logline", "")
+            project_type = request.context.get("project_type", "short_film")
+            
+            # 构建生成提示
+            prompt = f"""请根据以下信息生成一个专业的剧本：
+
+项目标题：{title}
+一句话故事：{logline if logline else "（未提供，请自由发挥）"}
+项目类型：{project_type}
+
+要求：
+1. 使用标准剧本格式（场景标题、角色名、对话、动作描述）
+2. 场景标题格式：INT./EXT. 场景名 - 时间（日/夜/黄昏等）
+3. 角色名用中文，对话自然流畅
+4. 包含 3-5 个场景
+5. 总时长约 2-3 分钟
+6. 故事要有开头、发展、结尾
+7. 如果有一句话故事，剧本内容必须围绕它展开
+
+请直接输出剧本内容，不要添加额外说明。"""
+
+            response = await adapter.generate_raw(prompt)
+            if response.success and response.raw_content:
+                content = {"script": response.raw_content}
+        
         else:
             return GenerateContentResponse(
                 task_id=task_id,

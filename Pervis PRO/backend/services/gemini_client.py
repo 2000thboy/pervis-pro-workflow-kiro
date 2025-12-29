@@ -1,6 +1,7 @@
 """
 Gemini AI 客户端服务
 Phase 2: 安全的后端AI调用，严格JSON验证
+Updated: 2025-12-28 - 迁移到 google.genai SDK
 """
 
 import os
@@ -8,8 +9,17 @@ import json
 import uuid
 import time
 from typing import Dict, List, Any, Optional
-from google.generativeai import GenerativeModel, configure
-import google.generativeai as genai
+
+# 尝试使用新版 SDK，如果不可用则回退到旧版
+try:
+    from google import genai
+    from google.genai import types
+    USE_NEW_SDK = True
+except ImportError:
+    # 回退到旧版 SDK
+    from google.generativeai import GenerativeModel, configure
+    import google.generativeai as genai_old
+    USE_NEW_SDK = False
 
 class GeminiClient:
     
@@ -19,6 +29,7 @@ class GeminiClient:
         
         self.mock_mode = False
         self.model = None
+        self.client = None
 
         if not api_key:
             # Phase 5: 用户要求强制去Mock，如果没有Key则直接报错，不提供Mock
@@ -29,13 +40,45 @@ class GeminiClient:
             self.mock_mode = True 
         else:
             try:
-                configure(api_key=api_key)
-                # 使用 Gemini 1.5 Flash
-                self.model = GenerativeModel('gemini-1.5-flash')
-                print("✅ Gemini AI内核已连接 (Model: gemini-1.5-flash)")
+                if USE_NEW_SDK:
+                    # 新版 SDK
+                    self.client = genai.Client(api_key=api_key)
+                    self.model_name = 'gemini-1.5-flash'
+                    print("✅ Gemini AI内核已连接 (Model: gemini-1.5-flash, SDK: google-genai)")
+                else:
+                    # 旧版 SDK (兼容)
+                    configure(api_key=api_key)
+                    self.model = GenerativeModel('gemini-1.5-flash')
+                    print("✅ Gemini AI内核已连接 (Model: gemini-1.5-flash, SDK: google-generativeai)")
             except Exception as e:
                 # Phase 5: 连接失败直接抛出异常，不回退
                 raise ConnectionError(f"❌ Gemini 连接失败: {str(e)}")
+    
+    def _generate_content(self, prompt: str, images: List[Any] = None) -> str:
+        """统一的内容生成方法，兼容新旧 SDK"""
+        if USE_NEW_SDK:
+            # 新版 SDK
+            if images:
+                # 多模态请求
+                contents = [prompt] + images
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=contents
+                )
+            else:
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=prompt
+                )
+            return response.text
+        else:
+            # 旧版 SDK
+            if images:
+                content_parts = [prompt] + images
+                response = self.model.generate_content(content_parts)
+            else:
+                response = self.model.generate_content(prompt)
+            return response.text
     
     async def analyze_script(self, script_text: str, mode: str = "parse") -> Dict[str, Any]:
         """
@@ -83,11 +126,11 @@ JSON格式：
             # 构建完整提示
             full_prompt = f"{system_prompt}\n\n剧本内容：\n{script_text}"
             
-            # 调用Gemini
-            response = self.model.generate_content(full_prompt)
+            # 调用Gemini (使用统一方法)
+            response_text = self._generate_content(full_prompt)
             
             # 清理和验证JSON
-            cleaned_json = self._clean_json_response(response.text)
+            cleaned_json = self._clean_json_response(response_text)
             parsed_data = json.loads(cleaned_json)
             
             # 验证必要字段
@@ -96,7 +139,7 @@ JSON格式：
             return {
                 "status": "success",
                 "data": parsed_data,
-                "raw_response": response.text[:500]  # 保留部分原始响应用于调试
+                "raw_response": response_text[:500]  # 保留部分原始响应用于调试
             }
             
         except json.JSONDecodeError as e:
@@ -106,7 +149,7 @@ JSON格式：
                 "message": "AI返回的JSON格式无效",
                 "details": str(e),
                 "trace_id": str(uuid.uuid4()),
-                "raw_response": response.text if 'response' in locals() else None
+                "raw_response": response_text if 'response_text' in locals() else None
             }
         except Exception as e:
             return {
@@ -172,10 +215,12 @@ JSON格式：
             else:
                 content_parts.append("(未提供关键帧图片，仅根据文件名分析)")
             
-            # 调用Gemini (Multimodal)
-            response = self.model.generate_content(content_parts)
+            # 调用Gemini (Multimodal) - 使用统一方法
+            full_prompt = "\n".join([str(p) for p in content_parts if isinstance(p, str)])
+            image_list = [p for p in content_parts if not isinstance(p, str)]
+            response_text = self._generate_content(full_prompt, image_list if image_list else None)
             
-            cleaned_json = self._clean_json_response(response.text)
+            cleaned_json = self._clean_json_response(response_text)
             parsed_data = json.loads(cleaned_json)
             
             return {
@@ -213,8 +258,8 @@ Beat内容: {beat_content}
 """
         
         try:
-            response = self.model.generate_content(prompt)
-            return response.text.strip()
+            response_text = self._generate_content(prompt)
+            return response_text.strip()
         except:
             return f"该素材与您的创作需求匹配度为{match_score:.0%}，建议预览查看效果"
     
@@ -226,8 +271,8 @@ Beat内容: {beat_content}
              raise NotImplementedError("Mock mode not supported for generate_json")
 
         try:
-            response = self.model.generate_content(prompt)
-            cleaned = self._clean_json_response(response.text)
+            response_text = self._generate_content(prompt)
+            cleaned = self._clean_json_response(response_text)
             return json.loads(cleaned)
         except Exception as e:
             print(f"Gemini Generate JSON Failed: {e}")
@@ -523,11 +568,11 @@ Beat内容: {beat_content}
             }
         
         try:
-            response = self.model.generate_content(prompt)
+            response_text = self._generate_content(prompt)
             return {
                 "status": "success",
                 "data": {
-                    "text": response.text
+                    "text": response_text
                 }
             }
         except Exception as e:

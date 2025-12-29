@@ -346,16 +346,26 @@ class VideoPreprocessor:
             return segments
         
         try:
-            import google.generativeai as genai
-            genai.configure(api_key=self.gemini_api_key)
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            # 尝试使用新版 SDK
+            try:
+                from google import genai
+                client = genai.Client(api_key=self.gemini_api_key)
+                use_new_sdk = True
+            except ImportError:
+                # 回退到旧版 SDK
+                import google.generativeai as genai_old
+                genai_old.configure(api_key=self.gemini_api_key)
+                model = genai_old.GenerativeModel('gemini-1.5-flash')
+                use_new_sdk = False
             
             for segment in segments:
                 try:
                     # 如果有缩略图，使用图片分析
                     if segment.thumbnail_path and Path(segment.thumbnail_path).exists():
                         tags = await self._generate_tags_from_image(
-                            model, segment.thumbnail_path
+                            client if use_new_sdk else model, 
+                            segment.thumbnail_path,
+                            use_new_sdk=use_new_sdk
                         )
                     else:
                         # 使用文件名和时间信息生成基础标签

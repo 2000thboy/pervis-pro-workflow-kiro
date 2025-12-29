@@ -40,6 +40,9 @@ import { StepLibrary } from './components/StepLibrary';
 import { SettingsModal } from './components/SettingsModal';
 import { AdminConsole } from './components/AdminConsole';
 
+// Workspace (Tab 导航工作台)
+import { Workspace } from './components/Workspace';
+
 // System Agent
 import { SystemAgentProvider, SystemAgentUI, NotificationToast } from './components/SystemAgent';
 
@@ -502,172 +505,20 @@ function App() {
         );
     }
 
+    // 使用新的 Workspace 组件（Tab 导航）
     return (
-        <div className="flex h-screen w-full bg-zinc-950 text-zinc-200 font-sans overflow-hidden selection:bg-yellow-500/30">
-
-            {/* --- GLOBAL SIDEBAR --- */}
-            <aside className="w-64 bg-zinc-950 border-r border-zinc-800 flex flex-col z-50 flex-shrink-0 relative">
-
-                {/* 1. Header: Logo & Brand */}
-                <div
-                    onClick={resetToHome}
-                    className="h-16 flex items-center px-6 border-b border-zinc-800/50 cursor-pointer group select-none hover:bg-zinc-900/30 transition-colors"
-                >
-                    <h1 className="text-lg font-black text-white font-serif tracking-tight flex items-center gap-2">
-                        PreVis Pro
-                    </h1>
-                </div>
-
-                {/* 2. Project Selector (The "First Row") */}
-                <div className="px-4 py-4 border-b border-zinc-800/30 relative">
-                    <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-wider mb-2 px-2">{t('sidebar.current_project')}</div>
-                    <button
-                        onClick={() => setProjectListOpen(!projectListOpen)}
-                        className="w-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg p-3 flex items-center justify-between group transition-all shadow-sm"
-                    >
-                        <div className="flex items-center gap-3 overflow-hidden">
-                            <div className="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-serif font-bold text-xs flex-shrink-0 shadow-inner">
-                                {project.title.substring(0, 1)}
-                            </div>
-                            <div className="flex flex-col items-start overflow-hidden">
-                                <span className="text-xs font-bold text-zinc-200 truncate w-full group-hover:text-white transition-colors">{project.title}</span>
-                                <span className="text-[9px] text-zinc-500 truncate w-full">Draft v0.1</span>
-                            </div>
-                        </div>
-                        <ChevronDown size={14} className={`text-zinc-600 group-hover:text-zinc-400 transition-transform ${projectListOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    {/* Dropdown for Switching Projects */}
-                    {projectListOpen && (
-                        <div className="absolute top-full left-4 right-4 mt-2 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto">
-                            {recentProjects.map(p => (
-                                <div
-                                    key={p.id}
-                                    onClick={() => handleOpenProject(p)}
-                                    className={`p-3 text-xs border-b border-zinc-800 last:border-0 hover:bg-zinc-800 cursor-pointer flex items-center gap-2 ${p.id === project.id ? 'bg-zinc-800' : ''}`}
-                                >
-                                    <div className={`w-2 h-2 rounded-full ${p.id === project.id ? 'bg-yellow-500' : 'bg-zinc-600'}`}></div>
-                                    <span className={`truncate ${p.id === project.id ? 'text-white font-bold' : 'text-zinc-400'}`}>{p.title}</span>
-                                </div>
-                            ))}
-                            <div
-                                onClick={() => {
-                                    setProjectListOpen(false);
-                                    setProject(null); // Go to landing
-                                }}
-                                className="p-3 text-xs text-yellow-500 hover:bg-zinc-800 cursor-pointer flex items-center gap-2 font-bold border-t border-zinc-800"
-                            >
-                                <Plus size={12} /> {t('landing.start')}
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* 3. Navigation: Tools (Left Top Only) */}
-                <nav className="flex-1 py-4 space-y-1 overflow-y-auto">
-                    <div className="px-6 mb-2 mt-2 text-[10px] font-bold text-zinc-600 uppercase tracking-wider">{t('sidebar.tools')}</div>
-                    <SidebarItem
-                        icon={FileText}
-                        label={t('sidebar.script')}
-                        active={currentStage === WorkflowStage.ANALYSIS}
-                        onClick={() => handleStageChange(WorkflowStage.ANALYSIS)}
-                    />
-                    <SidebarItem
-                        icon={LayoutDashboard}
-                        label={t('sidebar.board')}
-                        active={currentStage === WorkflowStage.BOARD}
-                        onClick={() => handleStageChange(WorkflowStage.BOARD)}
-                    />
-                    <SidebarItem
-                        icon={Film}
-                        label={t('sidebar.timeline')}
-                        active={currentStage === WorkflowStage.TIMELINE}
-                        onClick={() => handleStageChange(WorkflowStage.TIMELINE)}
-                    />
-                </nav>
-
-                {/* 4. Bottom Section: Library & System */}
-                <div className="flex-shrink-0 border-t border-zinc-800 bg-zinc-950/50">
-
-                    {/* Asset Library (Moved to Bottom) */}
-                    <div className="py-2">
-                        <div className="px-6 mb-1 mt-2 text-[10px] font-bold text-zinc-600 uppercase tracking-wider">{t('sidebar.resources')}</div>
-                        <SidebarItem
-                            icon={FolderOpen}
-                            label={t('sidebar.assets')}
-                            active={currentStage === WorkflowStage.LIBRARY}
-                            onClick={() => handleStageChange(WorkflowStage.LIBRARY)}
-                        />
-                    </div>
-
-                    {/* System Actions */}
-                    <div className="p-4 space-y-2 border-t border-zinc-800/50">
-                        <button
-                            onClick={() => setShowAdmin(true)}
-                            className="w-full flex items-center gap-3 px-3 py-2 text-xs text-zinc-500 hover:text-white rounded hover:bg-zinc-900 transition-colors"
-                        >
-                            <div className="relative">
-                                <Server size={14} />
-                                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-green-500 rounded-full border border-zinc-950"></span>
-                            </div>
-                            <span>{t('sidebar.ai_ready')}</span>
-                        </button>
-
-                        <button
-                            onClick={() => setShowSettings(true)}
-                            className="w-full flex items-center gap-3 px-3 py-2 text-xs text-zinc-500 hover:text-white rounded hover:bg-zinc-900 transition-colors"
-                        >
-                            <Settings size={14} />
-                            <span>{t('sidebar.settings')}</span>
-                        </button>
-
-                        {/* Language Toggle */}
-                        <button
-                            onClick={toggleLanguage}
-                            className="w-full flex items-center gap-3 px-3 py-2 text-xs text-zinc-500 hover:text-white rounded hover:bg-zinc-900 transition-colors"
-                        >
-                            <Languages size={14} />
-                            <span>Language: {language === 'zh' ? '中文' : 'English'}</span>
-                        </button>
-
-                        <button
-                            onClick={resetToHome}
-                            className="w-full flex items-center gap-3 px-3 py-2 text-xs text-red-500/70 hover:text-red-400 rounded hover:bg-red-950/20 transition-colors"
-                        >
-                            <LogOut size={14} />
-                            <span>{t('sidebar.exit')}</span>
-                        </button>
-                    </div>
-                </div>
-            </aside>
-
-            {/* --- MAIN CONTENT AREA --- */}
-            <div className="flex-1 flex flex-col overflow-hidden relative min-w-0 bg-zinc-950">
-
-                {/* Top Header (Page Level Actions) */}
-                <header className="h-14 border-b border-zinc-800 bg-zinc-950 flex items-center justify-between px-6 flex-shrink-0">
-                    <div className="flex items-center gap-4">
-                        {/* Breadcrumb / Title */}
-                        <span className="text-zinc-500 text-xs">Project / {project.title} /</span>
-                        <h2 className="text-sm font-bold text-white">
-                            {currentStage === WorkflowStage.ANALYSIS && t('stage.analysis')}
-                            {currentStage === WorkflowStage.BOARD && t('stage.board')}
-                            {currentStage === WorkflowStage.TIMELINE && t('stage.timeline')}
-                            {currentStage === WorkflowStage.LIBRARY && t('stage.library')}
-                        </h2>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        {getExportButton()}
-                    </div>
-                </header>
-
-                {/* Workspace Content */}
-                <main className="flex-1 overflow-hidden relative">
-                    {renderContent()}
-                </main>
-            </div>
-
+        <>
+            <Workspace
+                project={project}
+                recentProjects={recentProjects}
+                onUpdateProject={handleProjectUpdate}
+                onUpdateBeats={updateBeats}
+                onExit={resetToHome}
+                onOpenProject={handleOpenProject}
+                onShowSettings={() => setShowSettings(true)}
+                onShowAdmin={() => setShowAdmin(true)}
+            />
+            
             {/* --- Modals --- */}
             {showIngestion && (
                 <ScriptIngestion
@@ -680,9 +531,7 @@ function App() {
                     onClose={() => setShowWizard(false)}
                     onComplete={async (projectId) => {
                         setShowWizard(false);
-                        // 刷新项目列表并自动打开新创建的项目
                         await refreshProjects();
-                        // 获取新创建的项目并打开
                         try {
                             const newProject = await api.getProject(projectId);
                             if (newProject) {
@@ -701,7 +550,7 @@ function App() {
             {/* System Agent UI */}
             <SystemAgentUI />
             <NotificationToast />
-        </div>
+        </>
     );
 }
 

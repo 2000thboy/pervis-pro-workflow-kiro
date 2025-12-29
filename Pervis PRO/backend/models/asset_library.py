@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 try:
     from database import Base
 except ImportError:
-    from sqlalchemy.ext.declarative import declarative_base
+    from sqlalchemy.orm import declarative_base
     Base = declarative_base()
 
 

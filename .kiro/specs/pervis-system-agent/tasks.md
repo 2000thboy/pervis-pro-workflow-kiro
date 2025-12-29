@@ -183,3 +183,27 @@
 - ✅ `/api/system/health/quick` - 快速健康检查通过
 - ✅ 路由前缀问题已修复（移除 `prefix="/api/system"`）
 - **测试结果: 3/3 System Agent API 端点通过**
+
+---
+
+## 实际文件清单 (2025-12-29 同步)
+
+```
+前端组件：
+- frontend/components/SystemAgent/index.ts           ✅ 导出入口
+- frontend/components/SystemAgent/types.ts           ✅ 类型定义
+- frontend/components/SystemAgent/SystemAgentContext.tsx ✅ 状态管理 + WebSocket
+- frontend/components/SystemAgent/SystemAgentUI.tsx  ✅ 悬浮 UI 主组件
+- frontend/components/SystemAgent/TaskList.tsx       ✅ 任务列表
+- frontend/components/SystemAgent/NotificationList.tsx ✅ 通知列表
+- frontend/components/SystemAgent/NotificationToast.tsx ✅ Toast 提示
+
+后端服务：
+- backend/services/event_service.py     ✅ 事件服务
+- backend/services/health_checker.py    ✅ 健康检查
+- backend/routers/system.py             ✅ API 路由
+- backend/routers/websocket.py          ✅ WebSocket 端点
+- backend/models/system_notification.py ✅ 通知模型
+- backend/models/background_task.py     ✅ 任务模型
+- backend/migrations/008_add_system_agent_tables.py ✅ 数据库迁移
+```

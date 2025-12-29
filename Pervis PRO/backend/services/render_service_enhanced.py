@@ -341,11 +341,16 @@ class EnhancedRenderService:
     ):
         """执行增强版渲染"""
         temp_files = []
+        start_time = datetime.now()
         
         try:
             # 更新状态
             self._update_task_status(task_id, "processing", 0, started_at=datetime.now())
-            self._emit_progress(task_id, "processing", 0, "准备渲染...")
+            self._emit_progress(
+                task_id, "processing", 0, "准备渲染...",
+                current_stage="初始化",
+                elapsed_time=0
+            )
             
             # 获取时间线
             timeline_service = self._get_timeline_service()
@@ -367,9 +372,25 @@ class EnhancedRenderService:
             
             # 处理每个片段
             for i, clip in enumerate(clips):
+                elapsed = (datetime.now() - start_time).total_seconds()
                 progress = (i / total_clips) * 70  # 70% 用于片段处理
+                
+                # 估算剩余时间
+                if i > 0:
+                    avg_time_per_clip = elapsed / i
+                    remaining_clips = total_clips - i
+                    estimated_remaining = avg_time_per_clip * remaining_clips + 10  # +10秒用于拼接
+                else:
+                    estimated_remaining = total_clips * 5  # 估算每个片段5秒
+                
                 self._update_task_status(task_id, "processing", progress)
-                self._emit_progress(task_id, "processing", progress, f"处理片段 {i+1}/{total_clips}")
+                self._emit_progress(
+                    task_id, "processing", progress, 
+                    f"处理片段 {i+1}/{total_clips}",
+                    current_stage=f"转码片段 {i+1}",
+                    elapsed_time=elapsed,
+                    estimated_remaining=estimated_remaining
+                )
                 
                 asset_id = clip.get('asset_id')
                 if not asset_id or asset_id == "placeholder":
@@ -414,8 +435,14 @@ class EnhancedRenderService:
                 raise Exception("没有有效的视频片段")
             
             # 拼接片段
+            elapsed = (datetime.now() - start_time).total_seconds()
             self._update_task_status(task_id, "processing", 80)
-            self._emit_progress(task_id, "processing", 80, "拼接视频片段...")
+            self._emit_progress(
+                task_id, "processing", 80, "拼接视频片段...",
+                current_stage="视频拼接",
+                elapsed_time=elapsed,
+                estimated_remaining=10
+            )
             
             if len(video_segments) == 1:
                 import shutil
@@ -424,11 +451,18 @@ class EnhancedRenderService:
                 ffmpeg.concat_videos(video_segments, output_path)
             
             # 最终处理
+            elapsed = (datetime.now() - start_time).total_seconds()
             self._update_task_status(task_id, "processing", 95)
-            self._emit_progress(task_id, "processing", 95, "完成处理...")
+            self._emit_progress(
+                task_id, "processing", 95, "完成处理...",
+                current_stage="最终处理",
+                elapsed_time=elapsed,
+                estimated_remaining=2
+            )
             
             # 获取文件大小
             file_size = os.path.getsize(output_path) if os.path.exists(output_path) else 0
+            elapsed = (datetime.now() - start_time).total_seconds()
             
             # 完成
             self._update_task_status(
@@ -436,15 +470,28 @@ class EnhancedRenderService:
                 completed_at=datetime.now(),
                 file_size=file_size
             )
-            self._emit_progress(task_id, "completed", 100, "渲染完成")
+            self._emit_progress(
+                task_id, "completed", 100, "渲染完成",
+                current_stage="完成",
+                elapsed_time=elapsed,
+                estimated_remaining=0,
+                output_path=output_path,
+                file_size=file_size
+            )
             
-            logger.info(f"渲染完成: {task_id} -> {output_path} ({file_size} bytes)")
+            logger.info(f"渲染完成: {task_id} -> {output_path} ({file_size} bytes, {elapsed:.1f}s)")
             
         except Exception as e:
             error_msg = str(e)
+            elapsed = (datetime.now() - start_time).total_seconds()
             logger.error(f"渲染失败 {task_id}: {error_msg}")
             self._update_task_status(task_id, "failed", 0, error_message=error_msg)
-            self._emit_progress(task_id, "failed", 0, f"渲染失败: {error_msg}")
+            self._emit_progress(
+                task_id, "failed", 0, f"渲染失败: {error_msg}",
+                current_stage="错误",
+                elapsed_time=elapsed,
+                error=error_msg
+            )
             
         finally:
             # 清理临时文件
@@ -553,46 +600,77 @@ class EnhancedRenderService:
         except Exception as e:
             logger.error(f"更新任务状态失败: {e}")
     
-    def _emit_progress(self, task_id: str, status: str, progress: float, message: str):
-        """发送进度事件"""
-        event_service = self._get_event_service()
-        if not event_service:
-            return
+    def _emit_progress(
+        self, 
+        task_id: str, 
+        status: str, 
+        progress: float, 
+        message: str,
+        current_stage: str = "",
+        elapsed_time: float = 0.0,
+        estimated_remaining: float = 0.0,
+        output_path: str = None,
+        file_size: int = None,
+        error: str = None
+    ):
+        """发送进度事件（同时发送到 EventService 和 SSE）"""
+        import asyncio
+        
+        async def emit_all():
+            # 1. 发送到 SSE
+            try:
+                from services.render_progress_sse import publish_render_progress
+                await publish_render_progress(
+                    task_id=task_id,
+                    status=status,
+                    progress=progress,
+                    message=message,
+                    current_stage=current_stage,
+                    elapsed_time=elapsed_time,
+                    estimated_remaining=estimated_remaining,
+                    output_path=output_path,
+                    file_size=file_size,
+                    error=error
+                )
+            except Exception as e:
+                logger.warning(f"SSE 进度推送失败: {e}")
+            
+            # 2. 发送到 EventService (WebSocket)
+            event_service = self._get_event_service()
+            if event_service:
+                try:
+                    if status == "processing":
+                        await event_service.emit_task_progress(
+                            task_id=task_id,
+                            progress=int(progress),
+                            message=message,
+                            task_type="render",
+                            task_name="视频渲染"
+                        )
+                    elif status == "completed":
+                        await event_service.emit_task_completed(
+                            task_id=task_id,
+                            task_type="render",
+                            task_name="视频渲染",
+                            result={"progress": 100, "message": message}
+                        )
+                    elif status == "failed":
+                        await event_service.emit_task_failed(
+                            task_id=task_id,
+                            task_type="render",
+                            task_name="视频渲染",
+                            error=error or message,
+                            can_retry=True
+                        )
+                except Exception as e:
+                    logger.warning(f"EventService 进度推送失败: {e}")
         
         try:
-            import asyncio
-            
-            async def emit():
-                if status == "processing":
-                    await event_service.emit_task_progress(
-                        task_id=task_id,
-                        progress=int(progress),
-                        message=message,
-                        task_type="render",
-                        task_name="视频渲染"
-                    )
-                elif status == "completed":
-                    await event_service.emit_task_completed(
-                        task_id=task_id,
-                        task_type="render",
-                        task_name="视频渲染",
-                        result={"progress": 100, "message": message}
-                    )
-                elif status == "failed":
-                    await event_service.emit_task_failed(
-                        task_id=task_id,
-                        task_type="render",
-                        task_name="视频渲染",
-                        error=message,
-                        can_retry=True
-                    )
-            
             try:
                 loop = asyncio.get_running_loop()
-                asyncio.create_task(emit())
+                asyncio.create_task(emit_all())
             except RuntimeError:
-                asyncio.run(emit())
-                
+                asyncio.run(emit_all())
         except Exception as e:
             logger.warning(f"发送进度事件失败: {e}")
     
