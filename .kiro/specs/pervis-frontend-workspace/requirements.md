@@ -92,6 +92,79 @@
 5. THE 预演模式 Tab SHALL 复用现有的 StepTimeline 组件的预览功能
 6. THE 预演模式 Tab SHALL 提供导出按钮（跳转到渲染流程）
 
+### Requirement 5.1: 预演模式数据隔离
+
+**User Story:** As a 导演, I want to 预演模式有独立的 Beatboard 数据, so that 我可以在预演中自由调整而不影响主 Beatboard。
+
+#### Acceptance Criteria
+
+1. THE 预演模式 SHALL 拥有独立的预演 Beatboard 数据（与主 Beatboard 隔离）
+2. WHEN 用户进入预演模式 THEN THE 系统 SHALL 复制当前 Beatboard 数据到预演 Beatboard
+3. THE 预演 Beatboard 的修改 SHALL NOT 影响主 Beatboard
+4. THE 预演模式 SHALL 提供"同步到主 Beatboard"按钮，允许用户手动同步
+5. THE 预演模式 SHALL 显示数据来源标识（预演数据/主数据）
+
+### Requirement 5.2: 真实音频轨道
+
+**User Story:** As a 导演, I want to 在时间轴上看到真实的音频轨道, so that 我可以精确控制音频和视频的配合。
+
+#### Acceptance Criteria
+
+1. THE 时间轴 SHALL 显示真实的音频波形（而非模拟波形）
+2. THE 音频轨道 SHALL 支持以下类型：
+   - 原声轨道（视频自带音频）
+   - BGM 轨道（背景音乐）
+   - 音效轨道（SFX）
+   - 对白轨道（VO）
+3. THE 音频轨道 SHALL 支持独立的音量控制
+4. THE 音频轨道 SHALL 支持静音/取消静音
+5. THE 音频轨道 SHALL 显示音频时长和波形预览
+
+### Requirement 5.3: 音视频分离功能
+
+**User Story:** As a 导演, I want to 一键切开视频和音频, so that 我可以单独处理视频画面和音频内容。
+
+#### Acceptance Criteria
+
+1. THE 时间轴 SHALL 提供"一键切开音视频"按钮
+2. WHEN 用户点击切开按钮 THEN THE 系统 SHALL：
+   - 将视频片段的音频分离到独立的音频轨道
+   - 保持视频片段在视频轨道上
+   - 保持音视频的时间对齐
+3. THE 分离后的音频 SHALL 可以独立移动、删除、替换
+4. THE 分离后的视频 SHALL 变为静音状态
+5. THE 系统 SHALL 支持重新关联音视频（合并操作）
+
+### Requirement 5.4: Beatboard 只选取视频功能
+
+**User Story:** As a 导演, I want to Beatboard 发送到时间轴时只选取视频（静音）, so that 我可以重新配置 BGM 和音效。
+
+#### Acceptance Criteria
+
+1. THE Beatboard SHALL 提供"只选取视频（静音）"选项
+2. WHEN 用户选择此选项 THEN THE 系统 SHALL：
+   - 将视频片段发送到时间轴时自动静音
+   - 不创建原声音频轨道
+3. THE 用户 SHALL 可以在发送前选择是否保留原声
+4. THE 默认行为 SHALL 为保留原声（向后兼容）
+
+### Requirement 5.5: Beatboard 重新分析功能
+
+**User Story:** As a 导演, I want to 重新分析 Beatboard 的素材匹配, so that 我可以在更新项目资产后获得更好的匹配结果。
+
+#### Acceptance Criteria
+
+1. THE Beatboard SHALL 提供"重新分析"按钮
+2. THE 重新分析 SHALL 支持两种模式：
+   - 单场次分析：只分析当前选中的场次
+   - 全局分析：分析所有场次
+3. WHEN 用户点击重新分析 THEN THE 系统 SHALL：
+   - 基于最新的项目资产库重新搜索匹配素材
+   - 更新候选素材列表
+   - 保留用户之前的手动选择（可选）
+4. THE 重新分析 SHALL 显示进度和状态
+5. THE 重新分析结果 SHALL 显示与之前结果的差异
+
 ### Requirement 6: 侧边栏集成
 
 **User Story:** As a 用户, I want to 在工作台中快速访问素材库和 AI 助手, so that 我可以高效地完成工作。

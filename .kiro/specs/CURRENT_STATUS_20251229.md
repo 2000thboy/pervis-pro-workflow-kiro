@@ -1,10 +1,52 @@
 # Pervis PRO 系统状态总结
 
-> 更新日期: 2025-12-29 (V2)
+> 更新日期: 2025-12-29 (V3)
 > 本文档同步当前代码实现与 spec 的对比状态
 > 完整评估报告: `Pervis PRO/docs/FULL_SYSTEM_ASSESSMENT_20251229_V3.md`
 
-## 一、已完成的 Spec
+## 一、Spec 目录清理记录 (2025-12-29)
+
+### 已删除的 Spec 目录
+- ✅ `pervis-codebase-consolidation/` - 代码整合已完成
+- ✅ `multi-agent-workflow-core/` - 已合并到 pervis-project-wizard
+- ✅ `pervis-ai-integration-fix/` - AI 集成修复已完成
+
+### 当前保留的 Spec 目录
+```
+.kiro/specs/
+├── pervis-asset-tagging/      # 素材标签与向量搜索（已更新：新增音频标签和RAG）
+├── pervis-export-system/      # 导出系统
+├── pervis-frontend-workspace/ # 前端工作台（已更新：新增预演模式增强）
+├── pervis-project-wizard/     # 项目向导（已更新：新增剧本→资产标签打通）
+├── pervis-system-agent/       # 系统 Agent
+└── CURRENT_STATUS_20251229.md # 本文件
+```
+
+### Spec 更新内容 (2025-12-29)
+
+#### 1. pervis-frontend-workspace - 新增预演模式增强
+- Requirement 5.1: 预演模式数据隔离（独立的预演 Beatboard）
+- Requirement 5.2: 真实音频轨道（波形显示、多轨道支持）
+- Requirement 5.3: 音视频分离功能（一键切开）
+- Requirement 5.4: Beatboard 只选取视频功能（静音发送）
+- Requirement 5.5: Beatboard 重新分析功能（单场次/全局）
+
+#### 2. pervis-asset-tagging - 新增音频标签和 RAG
+- Section 9.1: 音频标签体系（BGM 类型、情绪、节奏等）
+- Section 9.2: 音频向量嵌入
+- Section 9.3: 音频 RAG 检索功能
+- Section 9.4: 音频 RAG 召回策略
+- Section 9.5: 音频预处理管道
+
+#### 3. pervis-project-wizard - 新增剧本→资产标签打通
+- Requirement 18: 剧本数据到项目资产的自动打通
+  - 人物小传 → 角色标签 → 项目资产
+  - 场景描述 → 场景标签 → 项目资产
+- Requirement 19: 标签到素材的自动关联
+
+---
+
+## 二、已完成的 Spec
 
 ### 0. FFmpeg 检测修复 ✅ (2025-12-29 新增)
 **状态**: 已完成

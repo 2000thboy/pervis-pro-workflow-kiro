@@ -439,6 +439,57 @@ Pervis PRO 项目立项向导系统需求文档。本系统为导演工作台提
 4. THE 系统 SHALL 支持向量搜索和标签搜索两种方式
 5. THE Milvus SHALL 通过 Docker 部署，支持自托管
 
+### Requirement 18: 剧本数据到项目资产的自动打通
+
+**User Story:** As a 导演, I want to 剧本拆解后的人物小传和场景描述自动转换为标签并关联到项目资产, so that 后续的素材召回可以基于剧本内容进行智能匹配。
+
+#### Acceptance Criteria
+
+1. WHEN Script_Agent 完成剧本解析 THEN THE 系统 SHALL 自动执行以下转换：
+   - 人物小传 → 角色标签（外观、性格、服装、特征）
+   - 场景描述 → 场景标签（场景类型、时间、环境、氛围）
+2. THE 角色标签 SHALL 包含以下字段：
+   - `character_name`：角色名称
+   - `appearance`：外观描述（身高、体型、发型、肤色等）
+   - `costume`：服装风格（现代/古装/制服等）
+   - `personality`：性格特征（用于匹配表演风格）
+   - `props`：角色关联道具
+   - `visual_tags`：视觉标签列表（用于素材匹配）
+3. THE 场景标签 SHALL 包含以下字段：
+   - `scene_id`：场次编号
+   - `scene_type`：场景类型（INT/EXT）
+   - `time_of_day`：时间（DAY/NIGHT/DAWN/DUSK）
+   - `location`：地点描述
+   - `mood`：情绪氛围
+   - `environment_tags`：环境标签列表
+   - `action_tags`：动作标签列表
+4. WHEN 标签生成完成 THEN THE 系统 SHALL 自动将标签存储到项目资产库
+5. THE 项目资产库 SHALL 建立以下关联：
+   - 角色 ↔ 角色标签 ↔ 匹配素材
+   - 场次 ↔ 场景标签 ↔ 匹配素材
+6. THE 用户 SHALL 可以在向导步骤中确认和编辑自动生成的标签
+
+### Requirement 19: 标签到素材的自动关联
+
+**User Story:** As a 系统, I want to 自动将剧本标签与素材库中的素材进行关联, so that Beatboard 可以基于剧本内容智能推荐素材。
+
+#### Acceptance Criteria
+
+1. WHEN 角色/场景标签生成完成 THEN THE 系统 SHALL 自动执行素材匹配：
+   - 基于标签相似度搜索匹配素材
+   - 基于向量相似度搜索匹配素材
+   - 混合排序返回 Top N 候选
+2. THE 匹配结果 SHALL 存储到项目资产关联表：
+   - `project_id`：项目 ID
+   - `source_type`：来源类型（CHARACTER/SCENE）
+   - `source_id`：来源 ID（角色 ID/场次 ID）
+   - `asset_id`：匹配的素材 ID
+   - `match_score`：匹配分数
+   - `match_reason`：匹配原因
+3. WHEN Beatboard 需要素材推荐 THEN THE 系统 SHALL 优先使用项目资产关联
+4. THE 用户 SHALL 可以手动调整素材关联（添加/删除/替换）
+5. WHEN 项目资产库更新 THEN THE 系统 SHALL 提示用户是否重新匹配
+
 ---
 
 ## Architecture Notes (MVP 简化版)
